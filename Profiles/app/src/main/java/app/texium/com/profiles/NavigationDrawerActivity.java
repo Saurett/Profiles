@@ -10,8 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import app.texium.com.profiles.fragments.DateProfileFragment;
 import app.texium.com.profiles.fragments.FragmentProfileListener;
 import app.texium.com.profiles.fragments.PersonalProfileFragment;
 import app.texium.com.profiles.models.Users;
@@ -60,6 +64,37 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        */
+    }
+
+    public void onStart() {
+        super.onStart();
+
+        final EditText txtDate = (EditText) findViewById(R.id.birthDate);
+        final EditText txtAge = (EditText) findViewById(R.id.ageProfile);
+        Button calendarButton = (Button) findViewById(R.id.calendarButton) ;
+
+
+        calendarButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                DateProfileFragment dialog = new DateProfileFragment(txtDate,txtAge);
+                android.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
+                dialog.show(ft,"DatePicker");
+            }
+        });
+
+
+        /*
+
+        txtDate.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick (View v) {
+
+            }
+        });
         */
     }
 
