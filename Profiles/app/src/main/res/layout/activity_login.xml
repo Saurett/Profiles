@@ -76,6 +76,8 @@
                 android:layout_height="40dp"
                 android:hint="Usuario"
                 android:textSize="15sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textColorHint="@color/colorPrimaryDark"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:layout_marginTop="30dp"
@@ -83,13 +85,15 @@
                 android:layout_gravity="center"
                 android:textAlignment="center"
                 android:background="@drawable/shape_login"
-                />
+            />
             <EditText
                 android:id="@+id/password"
                 android:layout_width="350dp"
                 android:layout_height="40dp"
                 android:hint="Contraseña"
                 android:textSize="15sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textColorHint="@color/colorPrimaryDark"
                 android:maxLines="1"
                 android:inputType="textPassword"
                 android:singleLine="true"

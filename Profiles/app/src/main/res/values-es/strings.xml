@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">Profiles</string>
-    <string name="password_login_error">This password is invalid</string>
-    <string name="username_login_error">This field is required</string>
-    <string name="default_login_error">This email addres and password you entered do not match.</string>
-    <string name="default_user_unregister">Unregister user</string>
-    <string name="default_incorrect_password">Incorrect password</string>
-    <string name="default_exception_error">Unexpected error.</string>
-    <string name="default_connect_error">A failure in the server connection has been detected.</string>
-    <string name="default_soap_error">Unexpected soap error.</string>
+    <string name="app_name">Perfiles</string>
+    <string name="password_login_error">La contraseña no es valida</string>
+    <string name="username_login_error">Este campo es requerido</string>
+    <string name="default_login_error">El usuario y contraseña no coninciden</string>
+    <string name="default_user_unregister">Usuario no registrado</string>
+    <string name="default_incorrect_password">La contraseña es incorrecta</string>
+    <string name="default_exception_error">Error inesperado.</string>
+    <string name="default_connect_error">Una falla en la conección del servidor ha sido detectada.</string>
+    <string name="default_soap_error">Error inesperado (SOAP).</string>
 </resources>

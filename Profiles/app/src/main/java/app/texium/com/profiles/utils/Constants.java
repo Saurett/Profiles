@@ -30,7 +30,7 @@ public final class Constants {
     //endregion TOKEN ACCESS//
 
     //region FRAGMENT TAGS//
-    public static final String FRAGMENT_NEWS_TAG = "fragment_news_task";
+    public static final String FRAGMENT_PERSONAL_TAG = "fragment_personal_profile";
     //endregion FRAGMENT TAGS//
 
     //region WEB SERVICE ID //
