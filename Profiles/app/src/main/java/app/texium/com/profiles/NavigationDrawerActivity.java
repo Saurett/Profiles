@@ -2,6 +2,7 @@ package app.texium.com.profiles;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -11,18 +12,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import app.texium.com.profiles.fragments.AddressProfileFragment;
+import app.texium.com.profiles.fragments.ContactProfileFragment;
 import app.texium.com.profiles.fragments.DateProfileFragment;
+import app.texium.com.profiles.fragments.ElectoralProfileFragment;
 import app.texium.com.profiles.fragments.FragmentProfileListener;
 import app.texium.com.profiles.fragments.PersonalProfileFragment;
+import app.texium.com.profiles.fragments.ProfessionalProfileFragment;
+import app.texium.com.profiles.fragments.SocialNetworkProfileFragment;
 import app.texium.com.profiles.models.Users;
 import app.texium.com.profiles.utils.Constants;
 
 public class NavigationDrawerActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FragmentProfileListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FragmentProfileListener, View.OnClickListener {
 
     private static Users SESSION_DATA;
 
@@ -69,33 +74,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     public void onStart() {
         super.onStart();
+    }
 
-        final EditText txtDate = (EditText) findViewById(R.id.birthDate);
-        final EditText txtAge = (EditText) findViewById(R.id.ageProfile);
-        Button calendarButton = (Button) findViewById(R.id.calendarButton) ;
+    @Override
+    public void onClick(View v) {
 
-
-        calendarButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                DateProfileFragment dialog = new DateProfileFragment(txtDate,txtAge);
-                android.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
-                dialog.show(ft,"DatePicker");
-            }
-        });
-
-
-        /*
-
-        txtDate.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick (View v) {
-
-            }
-        });
-        */
     }
 
     @Override
@@ -153,5 +136,113 @@ public class NavigationDrawerActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void closeAllFragment() {
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        Fragment personal = fragmentManager.findFragmentByTag(Constants.FRAGMENT_PERSONAL_TAG);
+        if (null != personal) {
+            fragmentManager.beginTransaction().remove(personal).commit();
+        }
+
+        Fragment electoral = fragmentManager.findFragmentByTag(Constants.FRAGMENT_ELECTORAL_TAG);
+        if (null != electoral) {
+            fragmentManager.beginTransaction().remove(electoral).commit();
+        }
+
+        Fragment address = fragmentManager.findFragmentByTag(Constants.FRAGMENT_ADDRESS_TAG);
+        if (null != address) {
+            fragmentManager.beginTransaction().remove(address).commit();
+        }
+
+        Fragment contact = fragmentManager.findFragmentByTag(Constants.FRAGMENT_CONTACT_TAG);
+        if (null != contact) {
+            fragmentManager.beginTransaction().remove(contact).commit();
+        }
+    }
+
+    @Override
+    public void moveFragments(View view) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction actualFragment = fragmentManager.beginTransaction();
+
+        switch (view.getId()) {
+            case R.id.nextBtnPersonalProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new ElectoralProfileFragment(), Constants.FRAGMENT_ELECTORAL_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.backBtnElectoralProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new PersonalProfileFragment(), Constants.FRAGMENT_PERSONAL_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.nextBtnElectoralProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new AddressProfileFragment(), Constants.FRAGMENT_ADDRESS_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.backBtnAddressProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new ElectoralProfileFragment(), Constants.FRAGMENT_ELECTORAL_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.nextBtnAddressProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new ContactProfileFragment(), Constants.FRAGMENT_CONTACT_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.backBtnContactProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new AddressProfileFragment(), Constants.FRAGMENT_ADDRESS_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.nextBtnContactProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new ProfessionalProfileFragment(), Constants.FRAGMENT_PROFESSIONAL_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.backBtnProfessionalProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new ContactProfileFragment(), Constants.FRAGMENT_CONTACT_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.nextBtnProfessionalProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new SocialNetworkProfileFragment(), Constants.FRAGMENT_SOCIAL_NETWORK_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.backBtnSNProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new ProfessionalProfileFragment(), Constants.FRAGMENT_PROFESSIONAL_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.finishBtnSNProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new PersonalProfileFragment(), Constants.FRAGMENT_PERSONAL_TAG);
+                actualFragment.commit();
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void showCalendar(View view,EditText txtDate, EditText txtAge) {
+        DateProfileFragment dialog = new DateProfileFragment(txtDate,txtAge);
+        android.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
+        dialog.show(ft,"DatePicker");
     }
 }

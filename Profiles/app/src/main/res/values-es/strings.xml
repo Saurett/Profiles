@@ -8,4 +8,7 @@
     <string name="default_exception_error">Error inesperado.</string>
     <string name="default_connect_error">Una falla en la conección del servidor ha sido detectada.</string>
     <string name="default_soap_error">Error inesperado (SOAP).</string>
+    <string name="finish_profile">Finalizar</string>
+    <string name="next_profile">Siguiente</string>
+    <string name="back_profile">Anterior</string>
 </resources>

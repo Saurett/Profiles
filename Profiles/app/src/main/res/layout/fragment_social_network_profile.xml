@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:layout_gravity="center_horizontal"
-    tools:context="app.texium.com.profiles.fragments.PersonalProfileFragment"
+    tools:context="app.texium.com.profiles.fragments.ElectoralProfileFragment"
     android:backgroundTint="@color/colorPrimaryLight">
 
     <LinearLayout
@@ -27,7 +27,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Datos Personales"
+                android:text="Redes Sociales"
                 android:textSize="25sp"
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimaryDark"/>
@@ -35,66 +35,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <EditText
-                android:id="@+id/name"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Nombre(s)"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp" />
-            <EditText
-                android:id="@+id/firstSurname"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Apellido Paterno"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
-            <EditText
-                android:id="@+id/secondSurname"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Apellido Materno"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp">
-            <Button
-                android:id="@+id/calendarButton"
+            <ViewAnimator
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@android:drawable/ic_menu_my_calendar"
-                />
+                android:background="@drawable/icon_facebook"/>
             <EditText
-                android:id="@+id/birthDate"
-                android:layout_width="180dp"
+                android:id="@+id/sn1"
+                android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:hint="Fecha de Nacimiento"
+                android:hint="Facebook"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
@@ -104,12 +56,24 @@
                 android:paddingLeft="20dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:inputType="none"/>
-            <EditText
-                android:id="@+id/ageProfile"
-                android:layout_width="match_parent"
+                android:inputType="none"
+                android:layout_weight="1" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+            <ViewAnimator
+                android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:hint="Edad"
+                android:background="@drawable/icon_twitter"/>
+            <EditText
+                android:id="@+id/sn2"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:hint="Twitter"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
@@ -117,76 +81,53 @@
                 android:singleLine="true"
                 android:background="@drawable/shape_form"
                 android:paddingLeft="20dp"
-                android:inputType="none"/>
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:inputType="none"
+                android:layout_weight="1" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="20dp"
+            android:paddingTop="10dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Estado Civil"
+            <ViewAnimator
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/icon_instagram"/>
+            <EditText
+                android:id="@+id/birthDate"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:hint="Instagram"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
-                android:textStyle="bold"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Soltero"
-                android:id="@+id/checkBox"
-                android:layout_weight="1" />
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Casado"
-                android:id="@+id/checkBox2"
-                android:layout_weight="1" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Viudo"
-                android:id="@+id/checkBox3"
-                android:layout_weight="1" />
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Divorciado"
-                android:id="@+id/checkBo4"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:background="@drawable/shape_form"
+                android:paddingLeft="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:inputType="none"
                 android:layout_weight="1" />
         </LinearLayout>
     </LinearLayout>
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
         <Button
+            android:id="@+id/backBtnSNProfile"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:background="@null"
             android:text="@string/back_profile"
             android:textColor="@color/colorPrimaryText"
-            android:id="@+id/button"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:visibility="invisible"/>
+            android:layout_alignParentStart="true"/>
         <Button
+            android:id="@+id/finishBtnSNProfile"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:background="@null"
@@ -195,10 +136,9 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="100dp"
-            android:visibility="invisible"
-            />
+            android:visibility="visible" />
         <Button
-            android:id="@+id/nextBtnPersonalProfile"
+            android:id="@+id/nextBtnSNProfile"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:background="@null"
@@ -206,6 +146,7 @@
             android:textColor="@color/colorPrimaryText"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
+            android:visibility="invisible"
             />
     </RelativeLayout>
 </FrameLayout>

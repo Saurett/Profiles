@@ -9,33 +9,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 
 import app.texium.com.profiles.R;
 
 
-public class PersonalProfileFragment extends Fragment implements View.OnClickListener {
+public class AddressProfileFragment extends Fragment implements View.OnClickListener {
 
     static FragmentProfileListener activityListener;
 
-    private static Button nextBtn;
-    private EditText txtDate,txtAge;
-
+    private static Button backBtn, nextBtn;
     private ProgressDialog pDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_personal_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_address_profile, container, false);
 
-        txtDate = (EditText) view.findViewById(R.id.birthDate);
-        txtAge = (EditText) view.findViewById(R.id.ageProfile);
-        Button calendarButton = (Button) view.findViewById(R.id.calendarButton) ;
+        backBtn = (Button) view.findViewById(R.id.backBtnAddressProfile);
+        nextBtn = (Button) view.findViewById(R.id.nextBtnAddressProfile);
 
-        calendarButton.setOnClickListener(this);
-
-        nextBtn = (Button) view.findViewById(R.id.nextBtnPersonalProfile);
+        backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
 
         return view;
@@ -59,10 +53,10 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.calendarButton:
-                activityListener.showCalendar(v,txtDate,txtAge);
+            case R.id.backBtnAddressProfile:
+                activityListener.moveFragments(v);
                 break;
-            case R.id.nextBtnPersonalProfile:
+            case R.id.nextBtnAddressProfile:
                 activityListener.moveFragments(v);
                 break;
             default:

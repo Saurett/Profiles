@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:layout_gravity="center_horizontal"
-    tools:context="app.texium.com.profiles.fragments.PersonalProfileFragment"
+    tools:context="app.texium.com.profiles.fragments.ProfessionalProfileFragment"
     android:backgroundTint="@color/colorPrimaryLight">
 
     <LinearLayout
@@ -27,7 +27,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Datos Personales"
+                android:text="Datos Laborales"
                 android:textSize="25sp"
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimaryDark"/>
@@ -43,7 +43,7 @@
                 android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Nombre(s)"
+                android:hint="Número de Seguro Social"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
@@ -55,7 +55,7 @@
                 android:id="@+id/firstSurname"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Apellido Paterno"
+                android:hint="Nivel de Estudios"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
@@ -68,7 +68,20 @@
                 android:id="@+id/secondSurname"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Apellido Materno"
+                android:hint="Carrera"
+                android:textSize="15sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textColorHint="@color/colorPrimaryDark"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:background="@drawable/shape_form"
+                android:paddingLeft="20dp"
+                android:layout_marginTop="10dp"/>
+            <EditText
+                android:id="@+id/street"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:hint="Documentos Obtenidos"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
@@ -81,20 +94,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <Button
-                android:id="@+id/calendarButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@android:drawable/ic_menu_my_calendar"
-                />
+            android:paddingRight="20dp"
+            android:orientation="vertical">
             <EditText
-                android:id="@+id/birthDate"
-                android:layout_width="180dp"
+                android:id="@+id/electoralAdviser"
+                android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Fecha de Nacimiento"
+                android:hint="Empleo Actual"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
@@ -102,14 +109,12 @@
                 android:singleLine="true"
                 android:background="@drawable/shape_form"
                 android:paddingLeft="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:inputType="none"/>
+                android:layout_marginTop="10dp"/>
             <EditText
-                android:id="@+id/ageProfile"
+                android:id="@+id/politicalParty"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Edad"
+                android:hint="Empresa"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
@@ -117,75 +122,21 @@
                 android:singleLine="true"
                 android:background="@drawable/shape_form"
                 android:paddingLeft="20dp"
-                android:inputType="none"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Estado Civil"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:textStyle="bold"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Soltero"
-                android:id="@+id/checkBox"
-                android:layout_weight="1" />
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Casado"
-                android:id="@+id/checkBox2"
-                android:layout_weight="1" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Viudo"
-                android:id="@+id/checkBox3"
-                android:layout_weight="1" />
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Divorciado"
-                android:id="@+id/checkBo4"
-                android:layout_weight="1" />
+                android:layout_marginTop="10dp"/>
         </LinearLayout>
     </LinearLayout>
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
         <Button
+            android:id="@+id/backBtnProfessionalProfile"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:background="@null"
             android:text="@string/back_profile"
             android:textColor="@color/colorPrimaryText"
-            android:id="@+id/button"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:visibility="invisible"/>
+            android:layout_alignParentStart="true"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="40dp"
@@ -195,10 +146,9 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="100dp"
-            android:visibility="invisible"
-            />
+            android:visibility="invisible"/>
         <Button
-            android:id="@+id/nextBtnPersonalProfile"
+            android:id="@+id/nextBtnProfessionalProfile"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:background="@null"

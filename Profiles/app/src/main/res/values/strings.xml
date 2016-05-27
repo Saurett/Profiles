@@ -14,4 +14,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="finish_profile">Finalizar</string>
+    <string name="next_profile">Siguiente</string>
+    <string name="back_profile">Anterior</string>
 </resources>

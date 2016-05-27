@@ -31,6 +31,11 @@ public final class Constants {
 
     //region FRAGMENT TAGS//
     public static final String FRAGMENT_PERSONAL_TAG = "fragment_personal_profile";
+    public static final String FRAGMENT_ELECTORAL_TAG = "fragment_electoral_profile";
+    public static final String FRAGMENT_ADDRESS_TAG = "fragment_address_profile";
+    public static final String FRAGMENT_CONTACT_TAG = "fragment_contact_profile";
+    public static final String FRAGMENT_PROFESSIONAL_TAG = "fragment_professional_profile";
+    public static final String FRAGMENT_SOCIAL_NETWORK_TAG = "fragment_social_network_profile";
     //endregion FRAGMENT TAGS//
 
     //region WEB SERVICE ID //
