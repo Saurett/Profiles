@@ -10,6 +10,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class BDProfileManager extends SQLiteOpenHelper {
 
     public static final String USERS_TABLE_NAME = "Users";
+    public static final String PP_TABLE_NAME = "PoliticalParties";
+    public static final String ADDRESS_TABLE_NAME = "Address";
+    public static final String LEVELS_STUDIES_TABLE_NAME = "LevelsStudies";
+    public static final String CAREERS_TABLE_NAME = "Careers";
+    public static final String COMPANY_TABLE_NAME = "Company";
+    public static final String ELECTORAL_ACTOR_TABLE_NAME = "ElectoralActor";
 
     public static final String STRING_TYPE = "text";
     public static final String INT_TYPE = "integer";
@@ -25,6 +31,14 @@ public class BDProfileManager extends SQLiteOpenHelper {
         public static final String ACTOR_ID = "idActor";
         public static final String ACTOR_NAME = "actorName";
         public static final String ROL_ID = "idRol";
+    }
+
+    public static class ColumnPoliticalParties {
+        public static final String PP_CVE = "cvePP";
+        public static final String PP_ID = "idPP";
+        public static final String NAME = "name";
+        public static final String ACRONYM = "acronym";
+        public static final String PICTURE = "picture";
     }
 
     public static final String CREATE_USERS_TABLE_SCRIPT =
@@ -49,6 +63,27 @@ public class BDProfileManager extends SQLiteOpenHelper {
                     ColumnUsers.ROL_ID + ")" +
             "values ( 1, 1, 'admin', 'fredgomez',1,'Fred Gomez', 1)";
 
+    public static final String CREATE_PP_TABLE_SCRIPT =
+            "create table " + PP_TABLE_NAME + "(" +
+                    ColumnPoliticalParties.PP_CVE + " " + INT_TYPE + " primary key autoincrement," +
+                    ColumnPoliticalParties.PP_ID + " " + INT_TYPE + "," +
+                    ColumnPoliticalParties.NAME + " " + STRING_TYPE + "," +
+                    ColumnPoliticalParties.ACRONYM + " " + STRING_TYPE + "," +
+                    ColumnPoliticalParties.PICTURE + " " + STRING_TYPE +
+                    ")";
+
+
+    public static final String INSERT_DEFAULT_PP_SCRIPT =
+            "insert into " + PP_TABLE_NAME  + "(" +
+                    ColumnPoliticalParties.PP_CVE + "," +
+                    ColumnPoliticalParties.PP_ID + "," +
+                    ColumnPoliticalParties.NAME + "," +
+                    ColumnPoliticalParties.ACRONYM + "," +
+                    ColumnPoliticalParties.PICTURE + ") values" +
+                    "( 1, 0, 'Selecciona partido politico ... ', 'Selecciona partido politico ... ','no tiene')," +
+                    "( 2, 1, 'Partido Revolucionario Institucional', 'PRI','no tiene'')," +
+                    "( 3, 2, 'Partido Acción Nacional', 'PAN','no tiene')," +
+                    "( 4, 3, 'Partido Revolucionario Demodratico', 'PRD','no tiene')";
 
     public static  final String DROP_TABLE_IF_EXISTS = "drop table if exists ";
 
@@ -60,14 +95,19 @@ public class BDProfileManager extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_USERS_TABLE_SCRIPT);
         db.execSQL(INSERT_DEFAULT_USER_SCRIPT);
-
+        //db.execSQL(INSERT_DEFAULT_PP_SCRIPT);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.USERS_TABLE_NAME);
+        db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.PP_TABLE_NAME);
 
         db.execSQL(CREATE_USERS_TABLE_SCRIPT);
+        db.execSQL(CREATE_PP_TABLE_SCRIPT);
+
+        db.execSQL(INSERT_DEFAULT_USER_SCRIPT);
+        //db.execSQL(INSERT_DEFAULT_PP_SCRIPT);
     }
 }

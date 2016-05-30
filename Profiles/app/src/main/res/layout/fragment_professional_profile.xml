@@ -51,45 +51,45 @@
                 android:singleLine="true"
                 android:background="@drawable/shape_form"
                 android:paddingLeft="20dp" />
-            <EditText
-                android:id="@+id/firstSurname"
+            <Spinner
+                android:id="@+id/level"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Nivel de Estudios"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
-            <EditText
-                android:id="@+id/secondSurname"
+                android:paddingLeft="10dp"
+                android:layout_marginTop="10dp"
+                />
+            <Spinner
+                android:id="@+id/career"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Carrera"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
-            <EditText
-                android:id="@+id/street"
+                android:paddingLeft="10dp"
+                android:layout_marginTop="10dp"
+                />
+            <Spinner
+                android:id="@+id/professionalTitle"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Documentos Obtenidos"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
+                android:paddingLeft="10dp"
+                android:layout_marginTop="10dp"
+                />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -110,19 +110,19 @@
                 android:background="@drawable/shape_form"
                 android:paddingLeft="20dp"
                 android:layout_marginTop="10dp"/>
-            <EditText
-                android:id="@+id/politicalParty"
+            <Spinner
+                android:id="@+id/company"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Empresa"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
+                android:paddingLeft="10dp"
+                android:layout_marginTop="10dp"
+                />
         </LinearLayout>
     </LinearLayout>
     <RelativeLayout

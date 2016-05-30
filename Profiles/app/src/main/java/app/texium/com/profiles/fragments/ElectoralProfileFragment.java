@@ -8,17 +8,27 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import app.texium.com.profiles.R;
+import app.texium.com.profiles.databases.BDProfileManagerQuery;
 
 
-public class ElectoralProfileFragment extends Fragment implements View.OnClickListener {
+public class ElectoralProfileFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     static FragmentProfileListener activityListener;
 
     private static Button backBtn, nextBtn;
     private ProgressDialog pDialog;
+
+    private int position;
+    private String selection;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -28,69 +38,26 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
         backBtn = (Button) view.findViewById(R.id.backBtnElectoralProfile);
         nextBtn = (Button) view.findViewById(R.id.nextBtnElectoralProfile);
+        Spinner politicalSpinner = (Spinner) view.findViewById(R.id.politicalParty);
 
 
         backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
 
-        /*
-        close_window_button = (Button) view.findViewById(R.id.close_window_button);
-        send_task_button = (Button) view.findViewById(R.id.send_task_button);
-        next_task_button = (Button) view.findViewById(R.id.next_task_button);
-        back_task_button = (Button) view.findViewById(R.id.back_task_button);
-        picture_task_button = (Button) view.findViewById(R.id.picture_task_button);
-        video_task_button = (Button) view.findViewById(R.id.video_task_button);
+        try {
+            ArrayList<String> list =  BDProfileManagerQuery.getAllPP(getContext());
 
-        title_task_window = (TextView) view.findViewById(R.id.title_task_window);
-        content_task_window = (TextView) view.findViewById(R.id.content_task_window);
-        comment_task_window = (TextView) view.findViewById(R.id.comment_task_window);
-        number_photos = (TextView) view.findViewById(R.id.number_photos);
-        number_videos = (TextView) view.findViewById(R.id.number_videos);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                    android.R.layout.simple_spinner_item,
+                    android.R.id.text1,list);
 
-        task_window_icon = (ImageView) view.findViewById(R.id.task_window_icon);
+            politicalSpinner.setAdapter(adapter);
+            politicalSpinner.setSelection(list.size() - 1);
+            politicalSpinner.setOnItemSelectedListener(this);
 
-        back_task_button.setOnClickListener(this);
-        send_task_button.setOnClickListener(this);
-        close_window_button.setOnClickListener(this);
-        next_task_button.setOnClickListener(this);
-        picture_task_button.setOnClickListener(this);
-        video_task_button.setOnClickListener(this);
-
-        View tokenView = (View) taskToken.get(1L);
-        TaskListAdapter tokenAdapter = (TaskListAdapter) taskToken.get(2L);
-        Tasks tokenTask = (Tasks) taskToken.get(3L);
-        TasksDecode tokenTaskDecode = (TasksDecode) taskToken.get(4L);
-
-        title_task_window.setText(tokenTask.getTask_tittle());
-        content_task_window.setText(tokenTask.getTask_content());
-
-        int actualIcon = (tokenTaskDecode.getOrigin_button() == R.id.finish_task_button)
-                ? R.drawable.icon_progress : R.drawable.icon_pending;
-
-        task_window_icon.setBackground(getResources().getDrawable(actualIcon));
-
-        if (_ACTUAL_POSITION == _ACTUAL_COUNT) {
-            next_task_button.setEnabled(false);
-            next_task_button.setVisibility(View.INVISIBLE);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        if ((_ACTUAL_POSITION > 0) && (_ACTUAL_POSITION < _ACTUAL_COUNT)) {
-            next_task_button.setEnabled(true);
-            next_task_button.setVisibility(View.VISIBLE);
-
-            back_task_button.setEnabled(true);
-            back_task_button.setVisibility(View.VISIBLE);
-
-        }
-
-        if (_ACTUAL_POSITION <= 0) {
-            back_task_button.setEnabled(false);
-            back_task_button.setVisibility(View.INVISIBLE);
-        }
-
-        setCountFiles();
-
-        */
 
         return view;
     }
@@ -99,19 +66,6 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
 
-        /*
-        if (taskToken.isEmpty()) {
-            taskToken = activityListener.getToken();
-
-            TaskListAdapter backAdapter = (TaskListAdapter) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_ADAPTER);
-            TasksDecode taskDecode = (TasksDecode) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_CLASS_DECODE);
-
-            _ACTUAL_POSITION = taskDecode.getTask_position();
-            _ACTUAL_COUNT = backAdapter.getItemCount() - 1;
-        }
-
-        TASK_FILES = activityListener.getTaskFiles();
-        */
     }
 
     @Override
@@ -135,148 +89,27 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                 break;
             default:
                 break;
-
-            /*
-            case R.id.picture_task_button:
-
-                TaskListAdapter pictureAdapter = (TaskListAdapter) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_ADAPTER);
-                Tasks pictureTask = (Tasks) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_CLASS);
-                TasksDecode pictureDecode = (TasksDecode) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_CLASS_DECODE);
-
-                activityListener.taskActions(v, pictureAdapter, pictureTask, pictureDecode);
-
-                break;
-            case R.id.video_task_button:
-
-                TaskListAdapter videoAdapter = (TaskListAdapter) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_ADAPTER);
-                Tasks videoTask = (Tasks) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_CLASS);
-                TasksDecode videoDecode = (TasksDecode) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_CLASS_DECODE);
-
-                activityListener.taskActions(v, videoAdapter, videoTask, videoDecode);
-
-                break;
-            case R.id.send_task_button:
-
-                SpannableStringBuilder ssb = (SpannableStringBuilder) comment_task_window.getText();
-
-                View tokenView = (View) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_VIEW);
-                TaskListAdapter sendAdapter = (TaskListAdapter) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_ADAPTER);
-                Tasks sendTask = (Tasks) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_CLASS);
-                TasksDecode sendDecode = (TasksDecode) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_CLASS_DECODE);
-
-                sendDecode.setTask_comment(ssb.toString());
-                sendDecode.setOrigin_button(tokenView.getId());
-
-                AsyncSendTask wsSendTask = new AsyncSendTask(Constants.WS_KEY_UPDATE_TASK_WITH_PICTURE
-                        ,v,sendAdapter,sendTask,sendDecode);
-                wsSendTask.execute();
-
-                break;
-            case R.id.close_window_button:
-
-                taskToken = new HashMap<>();
-
-                activityListener.closeActiveTaskFragment(v);
-                activityListener.clearTaskToken();
-                break;
-            case R.id.back_task_button:
-
-                TaskListAdapter backAdapter = (TaskListAdapter) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_ADAPTER);
-                TasksDecode backDecode = (TasksDecode) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_CLASS_DECODE);
-
-                _ACTUAL_POSITION--;
-
-                if (_ACTUAL_POSITION == _ACTUAL_COUNT) {
-                    next_task_button.setEnabled(false);
-                    next_task_button.setVisibility(View.INVISIBLE);
-                } else {
-                    next_task_button.setEnabled(true);
-                    next_task_button.setVisibility(View.VISIBLE);
-                }
-
-                if (_ACTUAL_POSITION == 0) {
-                    back_task_button.setEnabled(false);
-                    back_task_button.setVisibility(View.INVISIBLE);
-                } else {
-                    back_task_button.setEnabled(true);
-                    back_task_button.setVisibility(View.VISIBLE);
-                }
-
-                Tasks actualBackTask = backAdapter.getItemByPosition(_ACTUAL_POSITION);
-                backDecode.setTask_position(_ACTUAL_POSITION);
-
-                title_task_window.setText(actualBackTask.getTask_tittle());
-                content_task_window.setText(actualBackTask.getTask_content());
-                setCountFiles();
-
-                taskToken.put(Constants.TOKEN_KEY_ACCESS_TASK_CLASS, actualBackTask);
-                taskToken.put(Constants.TOKEN_KEY_ACCESS_TASK_CLASS_DECODE,backDecode);
-                break;
-            case R.id.next_task_button:
-
-                TaskListAdapter nextAdapter = (TaskListAdapter) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_ADAPTER);
-                TasksDecode nextDecode = (TasksDecode) taskToken.get(Constants.TOKEN_KEY_ACCESS_TASK_CLASS_DECODE);
-
-                _ACTUAL_POSITION++;
-
-                if (_ACTUAL_POSITION == _ACTUAL_COUNT) {
-                    next_task_button.setEnabled(false);
-                    next_task_button.setVisibility(View.INVISIBLE);
-                } else {
-                    next_task_button.setEnabled(true);
-                    next_task_button.setVisibility(View.VISIBLE);
-                }
-
-                if (_ACTUAL_POSITION == 0) {
-                    back_task_button.setEnabled(false);
-                    back_task_button.setVisibility(View.INVISIBLE);
-                } else {
-                    back_task_button.setEnabled(true);
-                    back_task_button.setVisibility(View.VISIBLE);
-                }
-
-                Tasks actualNextTask = nextAdapter.getItemByPosition(_ACTUAL_POSITION);
-                nextDecode.setTask_position(_ACTUAL_POSITION);
-
-                title_task_window.setText(actualNextTask.getTask_tittle());
-                content_task_window.setText(actualNextTask.getTask_content());
-                setCountFiles();
-
-                taskToken.put(Constants.TOKEN_KEY_ACCESS_TASK_CLASS, actualNextTask);
-                taskToken.put(Constants.TOKEN_KEY_ACCESS_TASK_CLASS_DECODE,nextDecode);
-                break;
-            default:
-                break;
-                */
         }
     }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        this.position = position;
+        selection = parent.getItemAtPosition(position).toString();
+
+        if (position > 0) {
+            Toast.makeText(getActivity(),"Selección actual: " + selection, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        Toast.makeText(getActivity(),"Fred se la come", Toast.LENGTH_SHORT).show();
+
+    }
+
+
     /*
-
-    private void setCountFiles() {
-
-        number_photos.setText(Constants.NUMBER_ZERO);
-        number_videos.setText(Constants.NUMBER_ZERO);
-
-        if(TASK_FILES.containsKey(_ACTUAL_POSITION)) {
-            FilesManager filesManager = TASK_FILES.get(_ACTUAL_POSITION);
-            number_photos.setText(String.valueOf(filesManager.getFilesPicture().size()));
-            number_videos.setText(String.valueOf(filesManager.getFilesVideo().size()));
-        }
-    }
-
-    private void clearActualFiles() {
-        if(TASK_FILES.containsKey(_ACTUAL_POSITION)) {
-
-            FilesManager filesManager = TASK_FILES.get(_ACTUAL_POSITION);
-            filesManager.setFilesPicture(new ArrayList<Uri>());
-            filesManager.setFilesVideo(new ArrayList<Uri>());
-            TASK_FILES.put(_ACTUAL_POSITION, filesManager);
-
-            number_photos.setText(String.valueOf(filesManager.getFilesPicture().size()));
-            number_videos.setText(String.valueOf(filesManager.getFilesVideo().size()));
-        }
-    }
-
     private TasksDecode attachFiles(TasksDecode tasksDecode) throws Exception {
         try {
             FilesManager sendFile;

@@ -11,4 +11,13 @@
     <string name="finish_profile">Finalizar</string>
     <string name="next_profile">Siguiente</string>
     <string name="back_profile">Anterior</string>
+
+    <!-- Conjunto de Strings para el View GameSpinner -->
+    <string-array name="Games">
+        <item>League of Legends</item>
+        <item>Diablo III</item>
+        <item>God of War</item>
+        <item>Halo 4</item>
+        <item>StarCraft II</item>
+    </string-array>
 </resources>
