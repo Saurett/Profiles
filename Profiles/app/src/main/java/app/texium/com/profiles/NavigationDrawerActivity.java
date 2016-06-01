@@ -43,7 +43,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         SESSION_DATA = (Users) getIntent().getExtras().getSerializable(Constants.ACTIVITY_EXTRA_PARAMS_LOGIN);
 
         TextView actualUsername = (TextView) findViewById(R.id.actualUsername);
-        actualUsername.setText(SESSION_DATA.getActorName());
+        actualUsername.setText(SESSION_DATA.getUserName());
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction finishFragment = fragmentManager.beginTransaction();
@@ -160,6 +160,16 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Fragment contact = fragmentManager.findFragmentByTag(Constants.FRAGMENT_CONTACT_TAG);
         if (null != contact) {
             fragmentManager.beginTransaction().remove(contact).commit();
+        }
+
+        Fragment professional = fragmentManager.findFragmentByTag(Constants.FRAGMENT_PROFESSIONAL_TAG);
+        if (null != professional) {
+            fragmentManager.beginTransaction().remove(professional).commit();
+        }
+
+        Fragment socialNetwork = fragmentManager.findFragmentByTag(Constants.FRAGMENT_SOCIAL_NETWORK_TAG);
+        if (null != socialNetwork) {
+            fragmentManager.beginTransaction().remove(socialNetwork).commit();
         }
     }
 

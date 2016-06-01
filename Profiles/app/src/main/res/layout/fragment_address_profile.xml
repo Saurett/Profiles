@@ -65,7 +65,7 @@
                 android:layout_marginTop="10dp"
                 />
             <Spinner
-                android:id="@+id/city"
+                android:id="@+id/location"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:textSize="15sp"

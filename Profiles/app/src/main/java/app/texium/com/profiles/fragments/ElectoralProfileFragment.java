@@ -3,6 +3,7 @@ package app.texium.com.profiles.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,10 +15,14 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+
 import java.util.ArrayList;
 
 import app.texium.com.profiles.R;
-import app.texium.com.profiles.databases.BDProfileManagerQuery;
+import app.texium.com.profiles.services.SoapServices;
+import app.texium.com.profiles.utils.Constants;
 
 
 public class ElectoralProfileFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -29,6 +34,9 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
     private int position;
     private String selection;
+    private Spinner politicalSpinner;
+
+    private ArrayList<String> list;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,26 +46,12 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
         backBtn = (Button) view.findViewById(R.id.backBtnElectoralProfile);
         nextBtn = (Button) view.findViewById(R.id.nextBtnElectoralProfile);
-        Spinner politicalSpinner = (Spinner) view.findViewById(R.id.politicalParty);
-
+        politicalSpinner = (Spinner) view.findViewById(R.id.politicalParty);
 
         backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
 
-        try {
-            ArrayList<String> list =  BDProfileManagerQuery.getAllPP(getContext());
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                    android.R.layout.simple_spinner_item,
-                    android.R.id.text1,list);
-
-            politicalSpinner.setAdapter(adapter);
-            politicalSpinner.setSelection(list.size() - 1);
-            politicalSpinner.setOnItemSelectedListener(this);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        politicalSpinner.setOnItemSelectedListener(this);
 
         return view;
     }
@@ -65,6 +59,9 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
+
+        AsyncElectoral wsSpinnerPP = new AsyncElectoral(Constants.WS_KEY_SPINNER_ELECTORAL_SERVICE);
+        wsSpinnerPP.execute();
 
     }
 
@@ -109,60 +106,23 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
     }
 
 
-    /*
-    private TasksDecode attachFiles(TasksDecode tasksDecode) throws Exception {
-        try {
-            FilesManager sendFile;
-
-            if(TASK_FILES.containsKey(_ACTUAL_POSITION)) {
-                sendFile = TASK_FILES.get(_ACTUAL_POSITION);
-
-                List<Uri> uriFilesPicture = sendFile.getFilesPicture();
-                List<Uri> uriFileVideo = sendFile.getFilesVideo();
-
-                tasksDecode.setSendVideoFiles(FileServices.attachVideo(getActivity(), uriFileVideo));
-                tasksDecode.setSendImgFiles(FileServices.attachImg(getActivity(), uriFilesPicture));
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("File Exception:",e.getMessage());
-            throw  new Exception(e.getMessage());
-        }
-
-        return tasksDecode;
-    }
-
-    */
-
-    /*
-    private class AsyncSendTask extends AsyncTask<Void, Void, Boolean> {
+    private class AsyncElectoral extends AsyncTask<Void, Void, Boolean> {
 
         private SoapPrimitive soapPrimitive;
-
+        private SoapObject soapObject;
         private Integer webServiceOperation;
-        private View webServiceView;
-        private TaskListAdapter webServiceAdapter;
-        private Tasks webServiceTask;
-        private TasksDecode webServiceTaskDecode;
-
         private String textError;
 
-        private AsyncSendTask(Integer wsOperation,View wsView,TaskListAdapter wsAdapter,Tasks wsTask
-                ,TasksDecode wsServiceTaskDecode) {
+        private AsyncElectoral(Integer wsOperation) {
             webServiceOperation = wsOperation;
-            webServiceView = wsView;
-            webServiceAdapter = wsAdapter;
-            webServiceTask = wsTask;
-            webServiceTaskDecode = wsServiceTaskDecode;
             textError = "";
         }
 
         @Override
         protected void onPreExecute() {
             pDialog = new ProgressDialog(getContext());
-            pDialog.setMessage(getString(R.string.default_attaching_img));
-            pDialog.setTitle("Adjuntanto archivos");
+            pDialog.setMessage("Espere un momento porfavor");
+            pDialog.setTitle("Cargando formulario");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
             pDialog.show();
@@ -175,9 +135,9 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
             try{
                 switch (webServiceOperation) {
-                    case Constants.WS_KEY_UPDATE_TASK_WITH_PICTURE:
-                        webServiceTaskDecode = attachFiles(webServiceTaskDecode);
-                        validOperation = (webServiceTaskDecode != null);
+                    case Constants.WS_KEY_SPINNER_ELECTORAL_SERVICE:
+                        soapObject = SoapServices.getSpinnerPP(getContext());
+                        validOperation = (soapObject.getPropertyCount() > 0);
                         break;
                 }
             } catch (Exception e) {
@@ -194,19 +154,41 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
             pDialog.dismiss();
             if(success) {
 
-                taskToken = new HashMap<>();
-                activityListener.taskActions(webServiceView, webServiceAdapter
-                        , webServiceTask, webServiceTaskDecode);
+                list = new ArrayList<>();
+
+                if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                    SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                    if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                        SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                        for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                            SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+                            list.add(soItem.getProperty(2).toString());
+                        }
+                    }
+                }
+
+                try {
+                    //ArrayList<String> list =  BDProfileManagerQuery.getAllPP(getContext());
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                            android.R.layout.simple_spinner_item,
+                            android.R.id.text1,list);
+
+                    politicalSpinner.setAdapter(adapter);
+                    politicalSpinner.setSelection(0);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
 
             } else {
-                String tempText = (textError.isEmpty() ? "Se excedio el limite de imagenes" : textError);
+                String tempText = (textError.isEmpty() ? "Error desconocido" : textError);
                 Toast.makeText(getContext(), tempText, Toast.LENGTH_LONG).show();
 
-               clearActualFiles();
             }
         }
     }
-
-    */
 
 }

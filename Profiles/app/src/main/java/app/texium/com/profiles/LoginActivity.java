@@ -142,14 +142,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         validOperation = true;
                         break;
                     case Constants.WS_KEY_LOGIN_SERVICE:
-                        /*
                         soapObject = SoapServices.checkUser(getApplicationContext(),username,password);
-                        Integer id = Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID).toString());
+                        Integer id = Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ACTOR).toString());
 
                         validOperation = (id > 0);
-                        */
-                        validOperation = true;
-                        throw  new ConnectException("Void");
+                        break;
                     default:
                         validOperation = false;
                         break;
@@ -224,6 +221,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 ex.printStackTrace();
                                 Log.e("SQLite Exception ", ex.getMessage());
                             }
+
+                        } else {
+
+                            user.setIdUser(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_USER).toString()));
+                            //user.setCveUser(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ACTOR).toString()));
+                            user.setIdActor(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ACTOR).toString()));
+                            //user.setActorName(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ACTOR_NAME).toString());
+                            user.setUserName(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_USERNAME).toString());
+                            user.setPassword(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_PASSWORD).toString());
+                            user.setIdRol(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ROL).toString()));
 
                         }
 

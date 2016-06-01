@@ -3,6 +3,7 @@ package app.texium.com.profiles.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,11 +13,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import org.ksoap2.serialization.SoapObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import app.texium.com.profiles.R;
-import app.texium.com.profiles.databases.BDProfileManagerQuery;
+import app.texium.com.profiles.models.Locations;
+import app.texium.com.profiles.models.Municipalities;
+import app.texium.com.profiles.models.States;
+import app.texium.com.profiles.services.SoapServices;
+import app.texium.com.profiles.utils.Constants;
 
 
 public class AddressProfileFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -24,8 +33,13 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
     static FragmentProfileListener activityListener;
 
     private static Button backBtn, nextBtn;
-    private static Spinner stateSpinner, municipalitySpinner,citySpinner;
+    private static Spinner stateSpinner, municipalitySpinner,locationSpinner;
     private ProgressDialog pDialog;
+
+    private ArrayList<String> stateList, municipalList, locationList;
+    private List<States> states;
+    private List<Municipalities> municipalities;
+    private List<Locations> locations;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,53 +52,25 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
 
         stateSpinner = (Spinner) view.findViewById(R.id.state);
         municipalitySpinner = (Spinner) view.findViewById(R.id.municipality);
-        citySpinner = (Spinner) view.findViewById(R.id.city);
+        locationSpinner = (Spinner) view.findViewById(R.id.location);
 
 
         backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
 
-        try {
-            ArrayList<String> statesList =  BDProfileManagerQuery.getAllStates(getContext());
-
-            ArrayAdapter<String> statesAdapter = new ArrayAdapter<>(getActivity(),
-                    android.R.layout.simple_spinner_item,
-                    android.R.id.text1,statesList);
-
-            stateSpinner.setAdapter(statesAdapter);
-            stateSpinner.setSelection(statesList.size() - 1);
-            stateSpinner.setOnItemSelectedListener(this);
-
-            ArrayList<String> municipalitiesList =  BDProfileManagerQuery.getAllMunicipalities(getContext());
-
-            ArrayAdapter<String> municipalitiesAdapter = new ArrayAdapter<>(getActivity(),
-                    android.R.layout.simple_spinner_item,
-                    android.R.id.text1,municipalitiesList);
-
-            municipalitySpinner.setAdapter(municipalitiesAdapter);
-            municipalitySpinner.setSelection(municipalitiesList.size() - 1);
-            municipalitySpinner.setOnItemSelectedListener(this);
-
-            ArrayList<String> citiesList =  BDProfileManagerQuery.getAllCities(getContext());
-
-            ArrayAdapter<String> citiesAdapter = new ArrayAdapter<>(getActivity(),
-                    android.R.layout.simple_spinner_item,
-                    android.R.id.text1,citiesList);
-
-            citySpinner.setAdapter(citiesAdapter);
-            citySpinner.setSelection(citiesList.size() - 1);
-            citySpinner.setOnItemSelectedListener(this);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        stateSpinner.setOnItemSelectedListener(this);
+        municipalitySpinner.setOnItemSelectedListener(this);
 
         return view;
     }
 
     @Override
     public void onCreate(Bundle saveInstanceState) {
+
         super.onCreate(saveInstanceState);
+
+        AsyncAddress wsSpinnerState = new AsyncAddress(Constants.WS_KEY_SPINNER_ADDRESS_STATE_SERVICE);
+        wsSpinnerState.execute();
     }
 
     @Override
@@ -114,10 +100,250 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+        if (position > 0) {
+
+            switch (parent.getId()) {
+                case R.id.state:
+                    States state = states.get(position - 1);
+
+                    AsyncAddress wsSpinnerMunicipal = new AsyncAddress(
+                            Constants.WS_KEY_SPINNER_ADDRESS_MUNICIPAL_SERVICE,
+                            state.getIdState());
+                    wsSpinnerMunicipal.execute();
+
+                    break;
+                case R.id.municipality:
+                    Municipalities municipal = municipalities.get(position - 1);
+
+                    AsyncAddress wsSpinnerLocation = new AsyncAddress(
+                            Constants.WS_KEY_SPINNER_ADDRESS_LOCATION_SERVICE,
+                            municipal.getIdState(),municipal.getIdMunicipal());
+                    wsSpinnerLocation.execute();
+
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    private class AsyncAddress extends AsyncTask<Void, Void, Boolean> {
+
+        private SoapObject soapObject;
+        private Integer webServiceOperation;
+        private Integer webServiceIdState;
+        private Integer webServiceIdMunicipal;
+        private String textError;
+
+        private AsyncAddress(Integer wsOperation) {
+            webServiceOperation = wsOperation;
+            textError = "";
+        }
+
+        private AsyncAddress(Integer wsOperation, Integer wsIdItem) {
+            webServiceOperation = wsOperation;
+            webServiceIdState = wsIdItem;
+            textError = "";
+        }
+
+        private AsyncAddress(Integer wsOperation, Integer wsState, Integer wsMunicipal) {
+            webServiceOperation = wsOperation;
+            webServiceIdState = wsState;
+            webServiceIdMunicipal = wsMunicipal;
+            textError = "";
+        }
+
+        @Override
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(getContext());
+            pDialog.setMessage("Espere un momento porfavor");
+            pDialog.setTitle("Cargando formulario");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            Boolean validOperation = false;
+
+            try{
+                switch (webServiceOperation) {
+                    case Constants.WS_KEY_SPINNER_ADDRESS_STATE_SERVICE:
+                        soapObject = SoapServices.getSpinnerStates(getContext());
+                        validOperation = (soapObject.getPropertyCount() > 0);
+                        break;
+                    case Constants.WS_KEY_SPINNER_ADDRESS_MUNICIPAL_SERVICE:
+                        soapObject = SoapServices.getSpinnerMunicipal(getContext(), webServiceIdState);
+                        validOperation = (soapObject.getPropertyCount() > 0);
+                        break;
+                    case Constants.WS_KEY_SPINNER_ADDRESS_LOCATION_SERVICE:
+                        soapObject = SoapServices.getSpinnerLocation(getContext(), webServiceIdState,
+                                webServiceIdMunicipal);
+                        validOperation = (soapObject.getPropertyCount() > 0);
+                        break;
+                }
+            } catch (Exception e) {
+                textError = e.getMessage();
+                validOperation = false;
+            }
+
+            return validOperation;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+            pDialog.dismiss();
+            if(success) {
+
+                switch (webServiceOperation) {
+                    case Constants.WS_KEY_SPINNER_ADDRESS_STATE_SERVICE:
+                        stateList = new ArrayList<>();
+                        states = new ArrayList<>();
+                        stateList.add("Seleccione un estado ...");
+
+                        if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    States state = new States();
+                                    state.setIdItem(i);
+                                    state.setIdState(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
+                                    state.setAcronymName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
+                                    state.setStateName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
+                                    state.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                    states.add(state);
+                                    stateList.add(state.getStateName());
+                                }
+                            }
+                        }
+
+                        try {
+                            //ArrayList<String> list =  BDProfileManagerQuery.getAllPP(getContext());
+
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                                    android.R.layout.simple_spinner_item,
+                                    android.R.id.text1,stateList);
+
+                            stateSpinner.setAdapter(adapter);
+                            stateSpinner.setSelection(0);
+
+
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case Constants.WS_KEY_SPINNER_ADDRESS_MUNICIPAL_SERVICE:
+                        municipalList = new ArrayList<>();
+                        municipalities = new ArrayList<>();
+                        municipalList.add("Seleccione un municipio ...");
+
+                        if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    Municipalities municipal = new Municipalities();
+                                    municipal.setIdItem(i);
+                                    municipal.setIdState(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
+                                    municipal.setStateName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
+                                    municipal.setStateAcronym(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
+                                    municipal.setIdMunicipal(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_ID).toString()));
+                                    municipal.setMunicipalName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString());
+                                    municipal.setIdstatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                    municipalities.add(municipal);
+                                    municipalList.add(municipal.getMunicipalName());
+                                }
+                            }
+                        }
+
+                        try {
+
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                                    android.R.layout.simple_spinner_item,
+                                    android.R.id.text1,municipalList);
+
+                            municipalitySpinner.setAdapter(adapter);
+                            municipalitySpinner.setSelection(0);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        break;
+                    case Constants.WS_KEY_SPINNER_ADDRESS_LOCATION_SERVICE:
+                        locations = new ArrayList<>();
+                        locationList = new ArrayList<>();
+                        locationList.add("Seleccione una localidad ...");
+
+                        if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    Locations location = new Locations();
+                                    location.setIdItem(i);
+                                    location.setIdState(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
+                                    location.setStateName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
+                                    location.setStateAcronym(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
+                                    location.setIdMunicipal(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_ID).toString()));
+                                    location.setMunicipalName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString());
+                                    location.setIdLocation(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_ID).toString()));
+                                    location.setLocationName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_NAME).toString());
+                                    location.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+
+                                    locations.add(location);
+                                    locationList.add(location.getLocationName());
+                                }
+                            }
+                        }
+
+                        try {
+
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                                    android.R.layout.simple_spinner_item,
+                                    android.R.id.text1,locationList);
+
+                            locationSpinner.setAdapter(adapter);
+                            locationSpinner.setSelection(0);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        break;
+                }
+
+
+            } else {
+                String tempText = (textError.isEmpty() ? "Error desconocido" : textError);
+                Toast.makeText(getContext(), tempText, Toast.LENGTH_LONG).show();
+
+            }
+        }
     }
 }

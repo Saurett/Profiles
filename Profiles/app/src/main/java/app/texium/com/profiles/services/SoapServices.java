@@ -15,6 +15,7 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 
 import app.texium.com.profiles.R;
+import app.texium.com.profiles.utils.Constants;
 
 /**
  * Created by texiumuser on 01/03/2016.
@@ -123,6 +124,7 @@ public class SoapServices {
 
         return soapObject;
     }
+    */
 
     public static SoapObject checkUser(Context context, String username, String password) throws Exception {
         SoapObject soapObject;
@@ -177,58 +179,6 @@ public class SoapServices {
         return soapObject;
     }
 
-    public static SoapPrimitive forgetUsername(Context context, String email) throws Exception {
-        SoapPrimitive soapPrimitive;
-        try {
-            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_FORGET_USERNAME;
-            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_NAME_FORGET_USERNAME;
-            String NAMESPACE = Constants.WEB_SERVICE_NAMESPACE;
-            String URL = Constants.WEB_SERVICE_URL;
-
-            SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
-
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_LOGIN_EMAIL, email);
-
-            SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            soapEnvelope.dotNet = true;
-            soapEnvelope.setOutputSoapObject(Request);
-
-            HttpTransportSE transport = new HttpTransportSE(URL);
-
-            transport.call(SOAP_ACTION, soapEnvelope);
-            soapPrimitive = (SoapPrimitive) soapEnvelope.getResponse();
-
-        } catch (ConnectException e) {
-            e.printStackTrace();
-            Log.e("Soap ConnectException", e.getMessage());
-            throw  new ConnectException(context.getString(R.string.default_connect_error));
-        } catch (SocketTimeoutException e ) {
-            e.printStackTrace();
-            Log.e("Soap java.net.SocketTimeoutException", e.getMessage());
-            throw  new ConnectException(context.getString(R.string.default_connect_error));
-        } catch (HttpResponseException e){
-            e.printStackTrace();
-            Log.e("Soap HttpResponseException",e.getMessage());
-            throw new Exception(context.getString(R.string.default_soap_error));
-        } catch (SoapFault e){
-            e.printStackTrace();
-            Log.e("Soap Fault",e.getMessage());
-            throw new ConnectException(e.getMessage());
-        } catch (Exception e) {
-
-            if (e != null) {
-                e.printStackTrace();
-                Log.e("Soap Exception", e.getMessage());
-                throw new ConnectException(context.getString(R.string.default_exception_error));
-            } else {
-                Log.e("Soap Exception", "FalseNullPointer");
-                throw  new ConnectException(context.getString(R.string.default_connect_error));
-            }
-        }
-
-        return soapPrimitive;
-    }
-
     public static SoapObject getServerAllUsers(Context context) throws Exception {
         SoapObject soapObject;
         try {
@@ -281,28 +231,16 @@ public class SoapServices {
         return soapObject;
     }
 
-    public static SoapPrimitive updateTask(Context context, Integer task, String comment, Integer status, Integer user, List<String> encodedFile) throws Exception {
-        SoapPrimitive soapPrimitive;
+
+    public static SoapObject getSpinnerPP(Context context) throws Exception {
+        SoapObject soapObject;
         try {
-            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_UPDATE_TASK;
-            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_NAME_UPDATE_TASK;
+            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_SPINNER_PP;
+            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_NAME_SPINNER_PP;
             String NAMESPACE = Constants.WEB_SERVICE_NAMESPACE;
             String URL = Constants.WEB_SERVICE_URL;
 
             SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
-
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_TASK_ID, task);
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_TASK_COMMENT, comment);
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_TASK_STATUS, status);
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_TASK_ID_USER, user);
-
-            SoapObject soapFiles = new SoapObject(NAMESPACE, Constants.WEB_SERVICE_PARAM_TASK_FILE);
-
-            for (String encode: encodedFile) {
-                soapFiles.addProperty(Constants.WEB_SERVICE_PARAM_OBJECT_STRING,encode);
-            }
-
-            Request.addSoapObject(soapFiles);
 
             SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             soapEnvelope.dotNet = true;
@@ -311,8 +249,12 @@ public class SoapServices {
             HttpTransportSE transport = new HttpTransportSE(URL);
 
             transport.call(SOAP_ACTION, soapEnvelope);
-            soapPrimitive = (SoapPrimitive) soapEnvelope.getResponse();
+            soapObject = (SoapObject) soapEnvelope.getResponse();
 
+        } catch (EOFException e) {
+            e.printStackTrace();
+            Log.e("Soap EOFException",e.getMessage());
+            throw  new Exception(context.getString(R.string.default_exception_error));
         } catch (ConnectException e) {
             e.printStackTrace();
             Log.e("Soap ConnectException", e.getMessage());
@@ -320,39 +262,37 @@ public class SoapServices {
         } catch (SocketTimeoutException e ) {
             e.printStackTrace();
             Log.e("Soap SocketTimeoutException", e.getMessage());
-            throw  new ConnectException(context.getString(R.string.default_connect_error));
-        } catch (HttpResponseException e){
+            throw  new SocketTimeoutException(context.getString(R.string.default_connect_error));
+        } catch (java.net.SocketException e ) {
+            e.printStackTrace();
+            Log.e("Soap SocketException", e.getMessage());
+            throw  new Exception(context.getString(R.string.default_connect_error));
+        }  catch (HttpResponseException e){
             e.printStackTrace();
             Log.e("Soap HttpResponseException",e.getMessage());
             throw new Exception(context.getString(R.string.default_soap_error));
         } catch (SoapFault e){
             e.printStackTrace();
             Log.e("Soap Fault",e.getMessage());
-            throw new ConnectException(e.getMessage());
+            throw new Exception(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("Soap Exception", e.getMessage());
             throw new Exception(context.getString(R.string.default_exception_error));
         }
 
-        return soapPrimitive;
+        return soapObject;
     }
 
-    public static SoapPrimitive updateVideoFiles(Context context, Integer task, Integer user, String encodeFile, Integer partNumber, Boolean lastOne ) throws Exception {
-        SoapPrimitive soapPrimitive;
+    public static SoapObject getSpinnerStates(Context context) throws Exception {
+        SoapObject soapObject;
         try {
-            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_UPDATE_VIDEO;
-            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_NAME_UPDATE_VIDEO;
+            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_SPINNER_STATES;
+            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_NAME_SPINNER_STATES;
             String NAMESPACE = Constants.WEB_SERVICE_NAMESPACE;
             String URL = Constants.WEB_SERVICE_URL;
 
             SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
-
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_TASK_ID, task);
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_TASK_ID_USER, user);
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_CODE_FILE, encodeFile);
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_VIDEO_PART_NUMBER, partNumber);
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_VIDEO_LAST_ONE, lastOne);
 
             SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             soapEnvelope.dotNet = true;
@@ -361,8 +301,12 @@ public class SoapServices {
             HttpTransportSE transport = new HttpTransportSE(URL);
 
             transport.call(SOAP_ACTION, soapEnvelope);
-            soapPrimitive = (SoapPrimitive) soapEnvelope.getResponse();
+            soapObject = (SoapObject) soapEnvelope.getResponse();
 
+        } catch (EOFException e) {
+            e.printStackTrace();
+            Log.e("Soap EOFException",e.getMessage());
+            throw  new Exception(context.getString(R.string.default_exception_error));
         } catch (ConnectException e) {
             e.printStackTrace();
             Log.e("Soap ConnectException", e.getMessage());
@@ -370,23 +314,139 @@ public class SoapServices {
         } catch (SocketTimeoutException e ) {
             e.printStackTrace();
             Log.e("Soap SocketTimeoutException", e.getMessage());
-            throw  new ConnectException(context.getString(R.string.default_connect_error));
-        } catch (HttpResponseException e){
+            throw  new SocketTimeoutException(context.getString(R.string.default_connect_error));
+        } catch (java.net.SocketException e ) {
+            e.printStackTrace();
+            Log.e("Soap SocketException", e.getMessage());
+            throw  new Exception(context.getString(R.string.default_connect_error));
+        }  catch (HttpResponseException e){
             e.printStackTrace();
             Log.e("Soap HttpResponseException",e.getMessage());
             throw new Exception(context.getString(R.string.default_soap_error));
         } catch (SoapFault e){
             e.printStackTrace();
             Log.e("Soap Fault",e.getMessage());
-            throw new ConnectException(e.getMessage());
+            throw new Exception(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("Soap Exception", e.getMessage());
             throw new Exception(context.getString(R.string.default_exception_error));
         }
 
-        return soapPrimitive;
+        return soapObject;
     }
+
+    public static SoapObject getSpinnerMunicipal(Context context, Integer idEstate) throws Exception {
+        SoapObject soapObject;
+        try {
+            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_SPINNER_MUNICIPAL;
+            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_NAME_SPINNER_MUNICIPAL;
+            String NAMESPACE = Constants.WEB_SERVICE_NAMESPACE;
+            String URL = Constants.WEB_SERVICE_URL;
+
+            SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
+
+            Request.addProperty(Constants.WEB_SERVICE_PARAM_ADDRESS_ID_STATE, idEstate);
+
+            SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            soapEnvelope.dotNet = true;
+            soapEnvelope.setOutputSoapObject(Request);
+
+            HttpTransportSE transport = new HttpTransportSE(URL);
+
+            transport.call(SOAP_ACTION, soapEnvelope);
+            soapObject = (SoapObject) soapEnvelope.getResponse();
+
+        } catch (EOFException e) {
+            e.printStackTrace();
+            Log.e("Soap EOFException",e.getMessage());
+            throw  new Exception(context.getString(R.string.default_exception_error));
+        } catch (ConnectException e) {
+            e.printStackTrace();
+            Log.e("Soap ConnectException", e.getMessage());
+            throw  new ConnectException(context.getString(R.string.default_connect_error));
+        } catch (SocketTimeoutException e ) {
+            e.printStackTrace();
+            Log.e("Soap SocketTimeoutException", e.getMessage());
+            throw  new SocketTimeoutException(context.getString(R.string.default_connect_error));
+        } catch (java.net.SocketException e ) {
+            e.printStackTrace();
+            Log.e("Soap SocketException", e.getMessage());
+            throw  new Exception(context.getString(R.string.default_connect_error));
+        }  catch (HttpResponseException e){
+            e.printStackTrace();
+            Log.e("Soap HttpResponseException",e.getMessage());
+            throw new Exception(context.getString(R.string.default_soap_error));
+        } catch (SoapFault e){
+            e.printStackTrace();
+            Log.e("Soap Fault",e.getMessage());
+            throw new Exception(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Soap Exception", e.getMessage());
+            throw new Exception(context.getString(R.string.default_exception_error));
+        }
+
+        return soapObject;
+    }
+
+    public static SoapObject getSpinnerLocation(Context context, Integer idEstate, Integer idMunicipal) throws Exception {
+        SoapObject soapObject;
+        try {
+            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_SPINNER_LOCATION;
+            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_NAME_SPINNER_LOCATION;
+            String NAMESPACE = Constants.WEB_SERVICE_NAMESPACE;
+            String URL = Constants.WEB_SERVICE_URL;
+
+            SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
+
+            Request.addProperty(Constants.WEB_SERVICE_PARAM_ADDRESS_ID_STATE, idEstate);
+            Request.addProperty(Constants.WEB_SERVICE_PARAM_ADDRESS_ID_MUNICIPAL, idMunicipal);
+
+            SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            soapEnvelope.dotNet = true;
+            soapEnvelope.setOutputSoapObject(Request);
+
+            HttpTransportSE transport = new HttpTransportSE(URL);
+
+            transport.call(SOAP_ACTION, soapEnvelope);
+            soapObject = (SoapObject) soapEnvelope.getResponse();
+
+        } catch (EOFException e) {
+            e.printStackTrace();
+            Log.e("Soap EOFException",e.getMessage());
+            throw  new Exception(context.getString(R.string.default_exception_error));
+        } catch (ConnectException e) {
+            e.printStackTrace();
+            Log.e("Soap ConnectException", e.getMessage());
+            throw  new ConnectException(context.getString(R.string.default_connect_error));
+        } catch (SocketTimeoutException e ) {
+            e.printStackTrace();
+            Log.e("Soap SocketTimeoutException", e.getMessage());
+            throw  new SocketTimeoutException(context.getString(R.string.default_connect_error));
+        } catch (java.net.SocketException e ) {
+            e.printStackTrace();
+            Log.e("Soap SocketException", e.getMessage());
+            throw  new Exception(context.getString(R.string.default_connect_error));
+        }  catch (HttpResponseException e){
+            e.printStackTrace();
+            Log.e("Soap HttpResponseException",e.getMessage());
+            throw new Exception(context.getString(R.string.default_soap_error));
+        } catch (SoapFault e){
+            e.printStackTrace();
+            Log.e("Soap Fault",e.getMessage());
+            throw new Exception(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Soap Exception", e.getMessage());
+            throw new Exception(context.getString(R.string.default_exception_error));
+        }
+
+        return soapObject;
+    }
+
+
+   /*
 
     public static SoapPrimitive sendFile(Context context, Integer task, Integer user, List<String> encodedImage) throws Exception {
         SoapPrimitive soapPrimitive;
