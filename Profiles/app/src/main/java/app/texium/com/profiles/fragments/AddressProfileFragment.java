@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -21,8 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.texium.com.profiles.R;
+import app.texium.com.profiles.models.AddressProfile;
 import app.texium.com.profiles.models.Locations;
 import app.texium.com.profiles.models.Municipalities;
+import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.States;
 import app.texium.com.profiles.services.SoapServices;
 import app.texium.com.profiles.utils.Constants;
@@ -33,6 +36,7 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
     static FragmentProfileListener activityListener;
 
     private static Button backBtn, nextBtn;
+    private static EditText txtStreet, txtNumExt, txtNumInt, txtCity, txtDivision, txtPostalCode;
     private static Spinner stateSpinner, municipalitySpinner,locationSpinner;
     private ProgressDialog pDialog;
 
@@ -40,6 +44,11 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
     private List<States> states;
     private List<Municipalities> municipalities;
     private List<Locations> locations;
+
+    private static int positionState, positionMunicipal, positionLocation;
+    private static int idState, idMunicipal, idLocation;
+
+    private static ProfileManager _PROFILE_MANAGER;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,6 +58,13 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
 
         backBtn = (Button) view.findViewById(R.id.backBtnAddressProfile);
         nextBtn = (Button) view.findViewById(R.id.nextBtnAddressProfile);
+
+        txtStreet = (EditText) view.findViewById(R.id.street);
+        txtNumInt = (EditText) view.findViewById(R.id.numInt);
+        txtNumExt = (EditText) view.findViewById(R.id.numExt);
+        txtCity = (EditText) view.findViewById(R.id.city);
+        txtDivision = (EditText) view.findViewById(R.id.division);
+        txtPostalCode = (EditText) view.findViewById(R.id.postalCode);
 
         stateSpinner = (Spinner) view.findViewById(R.id.state);
         municipalitySpinner = (Spinner) view.findViewById(R.id.municipality);
@@ -60,6 +76,22 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
 
         stateSpinner.setOnItemSelectedListener(this);
         municipalitySpinner.setOnItemSelectedListener(this);
+        locationSpinner.setOnItemSelectedListener(this);
+
+        if (null != _PROFILE_MANAGER) {
+            if (null != _PROFILE_MANAGER.getAddressProfile().getStreet())
+                txtStreet.setText(_PROFILE_MANAGER.getAddressProfile().getStreet());
+            if (null != _PROFILE_MANAGER.getAddressProfile().getNumExt())
+                txtNumExt.setText(_PROFILE_MANAGER.getAddressProfile().getNumExt());
+            if (null != _PROFILE_MANAGER.getAddressProfile().getNumInt())
+                txtNumInt.setText(_PROFILE_MANAGER.getAddressProfile().getNumInt());
+            if (null != _PROFILE_MANAGER.getAddressProfile().getCity())
+                txtCity.setText(_PROFILE_MANAGER.getAddressProfile().getCity());
+            if (null != _PROFILE_MANAGER.getAddressProfile().getDivision())
+                txtDivision.setText(_PROFILE_MANAGER.getAddressProfile().getDivision());
+            if (null != _PROFILE_MANAGER.getAddressProfile().getPostalCode())
+                txtPostalCode.setText(String.valueOf(_PROFILE_MANAGER.getAddressProfile().getPostalCode()));
+        }
 
         return view;
     }
@@ -68,6 +100,8 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
     public void onCreate(Bundle saveInstanceState) {
 
         super.onCreate(saveInstanceState);
+
+        _PROFILE_MANAGER = activityListener.getProfileManager();
 
         AsyncAddress wsSpinnerState = new AsyncAddress(Constants.WS_KEY_SPINNER_ADDRESS_STATE_SERVICE);
         wsSpinnerState.execute();
@@ -85,11 +119,54 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+        AddressProfile addressProfile = new AddressProfile();
         switch (v.getId()) {
             case R.id.backBtnAddressProfile:
+
+                addressProfile.setStreet(txtStreet.getText().toString());
+                addressProfile.setNumExt(txtNumExt.getText().toString());
+                addressProfile.setNumInt(txtNumInt.getText().toString());
+                addressProfile.setCity(txtCity.getText().toString());
+                addressProfile.setDivision(txtDivision.getText().toString());
+
+                if (txtPostalCode.getText().toString().length() > 0) {
+                    addressProfile.setPostalCode(Integer.valueOf(txtPostalCode.getText().toString()));
+                }
+
+                addressProfile.setIdState(idState);
+                addressProfile.setIdMunicipal(idMunicipal);
+                addressProfile.setIdLocation(idLocation);
+                addressProfile.setIdItemState(positionState);
+                addressProfile.setIdItemMunicipal(positionMunicipal);
+                addressProfile.setIdItemLocation(positionLocation);
+
+                _PROFILE_MANAGER.setAddressProfile(addressProfile);
+
+                activityListener.updateProfile(_PROFILE_MANAGER);
                 activityListener.moveFragments(v);
                 break;
             case R.id.nextBtnAddressProfile:
+
+                addressProfile.setStreet(txtStreet.getText().toString());
+                addressProfile.setNumExt(txtNumExt.getText().toString());
+                addressProfile.setNumInt(txtNumInt.getText().toString());
+                addressProfile.setCity(txtCity.getText().toString());
+                addressProfile.setDivision(txtDivision.getText().toString());
+
+                if (txtPostalCode.getText().toString().length() > 0) {
+                    addressProfile.setPostalCode(Integer.valueOf(txtPostalCode.getText().toString()));
+                }
+
+                addressProfile.setIdState(idState);
+                addressProfile.setIdMunicipal(idMunicipal);
+                addressProfile.setIdLocation(idLocation);
+                addressProfile.setIdItemState(positionState);
+                addressProfile.setIdItemMunicipal(positionMunicipal);
+                addressProfile.setIdItemLocation(positionLocation);
+
+                _PROFILE_MANAGER.setAddressProfile(addressProfile);
+
+                activityListener.updateProfile(_PROFILE_MANAGER);
                 activityListener.moveFragments(v);
                 break;
             default:
@@ -104,7 +181,9 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
 
             switch (parent.getId()) {
                 case R.id.state:
+                    this.positionState = position;
                     States state = states.get(position - 1);
+                    this.idState = state.getIdState();
 
                     AsyncAddress wsSpinnerMunicipal = new AsyncAddress(
                             Constants.WS_KEY_SPINNER_ADDRESS_MUNICIPAL_SERVICE,
@@ -113,13 +192,19 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
 
                     break;
                 case R.id.municipality:
+                    this.positionMunicipal = position;
                     Municipalities municipal = municipalities.get(position - 1);
+                    this.idMunicipal = municipal.getIdMunicipal();
 
                     AsyncAddress wsSpinnerLocation = new AsyncAddress(
                             Constants.WS_KEY_SPINNER_ADDRESS_LOCATION_SERVICE,
                             municipal.getIdState(),municipal.getIdMunicipal());
                     wsSpinnerLocation.execute();
-
+                    break;
+                case R.id.location:
+                    this.positionLocation = position;
+                    Locations location = locations.get(position -1);
+                    this.idLocation = location.getIdLocation();
                     break;
                 default:
                     break;
@@ -164,7 +249,7 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
         @Override
         protected void onPreExecute() {
             pDialog = new ProgressDialog(getContext());
-            pDialog.setMessage("Espere un momento porfavor");
+            pDialog.setMessage("Espere un momento por favor");
             pDialog.setTitle("Cargando formulario");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
@@ -240,8 +325,10 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
                                     android.R.layout.simple_spinner_item,
                                     android.R.id.text1,stateList);
 
+                            int selectionState = (null != _PROFILE_MANAGER.getAddressProfile().getIdItemState())
+                                    ? _PROFILE_MANAGER.getAddressProfile().getIdItemState() : 0;
                             stateSpinner.setAdapter(adapter);
-                            stateSpinner.setSelection(0);
+                            stateSpinner.setSelection(selectionState);
 
 
 
@@ -283,8 +370,10 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
                                     android.R.layout.simple_spinner_item,
                                     android.R.id.text1,municipalList);
 
+                            int selectionMunicipal = (null != _PROFILE_MANAGER.getAddressProfile().getIdItemMunicipal())
+                                    ? _PROFILE_MANAGER.getAddressProfile().getIdItemMunicipal() : 0;
                             municipalitySpinner.setAdapter(adapter);
-                            municipalitySpinner.setSelection(0);
+                            municipalitySpinner.setSelection(selectionMunicipal);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -324,12 +413,15 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
 
                         try {
 
+                            int selectionLocation = (null != _PROFILE_MANAGER.getAddressProfile().getIdItemLocation())
+                                    ? _PROFILE_MANAGER.getAddressProfile().getIdItemLocation() : 0;
+
                             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                                     android.R.layout.simple_spinner_item,
                                     android.R.id.text1,locationList);
 
                             locationSpinner.setAdapter(adapter);
-                            locationSpinner.setSelection(0);
+                            locationSpinner.setSelection(selectionLocation);
 
                         } catch (Exception e) {
                             e.printStackTrace();

@@ -1,5 +1,10 @@
 package app.texium.com.profiles.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import app.texium.com.profiles.R;
+
 /**
  * Created by texiumuser on 25/02/2016.
  */
@@ -46,6 +51,8 @@ public final class Constants {
     public static final int WS_KEY_SPINNER_ADDRESS_STATE_SERVICE = 4;
     public static final int WS_KEY_SPINNER_ADDRESS_MUNICIPAL_SERVICE = 5;
     public static final int WS_KEY_SPINNER_ADDRESS_LOCATION_SERVICE = 6;
+    public static final int WS_KEY_SPINNER_ALL_PROFESSIONAL_SERVICE = 7;
+    public static final int WS_KEY_SPINNER_SAVE_PROFILE_SERVICE = 10;
 
     //endregion WEB SERVICE ID//
 
@@ -71,9 +78,17 @@ public final class Constants {
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_STATES = "Perfiles/ConsultaEstados";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_MUNICIPAL = "Perfiles/ConsultaMunicipios";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_LOCATION = "Perfiles/ConsultaLocalidades";
+    public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_ACADEMY_LEVELS = "Perfiles/ConsultaNivelesEstudio";
+    public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_CAREER = "Perfiles/ConsultaCarrerasProfesionales";
+    public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_PROFESSIONAL_TITLES = "Perfiles/ConsultaDocumentosObtenidos";
+    public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_COMPANIES = "Perfiles/ConsultaEmpresas";
     public static final String WEB_SERVICE_SOAP_ACTION_ALL_USERS = "192.168.12.10/LoginMovil";
+    public static final String WEB_SERVICE_SOAP_ACTION_SAVE_PROFILE = "Perfiles/AgregarPersona";
     public static final String WEB_SERVICE_NAMESPACE = "Perfiles";
-    public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
+    //public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
+    public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
+
+
     //public static final String WEB_SERVICE_URL = "http://187.216.220.51/ServicioWeb/Servicio_Android.asmx";
     //endregion SOAP CONFIGURATION//
 
@@ -83,7 +98,12 @@ public final class Constants {
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_STATES = "ConsultaEstados";
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_MUNICIPAL = "ConsultaMunicipios";
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_LOCATION = "ConsultaLocalidades";
+    public static final String WEB_SERVICE_METHOD_NAME_SPINNER_ACADEMY_LEVELS = "ConsultaNivelesEstudio";
+    public static final String WEB_SERVICE_METHOD_NAME_SPINNER_CAREER = "ConsultaCarrerasProfesionales";
+    public static final String WEB_SERVICE_METHOD_NAME_SPINNER_PROFESSIONAL_TITLES = "ConsultaDocumentosObtenidos";
+    public static final String WEB_SERVICE_METHOD_NAME_SPINNER_COMPANIES= "ConsultaEmpresas";
     public static final String WEB_SERVICE_METHOD_NAME_ALL_USERS = "LoginMovil";
+    public static final String WEB_SERVICE_METHOD_NAME_SAVE_PROFILE = "AgregarPersona";
     //endregion SOAP OPERATION//
 
     //region WEB SERVICE PARAMS//
@@ -91,6 +111,52 @@ public final class Constants {
     public static final String WEB_SERVICE_PARAM_LOGIN_PASSWORD = "Contrasena";
     public static final String WEB_SERVICE_PARAM_ADDRESS_ID_STATE = "IDEstado";
     public static final String WEB_SERVICE_PARAM_ADDRESS_ID_MUNICIPAL = "IDMunicipio";
+    public static final String WEB_SERVICE_PARAM_ADDRESS_ID_GROUP = "IDGrupo";
+    public static final String WEB_SERVICE_PARAM_NAME = "Nombre";
+    public static final String WEB_SERVICE_PARAM_FIRST_SURNAME = "ApellidoPaterno";
+    public static final String WEB_SERVICE_PARAM_SECOND_SURNAME = "ApellidoMaterno";
+    public static final String WEB_SERVICE_PARAM_DATE_BIRTH = "FechaNacimiento";
+    public static final String WEB_SERVICE_PARAM_SEX = "Sexo";
+    public static final String WEB_SERVICE_PARAM_CIVIL_STATE = "EstadoCivil";
+    public static final String WEB_SERVICE_PARAM_OCR_INE = "OCRINE";
+    public static final String WEB_SERVICE_PARAM_ELECTORAL_KEY = "ClaveElector";
+    public static final String WEB_SERVICE_PARAM_VALIDITY_INE = "VigenciaINE";
+    public static final String WEB_SERVICE_PARAM_ELECTORAL_SECTION= "SeccionElectoral";
+    public static final String WEB_SERVICE_PARAM_FEDERAL_DISTRICT= "DistritoFederal";
+    public static final String WEB_SERVICE_PARAM_ELECTORAL_ADVISER= "ConsejeroPolitico";
+    public static final String WEB_SERVICE_PARAM_ID_POLITICAL_PARTY= "IDPartidoPolitico";
+    public static final String WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR= "IDTipoActorElectoral";
+    public static final String WEB_SERVICE_PARAM_FRONT_PHOTO= "FotoINEFrente";
+    public static final String WEB_SERVICE_PARAM_BACK_PHOTO= "FotoINEReverso";
+    public static final String WEB_SERVICE_PARAM_ID_STATE= "IDEstado";
+    public static final String WEB_SERVICE_PARAM_ID_MUNICIPAL= "IDMunicipio";
+    public static final String WEB_SERVICE_PARAM_ID_LOCATION= "IDLocalidad";
+    public static final String WEB_SERVICE_PARAM_STREET= "Calle";
+    public static final String WEB_SERVICE_PARAM_NUM_EXT= "NumeroExterior";
+    public static final String WEB_SERVICE_PARAM_NUM_INT= "NumeroInteior";
+    public static final String WEB_SERVICE_PARAM_CITY_COLONY= "ColoniaPoblado";
+    public static final String WEB_SERVICE_PARAM_DIVISION= "Fraccionamiento";
+    public static final String WEB_SERVICE_PARAM_POSTAL_CODE= "CodigoPostal";
+    public static final String WEB_SERVICE_PARAM_PERSONAL_EMAIL= "CorreoPersonal";
+    public static final String WEB_SERVICE_PARAM_PROFESSIONAL_EMAIL= "CorreoProfesional";
+    public static final String WEB_SERVICE_PARAM_CELLPHONE= "TelefonoPersonal";
+    public static final String WEB_SERVICE_PARAM_HOME_PHONE= "TelefonoCasa";
+    public static final String WEB_SERVICE_PARAM_OFFICE_PHONE= "TelefonoLaboral";
+    public static final String WEB_SERVICE_PARAM_OTHER_PHONE= "TelefonoReferencia";
+    public static final String WEB_SERVICE_PARAM_CURP= "CURP";
+    public static final String WEB_SERVICE_PARAM_RFC= "RFC";
+    public static final String WEB_SERVICE_PARAM_NSS= "NSS";
+    public static final String WEB_SERVICE_PARAM_ID_LEVEL= "IDNivelEstudio";
+    public static final String WEB_SERVICE_PARAM_ID_CAREER= "IDCarrera";
+    public static final String WEB_SERVICE_PARAM_ID_TITLE= "IDDocumentoObtenido";
+    public static final String WEB_SERVICE_PARAM_ACTUAL_JOB= "EmpleoActual";
+    public static final String WEB_SERVICE_PARAM_ID_COMPANY= "IDEmpresa";
+    public static final String WEB_SERVICE_PARAM_FACEBOOK= "Facebook";
+    public static final String WEB_SERVICE_PARAM_TWITTER= "Twitter";
+    public static final String WEB_SERVICE_PARAM_INSTAGRAM= "Instagram";
+    public static final String WEB_SERVICE_PARAM_ID_GROUP= "IDGrupo";
+    public static final String WEB_SERVICE_PARAM_ID_USER= "IDUsuario";
+
     //endregion WEB SERVICE PARAMS//
 
     //region Google Maps LOCATION//
@@ -103,6 +169,7 @@ public final class Constants {
     public static final String SOAP_OBJECT_KEY_LOGIN_ID_ACTOR = "IDActor";
     public static final String SOAP_OBJECT_KEY_LOGIN_ID_USER = "ID";
     public static final String SOAP_OBJECT_KEY_LOGIN_ACTOR_NAME = "NombreActor";
+    public static final String SOAP_OBJECT_KEY_LOGIN_ID_GROUP = "IDGrupo";
     public static final String SOAP_OBJECT_KEY_LOGIN_USERNAME = "Usuario";
     public static final String SOAP_OBJECT_KEY_LOGIN_PASSWORD = "Password";
     public static final String SOAP_OBJECT_KEY_LOGIN_ID_ROL = "IDRol";
@@ -114,6 +181,10 @@ public final class Constants {
     public static final String SOAP_OBJECT_KEY_MUNICIPAL_NAME  = "NombreMunicipio";
     public static final String SOAP_OBJECT_KEY_LOCATION_ID = "IDLocalidad";
     public static final String SOAP_OBJECT_KEY_LOCATION_NAME  = "NombreLocalidad";
+    public static final String SOAP_OBJECT_KEY_DESCRIPTION  = "Descripcion";
+    public static final String SOAP_OBJECT_KEY_ID  = "ID";
+    public static final String SOAP_OBJECT_KEY_NAME  = "Nombre";
+    public static final String SOAP_OBJECT_KEY_ACRONYM_NAME = "Siglas";
 
     //endregion SOAP KEYS//
 
@@ -124,6 +195,24 @@ public final class Constants {
 
     //region ACTIVITY PARAMS//
     public static final String ACTIVITY_EXTRA_PARAMS_LOGIN = "data";
+    public static final String ACTIVITY_EXTRA_PARAMS_PROFILE_MANAGER = "profileManager";
     //endregion ACTIVITY PARAMS//
+
+    public static final String MAP_KET_CHECK_ONE  = "Soltero";
+    public static final String MAP_KET_CHECK_TWO  = "Casado";
+    public static final String MAP_KET_CHECK_TREE  = "Viudo";
+    public static final String MAP_KET_CHECK_FOURTH  = "Divorciado";
+
+
+    public static Map<String,Integer> MAP_CHECKED;
+    static {
+        MAP_CHECKED = new HashMap<>();
+        MAP_CHECKED.put(Constants.MAP_KET_CHECK_ONE, R.id.checkBox);
+        MAP_CHECKED.put(Constants.MAP_KET_CHECK_TWO, R.id.checkBox2);
+        MAP_CHECKED.put(Constants.MAP_KET_CHECK_TREE, R.id.checkBox3);
+        MAP_CHECKED.put(Constants.MAP_KET_CHECK_FOURTH, R.id.checkBox4);
+    }
+
+
 
 }

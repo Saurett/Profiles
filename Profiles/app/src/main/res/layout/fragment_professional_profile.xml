@@ -40,7 +40,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp">
             <EditText
-                android:id="@+id/name"
+                android:id="@+id/nss"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="Número de Seguro Social"
@@ -98,7 +98,7 @@
             android:paddingRight="20dp"
             android:orientation="vertical">
             <EditText
-                android:id="@+id/electoralAdviser"
+                android:id="@+id/actualJob"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="Empleo Actual"

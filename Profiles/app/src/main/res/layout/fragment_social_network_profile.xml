@@ -43,7 +43,7 @@
                 android:layout_height="40dp"
                 android:background="@drawable/icon_facebook"/>
             <EditText
-                android:id="@+id/sn1"
+                android:id="@+id/facebook"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:hint="Facebook"
@@ -70,7 +70,7 @@
                 android:layout_height="40dp"
                 android:background="@drawable/icon_twitter"/>
             <EditText
-                android:id="@+id/sn2"
+                android:id="@+id/twitter"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:hint="Twitter"
@@ -97,7 +97,7 @@
                 android:layout_height="40dp"
                 android:background="@drawable/icon_instagram"/>
             <EditText
-                android:id="@+id/birthDate"
+                android:id="@+id/instagram"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:hint="Instagram"

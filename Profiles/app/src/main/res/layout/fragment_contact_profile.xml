@@ -40,7 +40,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp">
             <EditText
-                android:id="@+id/name"
+                android:id="@+id/personalEmail"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="Email Personal"
@@ -50,9 +50,10 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:background="@drawable/shape_form"
-                android:paddingLeft="20dp" />
+                android:paddingLeft="20dp"
+                android:inputType="textEmailAddress"/>
             <EditText
-                android:id="@+id/firstSurname"
+                android:id="@+id/professionalEmail"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="Email Profesional"
@@ -63,7 +64,8 @@
                 android:singleLine="true"
                 android:background="@drawable/shape_form"
                 android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                android:inputType="textEmailSubject"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,7 +74,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp">
             <EditText
-                android:id="@+id/electoralSection"
+                android:id="@+id/cellPhoneNumber"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:hint="Teléfono Móvil"
@@ -86,7 +88,7 @@
                 android:inputType="none"
                 android:layout_weight="1" />
             <EditText
-                android:id="@+id/birthDate"
+                android:id="@+id/officePhoneNumber"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:hint="Teléfono Oficina"
@@ -109,7 +111,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp">
             <EditText
-                android:id="@+id/et1"
+                android:id="@+id/homePhoneNumber"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:hint="Teléfono Casa"
@@ -123,7 +125,7 @@
                 android:inputType="none"
                 android:layout_weight="1" />
             <EditText
-                android:id="@+id/et2"
+                android:id="@+id/otherPhoneNumber"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:hint="Tel. Referencia"
@@ -160,7 +162,7 @@
             android:paddingRight="20dp"
             android:orientation="vertical">
             <EditText
-                android:id="@+id/electoralAdviser"
+                android:id="@+id/curp"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="CURP"
@@ -173,7 +175,7 @@
                 android:paddingLeft="20dp"
                 android:layout_marginTop="10dp"/>
             <EditText
-                android:id="@+id/politicalParty"
+                android:id="@+id/rfc"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="RFC"

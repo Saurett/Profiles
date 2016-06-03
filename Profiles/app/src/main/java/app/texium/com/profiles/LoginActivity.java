@@ -18,6 +18,7 @@ import org.ksoap2.serialization.SoapPrimitive;
 import java.net.ConnectException;
 
 import app.texium.com.profiles.databases.BDProfileManagerQuery;
+import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.Users;
 import app.texium.com.profiles.services.SoapServices;
 import app.texium.com.profiles.utils.Constants;
@@ -227,7 +228,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             user.setIdUser(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_USER).toString()));
                             //user.setCveUser(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ACTOR).toString()));
                             user.setIdActor(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ACTOR).toString()));
-                            //user.setActorName(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ACTOR_NAME).toString());
+                            user.setIdGroup(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_GROUP).toString()));
                             user.setUserName(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_USERNAME).toString());
                             user.setPassword(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_PASSWORD).toString());
                             user.setIdRol(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ROL).toString()));
@@ -238,7 +239,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         usernameLogin.clearFocus();
                         passwordLogin.clearFocus();
 
+                        ProfileManager profileManager = new ProfileManager();
+
                         intentNavigationDrawer.putExtra(Constants.ACTIVITY_EXTRA_PARAMS_LOGIN, user);
+                        intentNavigationDrawer.putExtra(Constants.ACTIVITY_EXTRA_PARAMS_PROFILE_MANAGER, profileManager);
                         cleanAllLogin();
                         startActivity(intentNavigationDrawer);
                         break;

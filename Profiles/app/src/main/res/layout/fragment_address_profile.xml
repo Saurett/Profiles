@@ -98,7 +98,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp">
             <EditText
-                android:id="@+id/electoralSection"
+                android:id="@+id/numExt"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:hint="Número Exterior"
@@ -112,7 +112,7 @@
                 android:inputType="none"
                 android:layout_weight="1" />
             <EditText
-                android:id="@+id/birthDate"
+                android:id="@+id/numInt"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:hint="Número Interior"
@@ -135,7 +135,7 @@
             android:paddingRight="20dp"
             android:orientation="vertical">
             <EditText
-                android:id="@+id/electoralAdviser"
+                android:id="@+id/city"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="Poblado"
@@ -148,7 +148,7 @@
                 android:paddingLeft="20dp"
                 android:layout_marginTop="10dp"/>
             <EditText
-                android:id="@+id/politicalParty"
+                android:id="@+id/division"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="Fraccionamiento"
@@ -161,7 +161,7 @@
                 android:paddingLeft="20dp"
                 android:layout_marginTop="10dp"/>
             <EditText
-                android:id="@+id/sympathizer"
+                android:id="@+id/postalCode"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="Código Postal"
@@ -172,7 +172,8 @@
                 android:singleLine="true"
                 android:background="@drawable/shape_form"
                 android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                android:inputType="number"/>
             <!--
             <LinearLayout
                 android:layout_width="match_parent"

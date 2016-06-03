@@ -40,7 +40,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp">
             <EditText
-                android:id="@+id/name"
+                android:id="@+id/ocrINE"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="OCR INE"
@@ -52,7 +52,7 @@
                 android:background="@drawable/shape_form"
                 android:paddingLeft="20dp" />
             <EditText
-                android:id="@+id/firstSurname"
+                android:id="@+id/electoralKey"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="Clave de Elector"
@@ -65,7 +65,7 @@
                 android:paddingLeft="20dp"
                 android:layout_marginTop="10dp"/>
             <EditText
-                android:id="@+id/secondSurname"
+                android:id="@+id/validityINE"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="Vigencia INE"
@@ -99,7 +99,7 @@
                 android:inputType="none"
                 android:layout_weight="1" />
             <EditText
-                android:id="@+id/birthDate"
+                android:id="@+id/localDistrict"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:hint="Dist. Local."
@@ -115,7 +115,7 @@
                 android:inputType="none"
                 android:layout_weight="1" />
             <EditText
-                android:id="@+id/ageProfile"
+                android:id="@+id/federalDistrict"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:hint="Dist. Fed."

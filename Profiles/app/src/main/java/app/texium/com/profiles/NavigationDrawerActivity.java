@@ -1,5 +1,8 @@
 package app.texium.com.profiles;
 
+import android.app.ProgressDialog;
+import android.content.pm.ActivityInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -14,6 +17,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.ksoap2.serialization.SoapPrimitive;
 
 import app.texium.com.profiles.fragments.AddressProfileFragment;
 import app.texium.com.profiles.fragments.ContactProfileFragment;
@@ -23,13 +29,18 @@ import app.texium.com.profiles.fragments.FragmentProfileListener;
 import app.texium.com.profiles.fragments.PersonalProfileFragment;
 import app.texium.com.profiles.fragments.ProfessionalProfileFragment;
 import app.texium.com.profiles.fragments.SocialNetworkProfileFragment;
+import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.Users;
+import app.texium.com.profiles.services.SoapServices;
 import app.texium.com.profiles.utils.Constants;
 
 public class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FragmentProfileListener, View.OnClickListener {
 
     private static Users SESSION_DATA;
+    private static ProfileManager PROFILE_MANAGER;
+
+    private ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +51,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         setTitle("");
 
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+
+        PROFILE_MANAGER = (ProfileManager) getIntent().getExtras().getSerializable(Constants.ACTIVITY_EXTRA_PARAMS_PROFILE_MANAGER);
         SESSION_DATA = (Users) getIntent().getExtras().getSerializable(Constants.ACTIVITY_EXTRA_PARAMS_LOGIN);
 
         TextView actualUsername = (TextView) findViewById(R.id.actualUsername);
@@ -74,6 +88,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     public void onStart() {
         super.onStart();
+
+
     }
 
     @Override
@@ -180,6 +196,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         switch (view.getId()) {
             case R.id.nextBtnPersonalProfile:
+
                 closeAllFragment();
 
                 actualFragment.add(R.id.profiles_fragment_container, new ElectoralProfileFragment(), Constants.FRAGMENT_ELECTORAL_TAG);
@@ -240,10 +257,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 actualFragment.commit();
                 break;
             case R.id.finishBtnSNProfile:
-                closeAllFragment();
-
-                actualFragment.add(R.id.profiles_fragment_container, new PersonalProfileFragment(), Constants.FRAGMENT_PERSONAL_TAG);
-                actualFragment.commit();
+                AsyncProfile wsSpinnerPP = new AsyncProfile(Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE,PROFILE_MANAGER);
+                wsSpinnerPP.execute();
             default:
                 break;
         }
@@ -254,5 +269,107 @@ public class NavigationDrawerActivity extends AppCompatActivity
         DateProfileFragment dialog = new DateProfileFragment(txtDate,txtAge);
         android.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
         dialog.show(ft,"DatePicker");
+    }
+
+    @Override
+    public ProfileManager updateProfile(ProfileManager oldProfile) {
+        PROFILE_MANAGER = oldProfile;
+        return PROFILE_MANAGER;
+    }
+
+    @Override
+    public ProfileManager getProfileManager() {
+        return PROFILE_MANAGER;
+    }
+
+    private class AsyncProfile extends AsyncTask<Void, Void, Boolean> {
+
+        private SoapPrimitive soapPrimitive;
+        private Integer webServiceOperation;
+        private ProfileManager webServiceProfileManager;
+        private String textError;
+
+        private AsyncProfile(Integer wsOperation) {
+            webServiceOperation = wsOperation;
+            textError = "";
+        }
+
+        private AsyncProfile(Integer wsOperation, ProfileManager wsProfileManager) {
+            webServiceOperation = wsOperation;
+            webServiceProfileManager = wsProfileManager;
+            textError = "";
+        }
+
+        @Override
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(NavigationDrawerActivity.this);
+            pDialog.setMessage("Espere un momento por favor");
+            pDialog.setTitle("Registro perfil");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            Boolean validOperation = false;
+
+            try{
+                switch (webServiceOperation) {
+                    case Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE:
+                        soapPrimitive = SoapServices.saveProfile(getApplicationContext(),PROFILE_MANAGER,SESSION_DATA);
+                        validOperation = (soapPrimitive != null);
+                        break;
+                }
+            } catch (Exception e) {
+                textError = e.getMessage();
+                validOperation = false;
+            }
+
+            return validOperation;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+            pDialog.dismiss();
+            if(success) {
+/*
+                if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                    SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                    if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                        SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                        for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                            SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                        }
+                    }
+                }
+                */
+
+                try {
+                    closeAllFragment();
+
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction actualFragment = fragmentManager.beginTransaction();
+                    actualFragment.add(R.id.profiles_fragment_container, new PersonalProfileFragment(), Constants.FRAGMENT_PERSONAL_TAG);
+                    actualFragment.commit();
+
+                    String tempText = soapPrimitive.toString();
+                    Toast.makeText(getApplicationContext(), tempText, Toast.LENGTH_LONG).show();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+            } else {
+                String tempText = (textError.isEmpty() ? "Error desconocido" : textError);
+                Toast.makeText(getApplicationContext(), tempText, Toast.LENGTH_LONG).show();
+
+            }
+        }
     }
 }
