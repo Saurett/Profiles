@@ -2,160 +2,187 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
     android:layout_gravity="center_horizontal"
-    tools:context="app.texium.com.profiles.fragments.ProfessionalProfileFragment"
-    android:backgroundTint="@color/colorPrimaryLight">
+    android:background="@color/colorPrimary"
+    android:backgroundTint="@color/colorPrimaryLight"
+    tools:context="app.texium.com.profiles.fragments.ProfessionalProfileFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="15dp"
-            android:paddingLeft="10dp">
-            <TextView
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Registar Usuario"
-                android:textSize="15sp"
-                android:textStyle="normal"
-                android:textColor="@color/colorPrimaryDark"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Datos Laborales"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimaryDark"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <EditText
-                android:id="@+id/nss"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Número de Seguro Social"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp" />
-            <Spinner
-                android:id="@+id/level"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
+                android:orientation="vertical"
                 android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                />
-            <Spinner
-                android:id="@+id/career"
+                android:paddingTop="15dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Registar Usuario"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="15sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Datos Laborales"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                />
-            <Spinner
-                android:id="@+id/professionalTitle"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:orientation="vertical">
-            <EditText
-                android:id="@+id/actualJob"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Empleo Actual"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
-            <Spinner
-                android:id="@+id/company"
+                android:paddingRight="20dp"
+                android:paddingTop="20dp">
+
+                <EditText
+                    android:id="@+id/nss"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="Número de Seguro Social"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <Spinner
+                    android:id="@+id/level"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <Spinner
+                    android:id="@+id/career"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <Spinner
+                    android:id="@+id/professionalTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
+
+                <EditText
+                    android:id="@+id/actualJob"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="Empleo Actual"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <Spinner
+                    android:id="@+id/company"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/backBtnProfessionalProfile"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@null"
-            android:text="@string/back_profile"
-            android:textColor="@color/colorPrimaryText"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:background="@null"
-            android:text="@string/finish_profile"
-            android:textColor="@color/colorPrimaryText"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="100dp"
-            android:visibility="invisible"/>
-        <Button
-            android:id="@+id/nextBtnProfessionalProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:background="@null"
-            android:text="@string/next_profile"
-            android:textColor="@color/colorPrimaryText"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            />
+            android:background="@color/colorDivider"
+            android:orientation="horizontal"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp"
+            android:paddingTop="1dp">
+
+            <Button
+                android:id="@+id/backBtnProfessionalProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/back_profile"
+                android:textColor="@color/colorPrimaryText" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="100dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/finish_profile"
+                android:textColor="@color/colorPrimaryText"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/nextBtnProfessionalProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/next_profile"
+                android:textColor="@color/colorPrimaryText" />
+        </LinearLayout>
     </RelativeLayout>
 </FrameLayout>

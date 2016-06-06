@@ -2,224 +2,261 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
     android:layout_gravity="center_horizontal"
-    tools:context="app.texium.com.profiles.fragments.ContactProfileFragment"
-    android:backgroundTint="@color/colorPrimaryLight">
+    android:background="@color/colorPrimary"
+    android:backgroundTint="@color/colorPrimaryLight"
+    tools:context="app.texium.com.profiles.fragments.ContactProfileFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="15dp"
-            android:paddingLeft="10dp">
-            <TextView
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Registar Usuario"
-                android:textSize="15sp"
-                android:textStyle="normal"
-                android:textColor="@color/colorPrimaryDark"/>
-            <TextView
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingTop="15dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Registar Usuario"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="15sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Contacto"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Contacto"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimaryDark"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <EditText
-                android:id="@+id/personalEmail"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="20dp">
+
+                <EditText
+                    android:id="@+id/personalEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="Email Personal"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/professionalEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="Email Profesional"
+                    android:inputType="textEmailSubject"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Email Personal"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
+                android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
-                android:inputType="textEmailAddress"/>
-            <EditText
-                android:id="@+id/professionalEmail"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp">
+
+                <EditText
+                    android:id="@+id/cellPhoneNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_form"
+                    android:hint="Teléfono Móvil"
+                    android:inputType="none"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/officePhoneNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_form"
+                    android:hint="Teléfono Oficina"
+                    android:inputType="none"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Email Profesional"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
+                android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"
-                android:inputType="textEmailSubject"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <EditText
-                android:id="@+id/cellPhoneNumber"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:hint="Teléfono Móvil"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:inputType="none"
-                android:layout_weight="1" />
-            <EditText
-                android:id="@+id/officePhoneNumber"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:hint="Teléfono Oficina"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:inputType="none"
-                android:layout_weight="1" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <EditText
-                android:id="@+id/homePhoneNumber"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:hint="Teléfono Casa"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:inputType="none"
-                android:layout_weight="1" />
-            <EditText
-                android:id="@+id/otherPhoneNumber"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:hint="Tel. Referencia"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:inputType="none"
-                android:layout_weight="1" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="15dp"
-            android:paddingLeft="10dp">
-            <TextView
+                android:paddingRight="20dp"
+                android:paddingTop="10dp">
+
+                <EditText
+                    android:id="@+id/homePhoneNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_form"
+                    android:hint="Teléfono Casa"
+                    android:inputType="none"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/otherPhoneNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_form"
+                    android:hint="Tel. Referencia"
+                    android:inputType="none"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Fiscal"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimaryDark"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:orientation="vertical">
-            <EditText
-                android:id="@+id/curp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingTop="15dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Fiscal"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="CURP"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
-            <EditText
-                android:id="@+id/rfc"
+                android:paddingRight="20dp">
+
+                <EditText
+                    android:id="@+id/curp"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="CURP"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/rfc"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="RFC"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="RFC"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_height="40dp" />
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/backBtnContactProfile"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@null"
-            android:text="@string/back_profile"
-            android:textColor="@color/colorPrimaryText"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:background="@null"
-            android:text="@string/finish_profile"
-            android:textColor="@color/colorPrimaryText"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="100dp"
-            android:visibility="invisible"/>
-        <Button
-            android:id="@+id/nextBtnContactProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:background="@null"
-            android:text="@string/next_profile"
-            android:textColor="@color/colorPrimaryText"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            />
+            android:background="@color/colorDivider"
+            android:orientation="horizontal"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp"
+            android:paddingTop="1dp">
+
+            <Button
+                android:id="@+id/backBtnContactProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/back_profile"
+                android:textColor="@color/colorPrimaryText" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="100dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/finish_profile"
+                android:textColor="@color/colorPrimaryText"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/nextBtnContactProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/next_profile"
+                android:textColor="@color/colorPrimaryText" />
+        </LinearLayout>
     </RelativeLayout>
 </FrameLayout>

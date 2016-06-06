@@ -2,241 +2,245 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
     android:layout_gravity="center_horizontal"
-    tools:context="app.texium.com.profiles.fragments.ElectoralProfileFragment"
-    android:backgroundTint="@color/colorPrimaryLight">
+    android:background="@color/colorPrimary"
+    android:backgroundTint="@color/colorPrimaryLight"
+    tools:context="app.texium.com.profiles.fragments.ElectoralProfileFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:fillViewport="true">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="15dp"
-            android:paddingLeft="10dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Registar Usuario"
-                android:textSize="15sp"
-                android:textStyle="normal"
-                android:textColor="@color/colorPrimaryDark"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Dirección"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimaryDark"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <Spinner
-                android:id="@+id/state"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="10dp"
-                />
-            <Spinner
-                android:id="@+id/municipality"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                />
-            <Spinner
-                android:id="@+id/location"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                />
-            <EditText
-                android:id="@+id/street"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Calle"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <EditText
-                android:id="@+id/numExt"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:hint="Número Exterior"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:inputType="none"
-                android:layout_weight="1" />
-            <EditText
-                android:id="@+id/numInt"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:hint="Número Interior"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:inputType="none"
-                android:layout_weight="1" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
+            android:layout_height="match_parent"
             android:orientation="vertical">
-            <EditText
-                android:id="@+id/city"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Poblado"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
-            <EditText
-                android:id="@+id/division"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Fraccionamiento"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
-            <EditText
-                android:id="@+id/postalCode"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Código Postal"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"
-                android:inputType="number"/>
-            <!--
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <Button
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:background="@null"
-                    android:text="@string/back_profile"
-                    android:textColor="@color/colorPrimaryText"
-                    android:id="@+id/button"
-                    android:layout_weight="1" />
-                <Button
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:background="@null"
-                    android:text="@string/finish_profile"
-                    android:textColor="@color/colorPrimaryText"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_weight="1" />
-                <Button
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:background="@null"
-                    android:text="@string/next_profile"
-                    android:textColor="@color/colorPrimaryText"
-                    android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingTop="15dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Registar Usuario"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="15sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Dirección"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
             </LinearLayout>
-            -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="20dp">
+
+                <Spinner
+                    android:id="@+id/state"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/shape_form"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <Spinner
+                    android:id="@+id/municipality"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <Spinner
+                    android:id="@+id/location"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/street"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="Calle"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp">
+
+                <EditText
+                    android:id="@+id/numExt"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_form"
+                    android:hint="Número Exterior"
+                    android:inputType="none"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/numInt"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_form"
+                    android:hint="Número Interior"
+                    android:inputType="none"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
+
+                <EditText
+                    android:id="@+id/city"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="Poblado"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/division"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="Fraccionamiento"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/postalCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="Código Postal"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
         </LinearLayout>
-    </LinearLayout>
+
+    </ScrollView>
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/backBtnAddressProfile"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@null"
-            android:text="@string/back_profile"
-            android:textColor="@color/colorPrimaryText"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:background="@null"
-            android:text="@string/finish_profile"
-            android:textColor="@color/colorPrimaryText"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="100dp"
-            android:visibility="invisible"/>
-        <Button
-            android:id="@+id/nextBtnAddressProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:background="@null"
-            android:text="@string/next_profile"
-            android:textColor="@color/colorPrimaryText"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            />
+            android:background="@color/colorDivider"
+            android:orientation="horizontal"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp"
+            android:paddingTop="1dp">
+
+            <Button
+                android:id="@+id/backBtnAddressProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/back_profile"
+                android:textColor="@color/colorPrimaryText"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="100dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/finish_profile"
+                android:textColor="@color/colorPrimaryText"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/nextBtnAddressProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/next_profile"
+                android:textColor="@color/colorPrimaryText" />
+        </LinearLayout>
     </RelativeLayout>
 </FrameLayout>

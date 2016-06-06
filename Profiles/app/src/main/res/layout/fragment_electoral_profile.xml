@@ -2,263 +2,305 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
     android:layout_gravity="center_horizontal"
-    tools:context="app.texium.com.profiles.fragments.ElectoralProfileFragment"
-    android:backgroundTint="@color/colorPrimaryLight">
+    android:background="@color/colorPrimary"
+    android:backgroundTint="@color/colorPrimaryLight"
+    tools:context="app.texium.com.profiles.fragments.ElectoralProfileFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:fillViewport="true">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="15dp"
-            android:paddingLeft="10dp">
-            <TextView
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Registar Usuario"
-                android:textSize="15sp"
-                android:textStyle="normal"
-                android:textColor="@color/colorPrimaryDark"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Electoral &amp; Partidísta"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimaryDark"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <EditText
-                android:id="@+id/ocrINE"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="OCR INE"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp" />
-            <EditText
-                android:id="@+id/electoralKey"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Clave de Elector"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
-            <EditText
-                android:id="@+id/validityINE"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Vigencia INE"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-            <EditText
-                android:id="@+id/electoralSection"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:hint="Secc. Elec."
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:inputType="none"
-                android:layout_weight="1" />
-            <EditText
-                android:id="@+id/localDistrict"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:hint="Dist. Local."
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:inputType="none"
-                android:layout_weight="1" />
-            <EditText
-                android:id="@+id/federalDistrict"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:hint="Dist. Fed."
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:inputType="none"
-                android:layout_weight="1" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:orientation="vertical">
-            <EditText
-                android:id="@+id/electoralAdviser"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Consejero Político"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
-            <Spinner
-                android:id="@+id/politicalParty"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
+                android:orientation="vertical"
                 android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                />
-            <EditText
-                android:id="@+id/sympathizer"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="Simpatizante"
-                android:textSize="15sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:background="@drawable/shape_form"
-                android:paddingLeft="20dp"
-                android:layout_marginTop="10dp"/>
+                android:paddingTop="15dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Registar Usuario"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="15sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Electoral &amp; Partidísta"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="10dp"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/electoralCamera"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/ic_menu_camera"
-                    />
-                <TextView
-                    android:id="@+id/inePhoto"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="20dp">
+
+                <EditText
+                    android:id="@+id/ocrINE"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:text="Fotografía de la Credencial INE"
-                    android:textSize="15sp"
+                    android:background="@drawable/shape_form"
+                    android:hint="OCR INE"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
-                    android:textStyle="bold"
-                    android:paddingLeft="20dp" />
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/electoralKey"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="Clave de Elector"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/validityINE"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="Vigencia INE"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
             </LinearLayout>
-            <!--
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <Button
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp">
+
+                <EditText
+                    android:id="@+id/electoralSection"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:background="@null"
-                    android:text="@string/back_profile"
-                    android:textColor="@color/colorPrimaryText"
-                    android:id="@+id/button"
-                    android:layout_weight="1" />
-                <Button
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_form"
+                    android:hint="Secc. Elec."
+                    android:inputType="none"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/localDistrict"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:background="@null"
-                    android:text="@string/finish_profile"
-                    android:textColor="@color/colorPrimaryText"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_weight="1" />
-                <Button
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_form"
+                    android:hint="Dist. Local."
+                    android:inputType="none"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/federalDistrict"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:background="@null"
-                    android:text="@string/next_profile"
-                    android:textColor="@color/colorPrimaryText"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_form"
+                    android:hint="Dist. Fed."
+                    android:inputType="none"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
             </LinearLayout>
-            -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
+
+                <EditText
+                    android:id="@+id/electoralAdviser"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="Consejero Político"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <Spinner
+                    android:id="@+id/politicalParty"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/sympathizer"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:hint="Simpatizante"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <Spinner
+                    android:id="@+id/subItemPoliticalParty"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp">
+
+                    <Button
+                        android:id="@+id/photoBack"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/ic_menu_camera" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:paddingLeft="20dp"
+                        android:text="Credencial INE (Reverso)"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/colorPrimaryDark"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp">
+
+                    <Button
+                        android:id="@+id/photoFront"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/ic_menu_camera" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:paddingLeft="20dp"
+                        android:text="Credencial INE (Frente)"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/colorPrimaryDark"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/backBtnElectoralProfile"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@null"
-            android:text="Anterior"
-            android:textColor="@color/colorPrimaryText"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true" />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:background="@null"
-            android:text="Finalizar"
-            android:textColor="@color/colorPrimaryText"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="100dp"
-            android:visibility="invisible"/>
-        <Button
-            android:id="@+id/nextBtnElectoralProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:background="@null"
-            android:text="Siguiente"
-            android:textColor="@color/colorPrimaryText"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            />
+            android:background="@color/colorDivider"
+            android:orientation="horizontal"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp"
+            android:paddingTop="1dp">
+
+            <Button
+                android:id="@+id/backBtnElectoralProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/back_profile"
+                android:textColor="@color/colorPrimaryText" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="100dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/finish_profile"
+                android:textColor="@color/colorPrimaryText"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/nextBtnElectoralProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/next_profile"
+                android:textColor="@color/colorPrimaryText" />
+        </LinearLayout>
     </RelativeLayout>
 </FrameLayout>
