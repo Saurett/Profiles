@@ -134,11 +134,26 @@
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
                     android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/professionalResume"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/shape_form"
+                    android:gravity="top"
+                    android:hint="Resumen Ejecutivo"
+                    android:inputType="textMultiLine"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="20dp"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="40dp" />
+                android:layout_height="@dimen/bottom_space" />
         </LinearLayout>
     </ScrollView>
 

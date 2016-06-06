@@ -27,7 +27,7 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
 
     private static Button nextBtn;
     private EditText txtDate,txtAge,txtName,txtFirstSurname,txtSecondSurname;
-    private CheckBox checkBox, checkBox2, checkBox3, checkBox4;
+    private CheckBox checkBox, checkBox2, checkBox3, checkBox4, checkBoxWoman, checkBoxMan;
 
     private ProgressDialog pDialog;
 
@@ -44,10 +44,13 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
         txtSecondSurname = (EditText) view.findViewById(R.id.secondSurname);
         txtDate = (EditText) view.findViewById(R.id.birthDate);
         txtAge = (EditText) view.findViewById(R.id.ageProfile);
+
         checkBox = (CheckBox) view.findViewById(R.id.checkBox);
         checkBox2 = (CheckBox) view.findViewById(R.id.checkBox2);
         checkBox3 = (CheckBox) view.findViewById(R.id.checkBox3);
         checkBox4 = (CheckBox) view.findViewById(R.id.checkBox4);
+        checkBoxWoman = (CheckBox) view.findViewById(R.id.checkBoxWoman);
+        checkBoxMan = (CheckBox) view.findViewById(R.id.checkBoxMan);
 
 
         Button calendarButton = (Button) view.findViewById(R.id.calendarButton) ;
@@ -127,7 +130,7 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
                 personalProfile.setSecondSurname(txtSecondSurname.getText().toString());
                 personalProfile.setBirthDate(txtDate.getText().toString());
                 personalProfile.setAgeProfile(txtAge.getText().toString());
-                personalProfile.setCivilState(getChecked().getText().toString());
+                personalProfile.setCivilState(getCheckedCivilState().getText().toString());
 
                 _PROFILE_MANAGER.setPersonalProfile(personalProfile);
 
@@ -174,12 +177,26 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
                             checkBox4.setChecked(true);
                         }
                         break;
+                    case R.id.checkBoxWoman:
+                        if (checked) {
+                            checkBoxMan.setChecked(false);
+                        } else {
+                            checkBoxWoman.setChecked(true);
+                        }
+                        break;
+                    case R.id.checkBoxMan:
+                        if (checked) {
+                            checkBoxWoman.setChecked(false);
+                        } else {
+                            checkBoxMan.setChecked(true);
+                        }
+                        break;
                 }
                 break;
         }
     }
 
-    public CheckBox getChecked() {
+    public CheckBox getCheckedCivilState() {
         CheckBox checked = null;
 
         List<CheckBox> checkBoxes = new ArrayList<>();
@@ -191,6 +208,27 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
 
         for (CheckBox checkBox:
              checkBoxes) {
+            if (checkBox.isChecked()) {
+                checked = checkBox;
+                break;
+            }
+        }
+
+        return  checked;
+    }
+
+    public CheckBox getCheckedSex() {
+        CheckBox checked = null;
+
+        List<CheckBox> checkBoxes = new ArrayList<>();
+
+        checkBoxes.add(checkBox);
+        checkBoxes.add(checkBox2);
+        checkBoxes.add(checkBox3);
+        checkBoxes.add(checkBox4);
+
+        for (CheckBox checkBox:
+                checkBoxes) {
             if (checkBox.isChecked()) {
                 checked = checkBox;
                 break;
