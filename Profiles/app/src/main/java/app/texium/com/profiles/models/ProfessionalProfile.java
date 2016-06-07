@@ -17,6 +17,7 @@ public class ProfessionalProfile implements Serializable {
     private String actualJob;
     private Integer company;
     private Integer idItemCompany;
+    private String professionalResume;
 
     public ProfessionalProfile(){}
 
@@ -98,5 +99,13 @@ public class ProfessionalProfile implements Serializable {
 
     public void setIdItemCompany(Integer idItemCompany) {
         this.idItemCompany = idItemCompany;
+    }
+
+    public String getProfessionalResume() {
+        return professionalResume;
+    }
+
+    public void setProfessionalResume(String professionalResume) {
+        this.professionalResume = professionalResume;
     }
 }

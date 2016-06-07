@@ -18,6 +18,11 @@ public class ElectoralProfile implements Serializable {
     private Integer idItemPP;
     private String photoINEBack;
     private String photoINEFront;
+    private Integer electoralActor;
+    private Integer idItemEA;
+    private Integer subItemElectoralActor;
+    private Integer idSubItemEA;
+
 
     public ElectoralProfile(){}
 
@@ -85,6 +90,14 @@ public class ElectoralProfile implements Serializable {
         this.politicalParty = politicalParty;
     }
 
+    public Integer getIdItemPP() {
+        return idItemPP;
+    }
+
+    public void setIdItemPP(Integer idItemPP) {
+        this.idItemPP = idItemPP;
+    }
+
     public String getPhotoINEBack() {
         return photoINEBack;
     }
@@ -101,11 +114,35 @@ public class ElectoralProfile implements Serializable {
         this.photoINEFront = photoINEFront;
     }
 
-    public Integer getIdItemPP() {
-        return idItemPP;
+    public Integer getElectoralActor() {
+        return electoralActor;
     }
 
-    public void setIdItemPP(Integer idItemPP) {
-        this.idItemPP = idItemPP;
+    public void setElectoralActor(Integer electoralActor) {
+        this.electoralActor = electoralActor;
+    }
+
+    public Integer getIdItemEA() {
+        return idItemEA;
+    }
+
+    public void setIdItemEA(Integer idItemEA) {
+        this.idItemEA = idItemEA;
+    }
+
+    public Integer getSubItemElectoralActor() {
+        return subItemElectoralActor;
+    }
+
+    public void setSubItemElectoralActor(Integer subItemElectoralActor) {
+        this.subItemElectoralActor = subItemElectoralActor;
+    }
+
+    public Integer getIdSubItemEA() {
+        return idSubItemEA;
+    }
+
+    public void setIdSubItemEA(Integer idSubItemEA) {
+        this.idSubItemEA = idSubItemEA;
     }
 }

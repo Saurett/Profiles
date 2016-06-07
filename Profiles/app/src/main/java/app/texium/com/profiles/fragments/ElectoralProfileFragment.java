@@ -21,9 +21,11 @@ import org.ksoap2.serialization.SoapObject;
 import java.util.ArrayList;
 
 import app.texium.com.profiles.R;
+import app.texium.com.profiles.models.ElectoralActor;
 import app.texium.com.profiles.models.ElectoralProfile;
 import app.texium.com.profiles.models.PoliticalParties;
 import app.texium.com.profiles.models.ProfileManager;
+import app.texium.com.profiles.models.SubItemElectoralActor;
 import app.texium.com.profiles.services.SoapServices;
 import app.texium.com.profiles.utils.Constants;
 
@@ -33,16 +35,19 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
     static FragmentProfileListener activityListener;
 
     private static Button backBtn, nextBtn;
-    private static EditText txtOCR, txtElectoralKey,txtValidityINE, txtElectoralSection,txtLocalDistrict,txtFederalDistrict,txtElectoralAdviser,txtSympathizer;
+    private static EditText txtOCR, txtElectoralKey, txtValidityINE, txtElectoralSection, txtLocalDistrict, txtFederalDistrict, txtElectoralAdviser;
     private ProgressDialog pDialog;
 
-    private static int position;
-    private static int idPoliticalParty;
+    private static int positionPP, positionElectoralActor, positionSubItemEA;
+    private static int idPoliticalParty, idElectoralActor, idSubItemEA;
 
-    private Spinner politicalSpinner;
+    private Spinner politicalSpinner, electoralActorSpinner, subItemEASpinner;
 
-    private ArrayList<String> list;
+    private ArrayList<String> list, electoralActorList, subItemEAList;
+
     private ArrayList<PoliticalParties> politicalParties;
+    private ArrayList<ElectoralActor> electoralActors;
+    private ArrayList<SubItemElectoralActor> subItemEAs;
 
     private static ProfileManager _PROFILE_MANAGER;
 
@@ -62,14 +67,18 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         txtLocalDistrict = (EditText) view.findViewById(R.id.localDistrict);
         txtFederalDistrict = (EditText) view.findViewById(R.id.federalDistrict);
         txtElectoralAdviser = (EditText) view.findViewById(R.id.electoralAdviser);
-        txtSympathizer = (EditText) view.findViewById(R.id.sympathizer);
+
 
         politicalSpinner = (Spinner) view.findViewById(R.id.politicalParty);
+        electoralActorSpinner = (Spinner) view.findViewById(R.id.electoralActor);
+        subItemEASpinner = (Spinner) view.findViewById(R.id.subItemElectoralActor);
 
         backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
 
         politicalSpinner.setOnItemSelectedListener(this);
+        electoralActorSpinner.setOnItemSelectedListener(this);
+        subItemEASpinner.setOnItemSelectedListener(this);
 
         if (null != _PROFILE_MANAGER) {
             if (null != _PROFILE_MANAGER.getElectoralProfile().getOcrINE())
@@ -97,7 +106,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
         _PROFILE_MANAGER = activityListener.getProfileManager();
 
-        AsyncElectoral wsSpinnerPP = new AsyncElectoral(Constants.WS_KEY_SPINNER_ELECTORAL_SERVICE);
+        AsyncElectoral wsSpinnerPP = new AsyncElectoral(Constants.WS_KEY_SPINNER_ALL_ELECTORAL_SERVICE);
         wsSpinnerPP.execute();
 
     }
@@ -130,7 +139,11 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                 electoralProfile.setFederalDistrict(txtFederalDistrict.getText().toString());
                 electoralProfile.setElectoralAdviser(txtElectoralAdviser.getText().toString());
                 electoralProfile.setPoliticalParty(idPoliticalParty);
-                electoralProfile.setIdItemPP(position);
+                electoralProfile.setElectoralActor(idElectoralActor);
+                electoralProfile.setSubItemElectoralActor(idSubItemEA);
+                electoralProfile.setIdItemPP(positionPP);
+                electoralProfile.setIdItemEA(positionElectoralActor);
+                electoralProfile.setIdSubItemEA(positionSubItemEA);
 
                 _PROFILE_MANAGER.setElectoralProfile(electoralProfile);
 
@@ -151,7 +164,11 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                 electoralProfile.setFederalDistrict(txtFederalDistrict.getText().toString());
                 electoralProfile.setElectoralAdviser(txtElectoralAdviser.getText().toString());
                 electoralProfile.setPoliticalParty(idPoliticalParty);
-                electoralProfile.setIdItemPP(position);
+                electoralProfile.setElectoralActor(idElectoralActor);
+                electoralProfile.setSubItemElectoralActor(idSubItemEA);
+                electoralProfile.setIdItemPP(positionPP);
+                electoralProfile.setIdItemEA(positionElectoralActor);
+                electoralProfile.setIdSubItemEA(positionSubItemEA);
 
                 _PROFILE_MANAGER.setElectoralProfile(electoralProfile);
 
@@ -165,9 +182,34 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        this.position = position;
-        PoliticalParties pp = politicalParties.get(position);
-        this.idPoliticalParty = pp.getIdPP();
+
+        switch (parent.getId()) {
+            case R.id.electoralActor:
+                this.positionElectoralActor = position;
+                ElectoralActor ea = electoralActors.get(position);
+                this.idElectoralActor = ea.getIdElectoralActor();
+
+                if (this.idElectoralActor == Constants.SUB_ITEM_ACTION) {
+                    subItemEASpinner.setVisibility(View.VISIBLE);
+                    AsyncElectoral wsSpinnerPP = new AsyncElectoral(
+                            Constants.WS_KEY_SPINNER_SUB_ITEM_EA_SERVICE,
+                            this.idElectoralActor);
+                    wsSpinnerPP.execute();
+                } else {
+                    subItemEASpinner.setVisibility(View.INVISIBLE);
+                }
+                break;
+            case R.id.politicalParty:
+                this.positionPP = position;
+                PoliticalParties pp = politicalParties.get(position);
+                this.idPoliticalParty = pp.getIdPP();
+                break;
+            case R.id.subItemElectoralActor:
+                this.positionSubItemEA = position;
+                SubItemElectoralActor subItemEA = subItemEAs.get(position);
+                this.idSubItemEA = subItemEA.getIdSubItemEA();
+                break;
+        }
     }
 
     @Override
@@ -178,12 +220,19 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
     private class AsyncElectoral extends AsyncTask<Void, Void, Boolean> {
 
-        private SoapObject soapObject;
+        private SoapObject soPoliticalParty, soElectoralActor, soSubItemElectoralActor;
         private Integer webServiceOperation;
+        private Integer webServiceID;
         private String textError;
 
         private AsyncElectoral(Integer wsOperation) {
             webServiceOperation = wsOperation;
+            textError = "";
+        }
+
+        private AsyncElectoral(Integer wsOperation, Integer wsID) {
+            webServiceOperation = wsOperation;
+            webServiceID = wsID;
             textError = "";
         }
 
@@ -202,11 +251,16 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
             Boolean validOperation = false;
 
-            try{
+            try {
                 switch (webServiceOperation) {
-                    case Constants.WS_KEY_SPINNER_ELECTORAL_SERVICE:
-                        soapObject = SoapServices.getSpinnerPP(getContext());
-                        validOperation = (soapObject.getPropertyCount() > 0);
+                    case Constants.WS_KEY_SPINNER_ALL_ELECTORAL_SERVICE:
+                        soPoliticalParty = SoapServices.getSpinnerPP(getContext());
+                        soElectoralActor = SoapServices.getSpinnerElectoralActor(getContext());
+                        validOperation = (soElectoralActor.getPropertyCount() > 0);
+                        break;
+                    case Constants.WS_KEY_SPINNER_SUB_ITEM_EA_SERVICE:
+                        soSubItemElectoralActor = SoapServices.getSpinnerSubItemEA(getContext(), webServiceID);
+                        validOperation = (soSubItemElectoralActor.getPropertyCount() > 0);
                         break;
                 }
             } catch (Exception e) {
@@ -221,48 +275,124 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         protected void onPostExecute(final Boolean success) {
 
             pDialog.dismiss();
-            if(success) {
+            if (success) {
 
-                list = new ArrayList<>();
-                politicalParties = new ArrayList<>();
+                switch (webServiceOperation) {
+
+                    case Constants.WS_KEY_SPINNER_ALL_ELECTORAL_SERVICE:
+
+                        list = new ArrayList<>();
+                        politicalParties = new ArrayList<>();
+
+                        electoralActorList = new ArrayList<>();
+                        electoralActors = new ArrayList<>();
 
 
-                if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                    SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                    if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                        SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+                        if (soPoliticalParty.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soPoliticalParty.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                        for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
-                            SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
-                            PoliticalParties pp = new PoliticalParties();
-                            pp.setIdItem(i);
-                            pp.setIdPP(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                            pp.setAcronymName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ACRONYM_NAME).toString());
-                            pp.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+                                    PoliticalParties pp = new PoliticalParties();
+                                    pp.setIdItem(i);
+                                    pp.setIdPP(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                    pp.setAcronymName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ACRONYM_NAME).toString());
+                                    pp.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
 
-                            politicalParties.add(pp);
-                            list.add(pp.getAcronymName());
+                                    politicalParties.add(pp);
+                                    list.add(pp.getAcronymName());
+                                }
+                            }
                         }
-                    }
+
+                        if (soElectoralActor.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soElectoralActor.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    ElectoralActor ea = new ElectoralActor();
+                                    ea.setIdItem(i);
+                                    ea.setIdElectoralActor(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                    ea.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+
+                                    electoralActors.add(ea);
+                                    electoralActorList.add(ea.getName());
+                                }
+                            }
+                        }
+
+                        try {
+                            //ArrayList<String> list =  BDProfileManagerQuery.getAllPP(getContext());
+
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                                    android.R.layout.simple_spinner_item,
+                                    android.R.id.text1, list);
+
+                            int actualSelection = (null != _PROFILE_MANAGER.getElectoralProfile().getIdItemPP())
+                                    ? _PROFILE_MANAGER.getElectoralProfile().getIdItemPP() : 0;
+                            politicalSpinner.setAdapter(adapter);
+                            politicalSpinner.setSelection(actualSelection);
+
+                            ArrayAdapter<String> electoralActorAdapter = new ArrayAdapter<>(getActivity(),
+                                    android.R.layout.simple_spinner_item,
+                                    android.R.id.text1, electoralActorList);
+
+                            int electoralActorSelection = (null != _PROFILE_MANAGER.getElectoralProfile().getIdItemEA())
+                                    ? _PROFILE_MANAGER.getElectoralProfile().getIdItemEA() : 0;
+                            electoralActorSpinner.setAdapter(electoralActorAdapter);
+                            electoralActorSpinner.setSelection(electoralActorSelection);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case Constants.WS_KEY_SPINNER_SUB_ITEM_EA_SERVICE:
+
+                        subItemEAList = new ArrayList<>();
+                        subItemEAs = new ArrayList<>();
+
+                        if (soSubItemElectoralActor.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soSubItemElectoralActor.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    SubItemElectoralActor subItemEA = new SubItemElectoralActor();
+                                    subItemEA.setIdItem(i);
+                                    subItemEA.setIdSubItemEA(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                    subItemEA.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+
+                                    subItemEAs.add(subItemEA);
+                                    subItemEAList.add(subItemEA.getName());
+                                }
+                            }
+                        }
+
+                        try {
+                            ArrayAdapter<String> subItemAdapter = new ArrayAdapter<>(getActivity(),
+                                    android.R.layout.simple_spinner_item,
+                                    android.R.id.text1, subItemEAList);
+
+                            int electoralActorSelection = (null != _PROFILE_MANAGER.getElectoralProfile().getIdSubItemEA())
+                                    ? _PROFILE_MANAGER.getElectoralProfile().getIdSubItemEA() : 0;
+                            subItemEASpinner.setAdapter(subItemAdapter);
+                            subItemEASpinner.setSelection(electoralActorSelection);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
                 }
-
-                try {
-                    //ArrayList<String> list =  BDProfileManagerQuery.getAllPP(getContext());
-
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                            android.R.layout.simple_spinner_item,
-                            android.R.id.text1,list);
-
-                    int actualSelection = (null != _PROFILE_MANAGER.getElectoralProfile().getIdItemPP())
-                            ? _PROFILE_MANAGER.getElectoralProfile().getIdItemPP() : 0;
-                    politicalSpinner.setAdapter(adapter);
-                    politicalSpinner.setSelection(actualSelection);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
 
             } else {
                 String tempText = (textError.isEmpty() ? "Error desconocido" : textError);

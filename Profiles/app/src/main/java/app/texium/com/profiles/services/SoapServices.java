@@ -287,6 +287,111 @@ public class SoapServices {
         return soapObject;
     }
 
+    public static SoapObject getSpinnerElectoralActor(Context context) throws Exception {
+        SoapObject soapObject;
+        try {
+            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_SPINNER_ELECTORAL_ACTOR;
+            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_NAME_SPINNER_ELECTORAL_ACTOR;
+            String NAMESPACE = Constants.WEB_SERVICE_NAMESPACE;
+            String URL = Constants.WEB_SERVICE_URL;
+
+            SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
+
+            SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            soapEnvelope.dotNet = true;
+            soapEnvelope.setOutputSoapObject(Request);
+
+            HttpTransportSE transport = new HttpTransportSE(URL);
+
+            transport.call(SOAP_ACTION, soapEnvelope);
+            soapObject = (SoapObject) soapEnvelope.getResponse();
+
+        } catch (EOFException e) {
+            e.printStackTrace();
+            Log.e("Soap EOFException",e.getMessage());
+            throw  new Exception(context.getString(R.string.default_exception_error));
+        } catch (ConnectException e) {
+            e.printStackTrace();
+            Log.e("Soap ConnectException", e.getMessage());
+            throw  new ConnectException(context.getString(R.string.default_connect_error));
+        } catch (SocketTimeoutException e ) {
+            e.printStackTrace();
+            Log.e("Soap SocketTimeoutException", e.getMessage());
+            throw  new SocketTimeoutException(context.getString(R.string.default_connect_error));
+        } catch (java.net.SocketException e ) {
+            e.printStackTrace();
+            Log.e("Soap SocketException", e.getMessage());
+            throw  new Exception(context.getString(R.string.default_connect_error));
+        }  catch (HttpResponseException e){
+            e.printStackTrace();
+            Log.e("Soap HttpResponseException",e.getMessage());
+            throw new Exception(context.getString(R.string.default_soap_error));
+        } catch (SoapFault e){
+            e.printStackTrace();
+            Log.e("Soap Fault",e.getMessage());
+            throw new Exception(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Soap Exception", e.getMessage());
+            throw new Exception(context.getString(R.string.default_exception_error));
+        }
+
+        return soapObject;
+    }
+
+    public static SoapObject getSpinnerSubItemEA(Context context, Integer idFather) throws Exception {
+        SoapObject soapObject;
+        try {
+            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_SPINNER_SUB_ITEM_EA;
+            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_NAME_SPINNER_SUB_ITEM_EA;
+            String NAMESPACE = Constants.WEB_SERVICE_NAMESPACE;
+            String URL = Constants.WEB_SERVICE_URL;
+
+            SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
+            Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_FATHER, idFather);
+
+            SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            soapEnvelope.dotNet = true;
+            soapEnvelope.setOutputSoapObject(Request);
+
+            HttpTransportSE transport = new HttpTransportSE(URL);
+
+            transport.call(SOAP_ACTION, soapEnvelope);
+            soapObject = (SoapObject) soapEnvelope.getResponse();
+
+        } catch (EOFException e) {
+            e.printStackTrace();
+            Log.e("Soap EOFException",e.getMessage());
+            throw  new Exception(context.getString(R.string.default_exception_error));
+        } catch (ConnectException e) {
+            e.printStackTrace();
+            Log.e("Soap ConnectException", e.getMessage());
+            throw  new ConnectException(context.getString(R.string.default_connect_error));
+        } catch (SocketTimeoutException e ) {
+            e.printStackTrace();
+            Log.e("Soap SocketTimeoutException", e.getMessage());
+            throw  new SocketTimeoutException(context.getString(R.string.default_connect_error));
+        } catch (java.net.SocketException e ) {
+            e.printStackTrace();
+            Log.e("Soap SocketException", e.getMessage());
+            throw  new Exception(context.getString(R.string.default_connect_error));
+        }  catch (HttpResponseException e){
+            e.printStackTrace();
+            Log.e("Soap HttpResponseException",e.getMessage());
+            throw new Exception(context.getString(R.string.default_soap_error));
+        } catch (SoapFault e){
+            e.printStackTrace();
+            Log.e("Soap Fault",e.getMessage());
+            throw new Exception(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Soap Exception", e.getMessage());
+            throw new Exception(context.getString(R.string.default_exception_error));
+        }
+
+        return soapObject;
+    }
+
     public static SoapObject getSpinnerStates(Context context) throws Exception {
         SoapObject soapObject;
         try {
@@ -296,6 +401,7 @@ public class SoapServices {
             String URL = Constants.WEB_SERVICE_URL;
 
             SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
+
 
             SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             soapEnvelope.dotNet = true;
@@ -668,14 +774,12 @@ public class SoapServices {
 
             SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
 
-
-
             //Personal profile
             Request.addProperty(Constants.WEB_SERVICE_PARAM_NAME, profileManager.getPersonalProfile().getName());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_FIRST_SURNAME, profileManager.getPersonalProfile().getFirstSurname());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_SECOND_SURNAME, profileManager.getPersonalProfile().getSecondSurname());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_DATE_BIRTH, profileManager.getPersonalProfile().getBirthDate());
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_SEX, "Hombre");
+            Request.addProperty(Constants.WEB_SERVICE_PARAM_SEX, profileManager.getPersonalProfile().getSex());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_CIVIL_STATE, profileManager.getPersonalProfile().getCivilState());
             //Electoral Profile
             Request.addProperty(Constants.WEB_SERVICE_PARAM_OCR_INE, profileManager.getElectoralProfile().getOcrINE());
@@ -685,7 +789,7 @@ public class SoapServices {
             Request.addProperty(Constants.WEB_SERVICE_PARAM_FEDERAL_DISTRICT, profileManager.getElectoralProfile().getFederalDistrict());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_ADVISER, profileManager.getElectoralProfile().getElectoralAdviser());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_POLITICAL_PARTY, profileManager.getElectoralProfile().getPoliticalParty());
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR, 1);
+            Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR, profileManager.getElectoralProfile().getElectoralActor());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_FRONT_PHOTO, profileManager.getElectoralProfile().getPhotoINEFront());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_BACK_PHOTO, profileManager.getElectoralProfile().getPhotoINEBack());
             //Address Profile

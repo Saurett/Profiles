@@ -38,7 +38,7 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
     static FragmentProfileListener activityListener;
 
     private static Button backBtn, nextBtn;
-    private static EditText txtNSS, txtActualJob;
+    private static EditText txtNSS, txtActualJob, txtProfessionalResume;
     private ProgressDialog pDialog;
     private static Spinner professionalTitleSpinner, companySpinner,careerSpinner,levelSpinner;
 
@@ -65,10 +65,10 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
 
         txtNSS = (EditText) view.findViewById(R.id.nss);
         txtActualJob = (EditText) view.findViewById(R.id.actualJob);
+        txtProfessionalResume = (EditText) view.findViewById(R.id.professionalResume);
 
         backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
-
 
         professionalTitleSpinner = (Spinner) view.findViewById(R.id.professionalTitle);
         companySpinner = (Spinner) view.findViewById(R.id.company);
@@ -86,6 +86,8 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
                 txtActualJob.setText(_PROFILE_MANAGER.getProfessionalProfile().getActualJob());
             if (null != _PROFILE_MANAGER.getProfessionalProfile().getNss())
                 txtNSS.setText(_PROFILE_MANAGER.getProfessionalProfile().getNss());
+            if (null != _PROFILE_MANAGER.getProfessionalProfile().getProfessionalResume())
+                txtProfessionalResume.setText(_PROFILE_MANAGER.getProfessionalProfile().getProfessionalResume());
         }
 
         return view;
@@ -129,6 +131,7 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
                 professionalProfile.setIdItemCareer(positionCareer);
                 professionalProfile.setIdItemLevel(positionLevel);
                 professionalProfile.setIdItemPT(positionTitle);
+                professionalProfile.setProfessionalResume(txtProfessionalResume.getText().toString());
 
                 _PROFILE_MANAGER.setProfessionalProfile(professionalProfile);
 
@@ -147,6 +150,7 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
                 professionalProfile.setIdItemCareer(positionCareer);
                 professionalProfile.setIdItemLevel(positionLevel);
                 professionalProfile.setIdItemPT(positionTitle);
+                professionalProfile.setProfessionalResume(txtProfessionalResume.getText().toString());
 
                 _PROFILE_MANAGER.setProfessionalProfile(professionalProfile);
 

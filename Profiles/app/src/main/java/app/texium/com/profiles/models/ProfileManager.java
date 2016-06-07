@@ -5,13 +5,15 @@ import java.io.Serializable;
 /**
  * Created by texiumuser on 02/06/2016.
  */
-public class ProfileManager implements Serializable{
+public class ProfileManager implements Serializable {
 
     private PersonalProfile personalProfile;
     private ElectoralProfile electoralProfile;
     private AddressProfile addressProfile;
     private ContactProfile contactProfile;
     private ProfessionalProfile professionalProfile;
+    private StructureProfile structureProfile;
+    private CommentProfile commentProfile;
     private SocialNetworkProfile socialNetworkProfile;
 
     public ProfileManager() {
@@ -20,6 +22,8 @@ public class ProfileManager implements Serializable{
         this.addressProfile = new AddressProfile();
         this.contactProfile = new ContactProfile();
         this.professionalProfile = new ProfessionalProfile();
+        this.structureProfile = new StructureProfile();
+        this.commentProfile = new CommentProfile();
         this.socialNetworkProfile = new SocialNetworkProfile();
     }
 
@@ -69,5 +73,21 @@ public class ProfileManager implements Serializable{
 
     public void setSocialNetworkProfile(SocialNetworkProfile socialNetworkProfile) {
         this.socialNetworkProfile = socialNetworkProfile;
+    }
+
+    public StructureProfile getStructureProfile() {
+        return structureProfile;
+    }
+
+    public void setStructureProfile(StructureProfile structureProfile) {
+        this.structureProfile = structureProfile;
+    }
+
+    public CommentProfile getCommentProfile() {
+        return commentProfile;
+    }
+
+    public void setCommentProfile(CommentProfile commentProfile) {
+        this.commentProfile = commentProfile;
     }
 }

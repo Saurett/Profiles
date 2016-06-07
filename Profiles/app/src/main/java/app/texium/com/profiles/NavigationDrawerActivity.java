@@ -22,6 +22,7 @@ import android.widget.Toast;
 import org.ksoap2.serialization.SoapPrimitive;
 
 import app.texium.com.profiles.fragments.AddressProfileFragment;
+import app.texium.com.profiles.fragments.CommentProfileFragment;
 import app.texium.com.profiles.fragments.ContactProfileFragment;
 import app.texium.com.profiles.fragments.DateProfileFragment;
 import app.texium.com.profiles.fragments.ElectoralProfileFragment;
@@ -29,6 +30,7 @@ import app.texium.com.profiles.fragments.FragmentProfileListener;
 import app.texium.com.profiles.fragments.PersonalProfileFragment;
 import app.texium.com.profiles.fragments.ProfessionalProfileFragment;
 import app.texium.com.profiles.fragments.SocialNetworkProfileFragment;
+import app.texium.com.profiles.fragments.StructureProfileFragment;
 import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.Users;
 import app.texium.com.profiles.services.SoapServices;
@@ -183,6 +185,16 @@ public class NavigationDrawerActivity extends AppCompatActivity
             fragmentManager.beginTransaction().remove(professional).commit();
         }
 
+        Fragment structure = fragmentManager.findFragmentByTag(Constants.FRAGMENT_STRUCTURE_TAG);
+        if (null != structure) {
+            fragmentManager.beginTransaction().remove(structure).commit();
+        }
+
+        Fragment comment = fragmentManager.findFragmentByTag(Constants.FRAGMENT_COMMENT_TAG);
+        if (null != comment) {
+            fragmentManager.beginTransaction().remove(comment).commit();
+        }
+
         Fragment socialNetwork = fragmentManager.findFragmentByTag(Constants.FRAGMENT_SOCIAL_NETWORK_TAG);
         if (null != socialNetwork) {
             fragmentManager.beginTransaction().remove(socialNetwork).commit();
@@ -196,7 +208,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         switch (view.getId()) {
             case R.id.nextBtnPersonalProfile:
-
                 closeAllFragment();
 
                 actualFragment.add(R.id.profiles_fragment_container, new ElectoralProfileFragment(), Constants.FRAGMENT_ELECTORAL_TAG);
@@ -247,17 +258,41 @@ public class NavigationDrawerActivity extends AppCompatActivity
             case R.id.nextBtnProfessionalProfile:
                 closeAllFragment();
 
+                actualFragment.add(R.id.profiles_fragment_container, new StructureProfileFragment(), Constants.FRAGMENT_STRUCTURE_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.backBtnStructureProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new ProfessionalProfileFragment(), Constants.FRAGMENT_PROFESSIONAL_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.nextBtnStructureProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new CommentProfileFragment(), Constants.FRAGMENT_COMMENT_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.backBtnCommentProfile:
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new StructureProfileFragment(), Constants.FRAGMENT_STRUCTURE_TAG);
+                actualFragment.commit();
+                break;
+            case R.id.nextBtnCommentProfile:
+                closeAllFragment();
+
                 actualFragment.add(R.id.profiles_fragment_container, new SocialNetworkProfileFragment(), Constants.FRAGMENT_SOCIAL_NETWORK_TAG);
                 actualFragment.commit();
                 break;
             case R.id.backBtnSNProfile:
                 closeAllFragment();
 
-                actualFragment.add(R.id.profiles_fragment_container, new ProfessionalProfileFragment(), Constants.FRAGMENT_PROFESSIONAL_TAG);
+                actualFragment.add(R.id.profiles_fragment_container, new CommentProfileFragment(), Constants.FRAGMENT_COMMENT_TAG);
                 actualFragment.commit();
                 break;
             case R.id.finishBtnSNProfile:
-                AsyncProfile wsSpinnerPP = new AsyncProfile(Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE,PROFILE_MANAGER);
+                AsyncProfile wsSpinnerPP = new AsyncProfile(Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE);
                 wsSpinnerPP.execute();
             default:
                 break;
@@ -265,10 +300,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
 
     @Override
-    public void showCalendar(View view,EditText txtDate, EditText txtAge) {
-        DateProfileFragment dialog = new DateProfileFragment(txtDate,txtAge);
+    public void showCalendar(View view, EditText txtDate, EditText txtAge) {
+        DateProfileFragment dialog = new DateProfileFragment(txtDate, txtAge);
         android.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
-        dialog.show(ft,"DatePicker");
+        dialog.show(ft, "DatePicker");
     }
 
     @Override
@@ -286,17 +321,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         private SoapPrimitive soapPrimitive;
         private Integer webServiceOperation;
-        private ProfileManager webServiceProfileManager;
         private String textError;
 
         private AsyncProfile(Integer wsOperation) {
             webServiceOperation = wsOperation;
-            textError = "";
-        }
-
-        private AsyncProfile(Integer wsOperation, ProfileManager wsProfileManager) {
-            webServiceOperation = wsOperation;
-            webServiceProfileManager = wsProfileManager;
             textError = "";
         }
 
@@ -315,10 +343,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
             Boolean validOperation = false;
 
-            try{
+            try {
                 switch (webServiceOperation) {
                     case Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE:
-                        soapPrimitive = SoapServices.saveProfile(getApplicationContext(),PROFILE_MANAGER,SESSION_DATA);
+                        soapPrimitive = SoapServices.saveProfile(getApplicationContext(), PROFILE_MANAGER, SESSION_DATA);
                         validOperation = (soapPrimitive != null);
                         break;
                 }
@@ -334,21 +362,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         protected void onPostExecute(final Boolean success) {
 
             pDialog.dismiss();
-            if(success) {
-/*
-                if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                    SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                    if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                        SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
-
-                        for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
-                            SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
-
-                        }
-                    }
-                }
-                */
-
+            if (success) {
                 try {
                     closeAllFragment();
 

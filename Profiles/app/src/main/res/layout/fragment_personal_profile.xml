@@ -201,14 +201,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:text="Femenino" />
+                    android:text="Mujer" />
 
                 <CheckBox
                     android:id="@+id/checkBoxMan"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Masculino" />
+                    android:text="Hombre" />
             </LinearLayout>
 
             <LinearLayout

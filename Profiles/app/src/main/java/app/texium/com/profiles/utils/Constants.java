@@ -21,6 +21,7 @@ public final class Constants {
     public static final int LOGIN_FORM = 1;
     public static final int FORGET_USERNAME_FORM = 2;
     public static final int RESET_PASSWORD_FORM = 3;
+    public static final int SUB_ITEM_ACTION = 2;
     //endregion SYS CONSTANTS//
 
     //region DATABASE STATUS//
@@ -40,6 +41,8 @@ public final class Constants {
     public static final String FRAGMENT_ADDRESS_TAG = "fragment_address_profile";
     public static final String FRAGMENT_CONTACT_TAG = "fragment_contact_profile";
     public static final String FRAGMENT_PROFESSIONAL_TAG = "fragment_professional_profile";
+    public static final String FRAGMENT_STRUCTURE_TAG = "fragment_structure_profile";
+    public static final String FRAGMENT_COMMENT_TAG = "fragment_comment_profile";
     public static final String FRAGMENT_SOCIAL_NETWORK_TAG = "fragment_social_network_profile";
     //endregion FRAGMENT TAGS//
 
@@ -52,6 +55,8 @@ public final class Constants {
     public static final int WS_KEY_SPINNER_ADDRESS_MUNICIPAL_SERVICE = 5;
     public static final int WS_KEY_SPINNER_ADDRESS_LOCATION_SERVICE = 6;
     public static final int WS_KEY_SPINNER_ALL_PROFESSIONAL_SERVICE = 7;
+    public static final int WS_KEY_SPINNER_ALL_ELECTORAL_SERVICE = 8;
+    public static final int WS_KEY_SPINNER_SUB_ITEM_EA_SERVICE = 9;
     public static final int WS_KEY_SPINNER_SAVE_PROFILE_SERVICE = 10;
 
     //endregion WEB SERVICE ID//
@@ -75,6 +80,8 @@ public final class Constants {
      */
     public static final String WEB_SERVICE_SOAP_ACTION = "Perfiles/LogIn";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_PP = "Perfiles/ConsultaPartidosPartidosPoliticos";
+    public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_ELECTORAL_ACTOR = "Perfiles/ConsultaTipoActorElectoral";
+    public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_SUB_ITEM_EA = "Perfiles/ConsultaHijosTipoActorElectoral";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_STATES = "Perfiles/ConsultaEstados";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_MUNICIPAL = "Perfiles/ConsultaMunicipios";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_LOCATION = "Perfiles/ConsultaLocalidades";
@@ -95,6 +102,8 @@ public final class Constants {
     //region SOAP OPERATION//
     public static final String WEB_SERVICE_METHOD_NAME_LOGIN = "LogIn";
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_PP = "ConsultaPartidosPartidosPoliticos";
+    public static final String WEB_SERVICE_METHOD_NAME_SPINNER_ELECTORAL_ACTOR = "ConsultaTipoActorElectoral";
+    public static final String WEB_SERVICE_METHOD_NAME_SPINNER_SUB_ITEM_EA = "ConsultaHijosTipoActorElectoral";
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_STATES = "ConsultaEstados";
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_MUNICIPAL = "ConsultaMunicipios";
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_LOCATION = "ConsultaLocalidades";
@@ -156,6 +165,7 @@ public final class Constants {
     public static final String WEB_SERVICE_PARAM_INSTAGRAM= "Instagram";
     public static final String WEB_SERVICE_PARAM_ID_GROUP= "IDGrupo";
     public static final String WEB_SERVICE_PARAM_ID_USER= "IDUsuario";
+    public static final String WEB_SERVICE_PARAM_ID_FATHER = "IDPadre";
 
     //endregion WEB SERVICE PARAMS//
 
@@ -202,6 +212,8 @@ public final class Constants {
     public static final String MAP_KET_CHECK_TWO  = "Casado";
     public static final String MAP_KET_CHECK_TREE  = "Viudo";
     public static final String MAP_KET_CHECK_FOURTH  = "Divorciado";
+    public static final String MAP_KET_CHECK_MAN  = "Hombre";
+    public static final String MAP_KET_CHECK_WOMAN  = "Mujer";
 
 
     public static Map<String,Integer> MAP_CHECKED;
@@ -211,6 +223,13 @@ public final class Constants {
         MAP_CHECKED.put(Constants.MAP_KET_CHECK_TWO, R.id.checkBox2);
         MAP_CHECKED.put(Constants.MAP_KET_CHECK_TREE, R.id.checkBox3);
         MAP_CHECKED.put(Constants.MAP_KET_CHECK_FOURTH, R.id.checkBox4);
+    }
+
+    public static Map<String,Integer> MAP_CHECKED_SEX;
+    static {
+        MAP_CHECKED_SEX = new HashMap<>();
+        MAP_CHECKED_SEX.put(Constants.MAP_KET_CHECK_WOMAN, R.id.checkBoxWoman);
+        MAP_CHECKED_SEX.put(Constants.MAP_KET_CHECK_MAN, R.id.checkBoxMan);
     }
 
 

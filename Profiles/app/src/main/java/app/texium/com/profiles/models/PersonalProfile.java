@@ -13,6 +13,7 @@ public class PersonalProfile implements Serializable {
     private String birthDate;
     private String ageProfile;
     private String civilState;
+    private String sex;
 
     public PersonalProfile() {
 
@@ -64,5 +65,13 @@ public class PersonalProfile implements Serializable {
 
     public void setCivilState(String civilState) {
         this.civilState = civilState;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 }
