@@ -185,6 +185,7 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
                     States state = states.get(position - 1);
                     this.idState = state.getIdState();
 
+                    municipalitySpinner.setVisibility(View.VISIBLE);
                     AsyncAddress wsSpinnerMunicipal = new AsyncAddress(
                             Constants.WS_KEY_SPINNER_ADDRESS_MUNICIPAL_SERVICE,
                             state.getIdState());
@@ -196,6 +197,7 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
                     Municipalities municipal = municipalities.get(position - 1);
                     this.idMunicipal = municipal.getIdMunicipal();
 
+                    locationSpinner.setVisibility(View.VISIBLE);
                     AsyncAddress wsSpinnerLocation = new AsyncAddress(
                             Constants.WS_KEY_SPINNER_ADDRESS_LOCATION_SERVICE,
                             municipal.getIdState(),municipal.getIdMunicipal());
