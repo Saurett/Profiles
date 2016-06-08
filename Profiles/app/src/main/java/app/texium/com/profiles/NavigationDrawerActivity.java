@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,7 +21,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +39,7 @@ import app.texium.com.profiles.fragments.SocialNetworkProfileFragment;
 import app.texium.com.profiles.fragments.StructureProfileFragment;
 import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.Users;
+import app.texium.com.profiles.services.FileServices;
 import app.texium.com.profiles.services.SoapServices;
 import app.texium.com.profiles.utils.Constants;
 
@@ -50,10 +51,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     private ProgressDialog pDialog;
 
-    private static Intent cameraIntent;
-
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
+
+    private static int idActualCameraBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -319,7 +320,27 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     @Override
     public void showCamera(View view) {
+        this.idActualCameraBtn = view.getId();
+
         mediaContent(MediaStore.ACTION_IMAGE_CAPTURE, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
+
+    //Save media content
+    private void mediaContent(String mediaType, int requestType) {
+        // Check permission for CAMERA
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Check Permissions Now
+            // Callback onRequestPermissionsResult interceptado na Activity MainActivity
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    NavigationDrawerActivity.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        } else {
+            // permission has been granted, continue as usual
+
+            Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(captureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        }
     }
 
     @Override
@@ -329,6 +350,22 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 // Image captured and saved to fileUri specified in the Intent
                 Toast.makeText(this, "Image saved to:\n" +
                         data.getData(), Toast.LENGTH_LONG).show();
+
+                switch (idActualCameraBtn) {
+                    case R.id.pictureBtnBack:
+                        try {
+                            Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                            String encode = FileServices.attachImg(this,imageBitmap);
+                            PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(encode);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        break;
+                    case R.id.pictureBtnFront:
+                        PROFILE_MANAGER.getElectoralProfile().setUriINEFront(data.getData());
+                        break;
+                }
 
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
@@ -347,31 +384,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
             } else {
                 // Video capture failed, advise user
             }
-        }
-    }
-
-    //Save media content
-    private void mediaContent(String mediaType, int requestType) {
-       /*cameraIntent = new Intent(mediaType);*/
-
-        /*
-        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(cameraIntent, requestType);
-        }*/
-
-        // Check permission for CAMERA
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Check Permissions Now
-            // Callback onRequestPermissionsResult interceptado na Activity MainActivity
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA},
-                    NavigationDrawerActivity.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        } else {
-            // permission has been granted, continue as usual
-
-            Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(captureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }
     }
 

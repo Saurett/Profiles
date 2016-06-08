@@ -115,6 +115,12 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        _PROFILE_MANAGER = activityListener.getProfileManager();
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
@@ -147,6 +153,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                 electoralProfile.setIdItemPP(positionPP);
                 electoralProfile.setIdItemEA(positionElectoralActor);
                 electoralProfile.setIdSubItemEA(positionSubItemEA);
+                electoralProfile.setPhotoINEBack(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEBack());
 
                 _PROFILE_MANAGER.setElectoralProfile(electoralProfile);
 
@@ -172,6 +179,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                 electoralProfile.setIdItemPP(positionPP);
                 electoralProfile.setIdItemEA(positionElectoralActor);
                 electoralProfile.setIdSubItemEA(positionSubItemEA);
+                electoralProfile.setPhotoINEBack(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEBack());
 
                 _PROFILE_MANAGER.setElectoralProfile(electoralProfile);
 

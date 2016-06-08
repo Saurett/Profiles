@@ -14,6 +14,8 @@ public class PersonalProfile implements Serializable {
     private String ageProfile;
     private String civilState;
     private String sex;
+    private String birthPlace;
+    private String nationality;
 
     public PersonalProfile() {
 
@@ -73,5 +75,21 @@ public class PersonalProfile implements Serializable {
 
     public void setSex(String sex) {
         this.sex = sex;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
+    }
+
+    public String getBirthPlace() {
+        return birthPlace;
+    }
+
+    public void setBirthPlace(String birthPlace) {
+        this.birthPlace = birthPlace;
     }
 }

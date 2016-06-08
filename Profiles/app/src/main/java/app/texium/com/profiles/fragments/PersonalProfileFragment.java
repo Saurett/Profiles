@@ -25,7 +25,7 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
     static FragmentProfileListener activityListener;
 
     private static Button nextBtn;
-    private EditText txtDate, txtAge, txtName, txtFirstSurname, txtSecondSurname;
+    private EditText txtDate, txtAge, txtName, txtFirstSurname, txtSecondSurname, txtNationality, txtPlace;
     private CheckBox checkBox, checkBox2, checkBox3, checkBox4, checkBoxWoman, checkBoxMan;
 
     private static ProfileManager _PROFILE_MANAGER;
@@ -41,6 +41,8 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
         txtSecondSurname = (EditText) view.findViewById(R.id.secondSurname);
         txtDate = (EditText) view.findViewById(R.id.birthDate);
         txtAge = (EditText) view.findViewById(R.id.ageProfile);
+        txtNationality = (EditText) view.findViewById(R.id.nationality);
+        txtPlace = (EditText) view.findViewById(R.id.birthPlace);
 
         checkBox = (CheckBox) view.findViewById(R.id.checkBox);
         checkBox2 = (CheckBox) view.findViewById(R.id.checkBox2);
@@ -74,6 +76,10 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
                 txtDate.setText(_PROFILE_MANAGER.getPersonalProfile().getBirthDate());
             if (null != _PROFILE_MANAGER.getPersonalProfile().getAgeProfile())
                 txtAge.setText(_PROFILE_MANAGER.getPersonalProfile().getAgeProfile());
+            if (null != _PROFILE_MANAGER.getPersonalProfile().getBirthPlace())
+                txtPlace.setText(_PROFILE_MANAGER.getPersonalProfile().getBirthPlace());
+            if (null != _PROFILE_MANAGER.getPersonalProfile().getNationality())
+                txtNationality.setText(_PROFILE_MANAGER.getPersonalProfile().getNationality());
             if (null != _PROFILE_MANAGER.getPersonalProfile().getCivilState()) {
                 Integer check = Constants.MAP_CHECKED.get(_PROFILE_MANAGER.getPersonalProfile().getCivilState());
 
@@ -148,6 +154,8 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
                 personalProfile.setAgeProfile(txtAge.getText().toString());
                 personalProfile.setCivilState(getCheckedCivilState().getText().toString());
                 personalProfile.setSex(getCheckedSex().getText().toString());
+                personalProfile.setNationality(txtNationality.getText().toString());
+                personalProfile.setBirthPlace(txtPlace.getText().toString());
 
                 _PROFILE_MANAGER.setPersonalProfile(personalProfile);
 

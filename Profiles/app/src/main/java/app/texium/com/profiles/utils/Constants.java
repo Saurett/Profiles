@@ -92,8 +92,8 @@ public final class Constants {
     public static final String WEB_SERVICE_SOAP_ACTION_ALL_USERS = "192.168.12.10/LoginMovil";
     public static final String WEB_SERVICE_SOAP_ACTION_SAVE_PROFILE = "Perfiles/AgregarPersona";
     public static final String WEB_SERVICE_NAMESPACE = "Perfiles";
-    //public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
-    public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
+    public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
+    //public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
 
 
     //public static final String WEB_SERVICE_URL = "http://187.216.220.51/ServicioWeb/Servicio_Android.asmx";
@@ -125,6 +125,8 @@ public final class Constants {
     public static final String WEB_SERVICE_PARAM_FIRST_SURNAME = "ApellidoPaterno";
     public static final String WEB_SERVICE_PARAM_SECOND_SURNAME = "ApellidoMaterno";
     public static final String WEB_SERVICE_PARAM_DATE_BIRTH = "FechaNacimiento";
+    public static final String WEB_SERVICE_PARAM_PLACE_BIRTH = "LugarNacimiento";
+    public static final String WEB_SERVICE_PARAM_NATIONALITY = "Nacionalidad";
     public static final String WEB_SERVICE_PARAM_SEX = "Sexo";
     public static final String WEB_SERVICE_PARAM_CIVIL_STATE = "EstadoCivil";
     public static final String WEB_SERVICE_PARAM_OCR_INE = "OCRINE";
@@ -134,7 +136,8 @@ public final class Constants {
     public static final String WEB_SERVICE_PARAM_FEDERAL_DISTRICT= "DistritoFederal";
     public static final String WEB_SERVICE_PARAM_ELECTORAL_ADVISER= "ConsejeroPolitico";
     public static final String WEB_SERVICE_PARAM_ID_POLITICAL_PARTY= "IDPartidoPolitico";
-    public static final String WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR= "IDTipoActorElectoral";
+    public static final String WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR= "IDTipoActorElectoralPadre";
+    public static final String WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_SON= "IDTipoActorElectoralHijo";
     public static final String WEB_SERVICE_PARAM_FRONT_PHOTO= "FotoINEFrente";
     public static final String WEB_SERVICE_PARAM_BACK_PHOTO= "FotoINEReverso";
     public static final String WEB_SERVICE_PARAM_ID_STATE= "IDEstado";
@@ -160,6 +163,12 @@ public final class Constants {
     public static final String WEB_SERVICE_PARAM_ID_TITLE= "IDDocumentoObtenido";
     public static final String WEB_SERVICE_PARAM_ACTUAL_JOB= "EmpleoActual";
     public static final String WEB_SERVICE_PARAM_ID_COMPANY= "IDEmpresa";
+    public static final String WEB_SERVICE_PARAM_COMMITTEE= "Comite";
+    public static final String WEB_SERVICE_PARAM_REFERENCE = "Referenciua";
+    public static final String WEB_SERVICE_PARAM_COORDINATOR = "Coordinador";
+    public static final String WEB_SERVICE_PARAM_LINK = "Enlace";
+    public static final String WEB_SERVICE_PARAM_COMMENT = "Observaciones";
+    public static final String WEB_SERVICE_PARAM_RESUME= "ResumenEjecutivo";
     public static final String WEB_SERVICE_PARAM_FACEBOOK= "Facebook";
     public static final String WEB_SERVICE_PARAM_TWITTER= "Twitter";
     public static final String WEB_SERVICE_PARAM_INSTAGRAM= "Instagram";
