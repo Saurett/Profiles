@@ -1,10 +1,15 @@
 package app.texium.com.profiles;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +49,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
     private static ProfileManager PROFILE_MANAGER;
 
     private ProgressDialog pDialog;
+
+    private static Intent cameraIntent;
+
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -307,6 +318,64 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
 
     @Override
+    public void showCamera(View view) {
+        mediaContent(MediaStore.ACTION_IMAGE_CAPTURE, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                // Image captured and saved to fileUri specified in the Intent
+                Toast.makeText(this, "Image saved to:\n" +
+                        data.getData(), Toast.LENGTH_LONG).show();
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // User cancelled the image capture
+            } else {
+                // Image capture failed, advise user
+            }
+        }
+
+        if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                // Video captured and saved to fileUri specified in the Intent
+                Toast.makeText(this, "Video saved to:\n" +
+                        data.getData(), Toast.LENGTH_LONG).show();
+            } else if (resultCode == RESULT_CANCELED) {
+                // User cancelled the video capture
+            } else {
+                // Video capture failed, advise user
+            }
+        }
+    }
+
+    //Save media content
+    private void mediaContent(String mediaType, int requestType) {
+       /*cameraIntent = new Intent(mediaType);*/
+
+        /*
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(cameraIntent, requestType);
+        }*/
+
+        // Check permission for CAMERA
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Check Permissions Now
+            // Callback onRequestPermissionsResult interceptado na Activity MainActivity
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    NavigationDrawerActivity.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        } else {
+            // permission has been granted, continue as usual
+
+            Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(captureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        }
+    }
+
+    @Override
     public ProfileManager updateProfile(ProfileManager oldProfile) {
         PROFILE_MANAGER = oldProfile;
         return PROFILE_MANAGER;
@@ -316,6 +385,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public ProfileManager getProfileManager() {
         return PROFILE_MANAGER;
     }
+
+
 
     private class AsyncProfile extends AsyncTask<Void, Void, Boolean> {
 

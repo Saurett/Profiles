@@ -14,4 +14,5 @@ public interface FragmentProfileListener {
     void showCalendar(View view, EditText txtDate, EditText txtAge);
     ProfileManager updateProfile(ProfileManager oldProfile);
     ProfileManager getProfileManager();
+    void showCamera(View view);
 }

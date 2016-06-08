@@ -34,7 +34,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
     static FragmentProfileListener activityListener;
 
-    private static Button backBtn, nextBtn;
+    private static Button backBtn, nextBtn, pictureBtnBack, pictureBtnFront;
     private static EditText txtOCR, txtElectoralKey, txtValidityINE, txtElectoralSection, txtLocalDistrict, txtFederalDistrict, txtElectoralAdviser;
     private ProgressDialog pDialog;
 
@@ -59,6 +59,8 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
         backBtn = (Button) view.findViewById(R.id.backBtnElectoralProfile);
         nextBtn = (Button) view.findViewById(R.id.nextBtnElectoralProfile);
+        pictureBtnBack = (Button) view.findViewById(R.id.pictureBtnBack);
+        pictureBtnFront = (Button) view.findViewById(R.id.pictureBtnFront);
 
         txtOCR = (EditText) view.findViewById(R.id.ocrINE);
         txtElectoralKey = (EditText) view.findViewById(R.id.electoralKey);
@@ -68,13 +70,14 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         txtFederalDistrict = (EditText) view.findViewById(R.id.federalDistrict);
         txtElectoralAdviser = (EditText) view.findViewById(R.id.electoralAdviser);
 
-
         politicalSpinner = (Spinner) view.findViewById(R.id.politicalParty);
         electoralActorSpinner = (Spinner) view.findViewById(R.id.electoralActor);
         subItemEASpinner = (Spinner) view.findViewById(R.id.subItemElectoralActor);
 
         backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
+        pictureBtnBack.setOnClickListener(this);
+        pictureBtnFront.setOnClickListener(this);
 
         politicalSpinner.setOnItemSelectedListener(this);
         electoralActorSpinner.setOnItemSelectedListener(this);
@@ -174,6 +177,9 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
                 activityListener.updateProfile(_PROFILE_MANAGER);
                 activityListener.moveFragments(v);
+                break;
+            case R.id.pictureBtnBack: case R.id.pictureBtnFront:
+                activityListener.showCamera(v);
                 break;
             default:
                 break;

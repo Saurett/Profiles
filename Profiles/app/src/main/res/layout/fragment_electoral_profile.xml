@@ -214,7 +214,7 @@
                     android:paddingTop="10dp">
 
                     <Button
-                        android:id="@+id/photoBack"
+                        android:id="@+id/pictureBtnBack"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:background="@drawable/ic_menu_camera" />
@@ -237,7 +237,7 @@
                     android:paddingTop="10dp">
 
                     <Button
-                        android:id="@+id/photoFront"
+                        android:id="@+id/pictureBtnFront"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:background="@drawable/ic_menu_camera" />
