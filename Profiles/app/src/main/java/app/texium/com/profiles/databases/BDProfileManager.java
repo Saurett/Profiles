@@ -41,6 +41,13 @@ public class BDProfileManager extends SQLiteOpenHelper {
         public static final String PICTURE = "picture";
     }
 
+    public static class ColumnCompany {
+        public static final String COMPANY_CVE = "cveCompany";
+        public static final String COMPANY_ID = "idCompany";
+        public static final String NAME = "name";
+        public static final String GROUP_ID = "idGroup";
+    }
+
     public static final String CREATE_USERS_TABLE_SCRIPT =
             "create table " + USERS_TABLE_NAME + "(" +
                     ColumnUsers.USER_CVE + " " + INT_TYPE + " primary key autoincrement," +
@@ -72,18 +79,13 @@ public class BDProfileManager extends SQLiteOpenHelper {
                     ColumnPoliticalParties.PICTURE + " " + STRING_TYPE +
                     ")";
 
-
-    public static final String INSERT_DEFAULT_PP_SCRIPT =
-            "insert into " + PP_TABLE_NAME  + "(" +
-                    ColumnPoliticalParties.PP_CVE + "," +
-                    ColumnPoliticalParties.PP_ID + "," +
-                    ColumnPoliticalParties.NAME + "," +
-                    ColumnPoliticalParties.ACRONYM + "," +
-                    ColumnPoliticalParties.PICTURE + ") values" +
-                    "( 1, 0, 'Selecciona partido politico ... ', 'Selecciona partido politico ... ','no tiene')," +
-                    "( 2, 1, 'Partido Revolucionario Institucional', 'PRI','no tiene'')," +
-                    "( 3, 2, 'Partido Acción Nacional', 'PAN','no tiene')," +
-                    "( 4, 3, 'Partido Revolucionario Demodratico', 'PRD','no tiene')";
+    public static final String CREATE_COMPANY_TABLE_SCRIPT =
+            "create table " + COMPANY_TABLE_NAME + "(" +
+                    ColumnCompany.COMPANY_CVE + " " + INT_TYPE + " primary key autoincrement," +
+                    ColumnCompany.COMPANY_ID + " " + INT_TYPE + "," +
+                    ColumnCompany.NAME + " " + STRING_TYPE + "," +
+                    ColumnCompany.GROUP_ID + " " + INT_TYPE +
+                    ")";
 
     public static  final String DROP_TABLE_IF_EXISTS = "drop table if exists ";
 
@@ -94,8 +96,9 @@ public class BDProfileManager extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_USERS_TABLE_SCRIPT);
+        db.execSQL(CREATE_COMPANY_TABLE_SCRIPT);
+
         db.execSQL(INSERT_DEFAULT_USER_SCRIPT);
-        //db.execSQL(INSERT_DEFAULT_PP_SCRIPT);
     }
 
     @Override
@@ -103,11 +106,12 @@ public class BDProfileManager extends SQLiteOpenHelper {
 
         db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.USERS_TABLE_NAME);
         db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.PP_TABLE_NAME);
+        db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.COMPANY_TABLE_NAME);
 
         db.execSQL(CREATE_USERS_TABLE_SCRIPT);
         db.execSQL(CREATE_PP_TABLE_SCRIPT);
+        db.execSQL(CREATE_COMPANY_TABLE_SCRIPT);
 
         db.execSQL(INSERT_DEFAULT_USER_SCRIPT);
-        //db.execSQL(INSERT_DEFAULT_PP_SCRIPT);
     }
 }
