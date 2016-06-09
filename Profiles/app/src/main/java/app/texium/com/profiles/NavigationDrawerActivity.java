@@ -1,16 +1,17 @@
 package app.texium.com.profiles;
 
-import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -27,6 +28,12 @@ import android.widget.Toast;
 
 import org.ksoap2.serialization.SoapPrimitive;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import app.texium.com.profiles.fragments.AddressProfileFragment;
 import app.texium.com.profiles.fragments.CommentProfileFragment;
 import app.texium.com.profiles.fragments.ContactProfileFragment;
@@ -40,6 +47,7 @@ import app.texium.com.profiles.fragments.StructureProfileFragment;
 import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.Users;
 import app.texium.com.profiles.services.FileServices;
+import app.texium.com.profiles.services.MarshMallowPermission;
 import app.texium.com.profiles.services.SoapServices;
 import app.texium.com.profiles.utils.Constants;
 
@@ -51,10 +59,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     private ProgressDialog pDialog;
 
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1;
+
+    public static final int MEDIA_TYPE_IMAGE = 1;
+    public static final int MEDIA_TYPE_VIDEO = 2;
 
     private static int idActualCameraBtn;
+    private Uri fileUri;
+
+    private MarshMallowPermission marshMallowPermission = new MarshMallowPermission(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -320,27 +333,73 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     @Override
     public void showCamera(View view) {
-        this.idActualCameraBtn = view.getId();
+        idActualCameraBtn = view.getId();
 
-        mediaContent(MediaStore.ACTION_IMAGE_CAPTURE, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        if (!marshMallowPermission.checkPermissionForCamera()) {
+            marshMallowPermission.requestPermissionForCamera();
+        } else {
+            if (!marshMallowPermission.checkPermissionForExternalStorage()) {
+                marshMallowPermission.requestPermissionForExternalStorage();
+            } else {
+
+                /*
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                }*/
+
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                // Ensure that there's a camera activity to handle the intent
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    // Create the File where the photo should go
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                    } catch (IOException ex) {
+                        // Error occurred while creating the File
+                    }
+                    // Continue only if the File was successfully created
+                    if (photoFile != null) {
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                Uri.fromFile(photoFile));
+                        startActivityForResult(takePictureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                    }
+                }
+            }
+        }
     }
 
-    //Save media content
-    private void mediaContent(String mediaType, int requestType) {
-        // Check permission for CAMERA
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Check Permissions Now
-            // Callback onRequestPermissionsResult interceptado na Activity MainActivity
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA},
-                    NavigationDrawerActivity.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        } else {
-            // permission has been granted, continue as usual
+    String mCurrentPhotoPath;
 
-            Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(captureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        }
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
     }
 
     @Override
@@ -348,41 +407,49 @@ public class NavigationDrawerActivity extends AppCompatActivity
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 // Image captured and saved to fileUri specified in the Intent
-                Toast.makeText(this, "Image saved to:\n" +
-                        data.getData(), Toast.LENGTH_LONG).show();
+                try {
 
-                switch (idActualCameraBtn) {
-                    case R.id.pictureBtnBack:
-                        try {
-                            Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
-                            String encode = FileServices.attachImg(this,imageBitmap);
-                            PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(encode);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    /*
+                    Bundle extras = data.getExtras();
+                    Bitmap photo = (Bitmap) extras.get("data");
 
-                        break;
-                    case R.id.pictureBtnFront:
-                        PROFILE_MANAGER.getElectoralProfile().setUriINEFront(data.getData());
-                        break;
+                    // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+                    Uri tempUri = getImageUri(getApplicationContext(), photo);
+
+                    // CALL THIS METHOD TO GET THE ACTUAL PATH
+                    File finalFile = new File(getRealPathFromURI(tempUri));
+
+                    finalFile.getName();
+
+
+                    System.out.println(finalFile.getAbsolutePath());
+
+                    String encode = FileServices.attachImg(this,finalFile);
+
+                    if (idActualCameraBtn == R.id.pictureBtnBack) {
+                        PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(encode);
+                    } else {
+                        PROFILE_MANAGER.getElectoralProfile().setPhotoINEFront(encode);
+                    }
+                    */
+
+                    Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                    File f = new File(mCurrentPhotoPath);
+                    Uri contentUri = Uri.fromFile(f);
+                    mediaScanIntent.setData(contentUri);
+                    this.sendBroadcast(mediaScanIntent);
+
+                    PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(FileServices.attachImg(this,f));
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
             } else {
                 // Image capture failed, advise user
-            }
-        }
-
-        if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // Video captured and saved to fileUri specified in the Intent
-                Toast.makeText(this, "Video saved to:\n" +
-                        data.getData(), Toast.LENGTH_LONG).show();
-            } else if (resultCode == RESULT_CANCELED) {
-                // User cancelled the video capture
-            } else {
-                // Video capture failed, advise user
             }
         }
     }

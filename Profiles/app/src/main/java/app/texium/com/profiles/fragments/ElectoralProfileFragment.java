@@ -199,29 +199,29 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
         switch (parent.getId()) {
             case R.id.electoralActor:
-                this.positionElectoralActor = position;
-                ElectoralActor ea = electoralActors.get(position);
-                this.idElectoralActor = ea.getIdElectoralActor();
+                subItemEASpinner.setVisibility(View.INVISIBLE);
 
-                if (this.idElectoralActor == Constants.SUB_ITEM_ACTION) {
+                positionElectoralActor = position;
+                ElectoralActor ea = electoralActors.get(position);
+                idElectoralActor = ea.getIdElectoralActor();
+
+                if (idElectoralActor == Constants.SUB_ITEM_ACTION) {
                     subItemEASpinner.setVisibility(View.VISIBLE);
                     AsyncElectoral wsSpinnerPP = new AsyncElectoral(
                             Constants.WS_KEY_SPINNER_SUB_ITEM_EA_SERVICE,
-                            this.idElectoralActor);
+                            idElectoralActor);
                     wsSpinnerPP.execute();
-                } else {
-                    subItemEASpinner.setVisibility(View.INVISIBLE);
                 }
                 break;
             case R.id.politicalParty:
-                this.positionPP = position;
+                positionPP = position;
                 PoliticalParties pp = politicalParties.get(position);
-                this.idPoliticalParty = pp.getIdPP();
+                idPoliticalParty = pp.getIdPP();
                 break;
             case R.id.subItemElectoralActor:
-                this.positionSubItemEA = position;
+                positionSubItemEA = position;
                 SubItemElectoralActor subItemEA = subItemEAs.get(position);
-                this.idSubItemEA = subItemEA.getIdSubItemEA();
+                idSubItemEA = subItemEA.getIdSubItemEA();
                 break;
         }
     }

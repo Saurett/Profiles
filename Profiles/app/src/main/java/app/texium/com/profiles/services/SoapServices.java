@@ -793,8 +793,8 @@ public class SoapServices {
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR, profileManager.getElectoralProfile().getElectoralActor());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_SON, profileManager.getElectoralProfile().getSubItemElectoralActor());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_POLITICAL_PARTY, profileManager.getElectoralProfile().getPoliticalParty());
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_FRONT_PHOTO, profileManager.getElectoralProfile().getPhotoINEFront());
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_BACK_PHOTO, profileManager.getElectoralProfile().getPhotoINEFront());
+            Request.addProperty(Constants.WEB_SERVICE_PARAM_FRONT_PHOTO, profileManager.getElectoralProfile().getPhotoINEBack());
+            Request.addProperty(Constants.WEB_SERVICE_PARAM_BACK_PHOTO, profileManager.getElectoralProfile().getPhotoINEBack());
             //Address Profile
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_STATE, profileManager.getAddressProfile().getIdState());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_MUNICIPAL, profileManager.getAddressProfile().getIdMunicipal());

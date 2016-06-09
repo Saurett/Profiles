@@ -2,11 +2,14 @@ package app.texium.com.profiles.services;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Base64;
+import android.util.Base64OutputStream;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import app.texium.com.profiles.R;
 
@@ -15,15 +18,38 @@ import app.texium.com.profiles.R;
  */
 public class FileServices {
 
-    public static String attachImg(Activity activity, Bitmap img) throws Exception {
+    public static String attachImg(Activity activity, File file) throws Exception {
         String imageEncoded;
         Context context = activity.getApplicationContext();
 
         try {
+
+/*
+            InputStream is = activity.getContentResolver()
+                    .openInputStream(uri);
+            Bitmap img = BitmapFactory.decodeStream(is);
             ByteArrayOutputStream convert = new ByteArrayOutputStream();
-            img.compress(Bitmap.CompressFormat.JPEG, 50, convert);
+            img.compress(Bitmap.CompressFormat.JPEG, 100, convert);
             byte[] b = convert.toByteArray();
             imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+            */
+
+            FileInputStream inputStream = new FileInputStream(file.getAbsolutePath());
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            Base64OutputStream output64 = new Base64OutputStream(output, Base64.DEFAULT);
+            try {
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    output64.write(buffer, 0, bytesRead);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            output64.close();
+
+            imageEncoded = output.toString();
+
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("AttachImg Exception",e.getMessage());
