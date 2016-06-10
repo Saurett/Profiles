@@ -3,6 +3,8 @@ package app.texium.com.profiles.fragments;
 import android.view.View;
 import android.widget.EditText;
 
+import java.io.IOException;
+
 import app.texium.com.profiles.models.ProfileManager;
 
 /**
@@ -14,5 +16,5 @@ public interface FragmentProfileListener {
     void showCalendar(View view, EditText txtDate, EditText txtAge);
     ProfileManager updateProfile(ProfileManager oldProfile);
     ProfileManager getProfileManager();
-    void showCamera(View view);
+    void showCamera(View view) throws IOException;
 }

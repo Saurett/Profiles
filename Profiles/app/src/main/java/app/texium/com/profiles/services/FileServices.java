@@ -2,6 +2,9 @@ package app.texium.com.profiles.services;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Base64;
 import android.util.Base64OutputStream;
 import android.util.Log;
@@ -10,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import app.texium.com.profiles.R;
 
@@ -18,23 +22,22 @@ import app.texium.com.profiles.R;
  */
 public class FileServices {
 
-    public static String attachImg(Activity activity, File file) throws Exception {
+    public static String attachImg(Activity activity, Uri uri) throws Exception {
         String imageEncoded;
         Context context = activity.getApplicationContext();
 
         try {
 
-/*
             InputStream is = activity.getContentResolver()
                     .openInputStream(uri);
             Bitmap img = BitmapFactory.decodeStream(is);
             ByteArrayOutputStream convert = new ByteArrayOutputStream();
-            img.compress(Bitmap.CompressFormat.JPEG, 100, convert);
+            img.compress(Bitmap.CompressFormat.JPEG, 20, convert);
             byte[] b = convert.toByteArray();
             imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
-            */
 
-            FileInputStream inputStream = new FileInputStream(file.getAbsolutePath());
+            //FileInputStream inputStream = new FileInputStream(file.getAbsolutePath());
+            /*FileInputStream inputStream = new FileInputStream(file.getAbsolutePath());
             byte[] buffer = new byte[8192];
             int bytesRead;
             ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -48,7 +51,7 @@ public class FileServices {
             }
             output64.close();
 
-            imageEncoded = output.toString();
+            imageEncoded = output.toString();*/
 
         } catch (Exception e) {
             e.printStackTrace();

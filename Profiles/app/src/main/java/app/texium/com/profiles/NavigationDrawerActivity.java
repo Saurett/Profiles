@@ -69,6 +69,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     private MarshMallowPermission marshMallowPermission = new MarshMallowPermission(this);
 
+    private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +113,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         */
+        mAlbumStorageDirFactory = new BaseAlbumDirFactory();
     }
 
     public void onStart() {
@@ -332,7 +335,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
 
     @Override
-    public void showCamera(View view) {
+    public void showCamera(View view) throws IOException {
         idActualCameraBtn = view.getId();
 
         if (!marshMallowPermission.checkPermissionForCamera()) {
@@ -360,8 +363,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
                     }
                     // Continue only if the File was successfully created
                     if (photoFile != null) {
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                Uri.fromFile(photoFile));
+                        //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(photoFile));
+
+                        // Save a file: path for use with ACTION_VIEW intents
+                        mCurrentPhotoPath = photoFile.getAbsolutePath();
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                         startActivityForResult(takePictureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
                     }
                 }
@@ -375,17 +381,41 @@ public class NavigationDrawerActivity extends AppCompatActivity
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
+        File albumF = getAlbumDir();
+        //File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
-                storageDir      /* directory */
+                albumF      /* directory */
         );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
+    }
+
+    private File getAlbumDir() {
+        File storageDir = null;
+
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+
+            storageDir = mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
+
+            if (storageDir != null) {
+                if (! storageDir.mkdirs()) {
+                    if (! storageDir.exists()){
+                        //Log.d("CameraSample", "failed to create directory");
+                        return null;
+                    }
+                }
+            }
+
+        } else {
+            //Log.v(getString(R.string.app_name), "External storage is not mounted READ/WRITE.");
+        }
+        return storageDir;
+    }
+
+    /* Photo album for this application */
+    private String getAlbumName() {
+        return "Profiles";
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
@@ -438,9 +468,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
                     Uri contentUri = Uri.fromFile(f);
                     mediaScanIntent.setData(contentUri);
                     this.sendBroadcast(mediaScanIntent);
+                    //String encode = FileServices.attachImg(this,f);
 
-                    PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(FileServices.attachImg(this,f));
-
+                    //PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(FileServices.attachImg(this,f));
+                    //PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(encode);
+                    PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(FileServices.attachImg(this,contentUri));
 
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import org.ksoap2.serialization.SoapObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import app.texium.com.profiles.R;
@@ -187,7 +188,11 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                 activityListener.moveFragments(v);
                 break;
             case R.id.pictureBtnBack: case R.id.pictureBtnFront:
-                activityListener.showCamera(v);
+                try {
+                    activityListener.showCamera(v);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             default:
                 break;
