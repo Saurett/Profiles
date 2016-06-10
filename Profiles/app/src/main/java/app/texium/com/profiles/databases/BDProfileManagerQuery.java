@@ -15,7 +15,7 @@ import app.texium.com.profiles.models.Users;
 public class BDProfileManagerQuery {
 
     static String BDName = "BDProfileManager";
-    static Integer BDVersion = 6;
+    static Integer BDVersion = 8;
 
     public static Users getUserByCredentials(Context context, Users u) throws Exception {
         Users data = new Users();

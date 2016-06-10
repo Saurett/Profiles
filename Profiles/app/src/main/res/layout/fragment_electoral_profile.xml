@@ -60,7 +60,9 @@
                     android:singleLine="true"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:inputType="textVisiblePassword"
+                    android:maxLength="13"/>
 
                 <EditText
                     android:id="@+id/electoralKey"
@@ -74,7 +76,9 @@
                     android:singleLine="true"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:inputType="textVisiblePassword"
+                    android:maxLength="13"/>
 
                 <EditText
                     android:id="@+id/validityINE"
@@ -88,7 +92,10 @@
                     android:singleLine="true"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:inputType="textVisiblePassword"
+                    android:maxLength="10"
+                    />
             </LinearLayout>
 
             <LinearLayout
@@ -105,7 +112,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/shape_form"
                     android:hint="Secc. Elec."
-                    android:inputType="none"
+                    android:inputType="number"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
@@ -122,7 +129,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/shape_form"
                     android:hint="Dist. Local."
-                    android:inputType="none"
+                    android:inputType="number"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
@@ -137,7 +144,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/shape_form"
                     android:hint="Dist. Fed."
-                    android:inputType="none"
+                    android:inputType="number"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
@@ -165,7 +172,8 @@
                     android:singleLine="true"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:inputType="textNoSuggestions"/>
 
                 <Spinner
                     android:id="@+id/politicalParty"

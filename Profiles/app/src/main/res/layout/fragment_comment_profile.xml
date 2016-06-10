@@ -37,7 +37,8 @@
                     android:text="Observaciones"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="25sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:inputType="textImeMultiLine"/>
             </LinearLayout>
 
             <LinearLayout

@@ -55,6 +55,7 @@
                     android:layout_height="40dp"
                     android:background="@drawable/shape_form"
                     android:hint="Nombre(s)"
+                    android:inputType="textNoSuggestions"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
@@ -69,6 +70,7 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/shape_form"
                     android:hint="Apellido Paterno"
+                    android:inputType="textNoSuggestions"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
@@ -83,6 +85,8 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/shape_form"
                     android:hint="Apellido Materno"
+                    android:imeOptions="actionDone"
+                    android:inputType="textNoSuggestions"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
@@ -102,7 +106,8 @@
                     android:id="@+id/calendarButton"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:background="@android:drawable/ic_menu_my_calendar" />
+                    android:background="@android:drawable/ic_menu_my_calendar"
+                    android:inputType="none" />
 
                 <EditText
                     android:id="@+id/birthDate"
@@ -149,6 +154,7 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/shape_form"
                     android:hint="Lugar de Nacimiento"
+                    android:inputType="textNoSuggestions"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
@@ -163,6 +169,7 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/shape_form"
                     android:hint="Nacionalidad"
+                    android:inputType="textNoSuggestions"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
