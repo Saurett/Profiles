@@ -3,9 +3,11 @@ package app.texium.com.profiles.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,11 +33,11 @@ import app.texium.com.profiles.services.SoapServices;
 import app.texium.com.profiles.utils.Constants;
 
 
-public class ElectoralProfileFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class ElectoralProfileFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener, DialogInterface.OnClickListener {
 
     static FragmentProfileListener activityListener;
 
-    private static Button backBtn, nextBtn, pictureBtnBack, pictureBtnFront;
+    private static Button backBtn, nextBtn, pictureBtnBack, pictureBtnFront, deleteBtnBack, deleteBtnFront;
     private static EditText txtOCR, txtElectoralKey, txtValidityINE, txtElectoralSection, txtLocalDistrict, txtFederalDistrict, txtElectoralAdviser;
     private ProgressDialog pDialog;
 
@@ -51,7 +53,6 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
     private ArrayList<SubItemElectoralActor> subItemEAs;
 
     private static ProfileManager _PROFILE_MANAGER;
-    private boolean cancelMove = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,6 +64,8 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         nextBtn = (Button) view.findViewById(R.id.nextBtnElectoralProfile);
         pictureBtnBack = (Button) view.findViewById(R.id.pictureBtnBack);
         pictureBtnFront = (Button) view.findViewById(R.id.pictureBtnFront);
+        deleteBtnBack = (Button) view.findViewById(R.id.deleteBtnBack);
+        deleteBtnFront = (Button) view.findViewById(R.id.deleteBtnFront);
 
         txtOCR = (EditText) view.findViewById(R.id.ocrINE);
         txtElectoralKey = (EditText) view.findViewById(R.id.electoralKey);
@@ -80,6 +83,8 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         nextBtn.setOnClickListener(this);
         pictureBtnBack.setOnClickListener(this);
         pictureBtnFront.setOnClickListener(this);
+        deleteBtnBack.setOnClickListener(this);
+        deleteBtnFront.setOnClickListener(this);
 
         politicalSpinner.setOnItemSelectedListener(this);
         electoralActorSpinner.setOnItemSelectedListener(this);
@@ -115,13 +120,19 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
         AsyncElectoral wsSpinnerPP = new AsyncElectoral(Constants.WS_KEY_SPINNER_ALL_ELECTORAL_SERVICE);
         wsSpinnerPP.execute();
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
         _PROFILE_MANAGER = activityListener.getProfileManager();
+
+        if (!_PROFILE_MANAGER.getElectoralProfile().getPhotoINEBack().isEmpty()) {
+            deleteBtnBack.setVisibility(View.VISIBLE);
+        }
+        if (!_PROFILE_MANAGER.getElectoralProfile().getPhotoINEFront().isEmpty()) {
+            deleteBtnFront.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -196,12 +207,17 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                 activityListener.updateProfile(_PROFILE_MANAGER);
                 activityListener.moveFragments(v);
                 break;
-            case R.id.pictureBtnBack: case R.id.pictureBtnFront:
+            case R.id.pictureBtnBack:
+            case R.id.pictureBtnFront:
                 try {
                     activityListener.showCamera(v);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                break;
+            case R.id.deleteBtnBack:
+            case R.id.deleteBtnFront:
+                showQuestion(v.getId());
                 break;
             default:
                 break;
@@ -242,6 +258,32 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    public void showQuestion(int id) {
+
+        String temp = (R.id.deleteBtnBack == id) ? "¿ Desea eliminar la imagen asociada a la Credencial INE (Reverso) ?"
+                : "¿ Desea eliminar la imagen asociada a la Credencial INE (Frente) ?";
+
+        AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+        ad.setTitle("Importante");
+        ad.setMessage(temp);
+        ad.setCancelable(false);
+        ad.setPositiveButton("Confirmar",this);
+        ad.setNegativeButton("Cancelar",this);
+        ad.show();
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+            case DialogInterface.BUTTON_POSITIVE:
+                _PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack("");
+                Toast.makeText(getActivity(),"Imagen borrada correctamente", Toast.LENGTH_SHORT).show();
+                deleteBtnBack.setVisibility(View.INVISIBLE);
+                break;
+        }
 
     }
 

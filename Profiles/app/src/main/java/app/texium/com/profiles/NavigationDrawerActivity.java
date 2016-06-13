@@ -326,7 +326,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
 
     @Override
-    public void showCamera(View view) throws IOException {
+    public void showCamera(View view ) throws IOException {
         idActualCameraBtn = view.getId();
 
         if (!marshMallowPermission.checkPermissionForCamera()) {

@@ -55,14 +55,14 @@
                     android:layout_height="40dp"
                     android:background="@drawable/shape_form"
                     android:hint="OCR INE"
+                    android:inputType="textVisiblePassword"
+                    android:maxLength="13"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
-                    android:textSize="15sp"
-                    android:inputType="textVisiblePassword"
-                    android:maxLength="13"/>
+                    android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/electoralKey"
@@ -71,14 +71,14 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/shape_form"
                     android:hint="Clave de Elector"
+                    android:inputType="textVisiblePassword"
+                    android:maxLength="13"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
-                    android:textSize="15sp"
-                    android:inputType="textVisiblePassword"
-                    android:maxLength="13"/>
+                    android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/validityINE"
@@ -87,15 +87,14 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/shape_form"
                     android:hint="Vigencia INE"
+                    android:inputType="textVisiblePassword"
+                    android:maxLength="10"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
-                    android:textSize="15sp"
-                    android:inputType="textVisiblePassword"
-                    android:maxLength="10"
-                    />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -167,13 +166,13 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/shape_form"
                     android:hint="Consejero Político"
+                    android:inputType="textNoSuggestions"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
-                    android:textSize="15sp"
-                    android:inputType="textNoSuggestions"/>
+                    android:textSize="15sp" />
 
                 <Spinner
                     android:id="@+id/politicalParty"
@@ -213,38 +212,7 @@
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
                     android:textSize="15sp"
-                    android:visibility="invisible"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingTop="10dp">
-
-                    <Button
-                        android:id="@+id/pictureBtnBack"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/ic_menu_camera" />
-
-                    <TextView
-                        android:layout_width="200dp"
-                        android:layout_height="40dp"
-                        android:paddingLeft="20dp"
-                        android:text="Credencial INE (Reverso)"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDark"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                    <Button
-                        android:id="@+id/deleteBtnBack"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_marginLeft="40dp"
-                        android:background="@android:drawable/ic_menu_delete"
-                        android:visibility="invisible"
-                        />
-                </LinearLayout>
+                    android:visibility="invisible" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -267,14 +235,45 @@
                         android:textColorHint="@color/colorPrimaryDark"
                         android:textSize="15sp"
                         android:textStyle="bold" />
+
                     <Button
                         android:id="@+id/deleteBtnFront"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_marginLeft="40dp"
                         android:background="@android:drawable/ic_menu_delete"
-                        android:visibility="invisible"
-                        />
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp">
+
+                    <Button
+                        android:id="@+id/pictureBtnBack"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/ic_menu_camera" />
+
+                    <TextView
+                        android:layout_width="200dp"
+                        android:layout_height="40dp"
+                        android:paddingLeft="20dp"
+                        android:text="Credencial INE (Reverso)"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/colorPrimaryDark"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/deleteBtnBack"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="40dp"
+                        android:background="@android:drawable/ic_menu_delete"
+                        android:visibility="invisible" />
                 </LinearLayout>
             </LinearLayout>
 

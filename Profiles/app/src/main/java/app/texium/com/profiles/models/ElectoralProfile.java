@@ -1,7 +1,5 @@
 package app.texium.com.profiles.models;
 
-import android.net.Uri;
-
 import java.io.Serializable;
 
 /**
@@ -19,9 +17,7 @@ public class ElectoralProfile implements Serializable {
     private Integer politicalParty;
     private Integer idItemPP;
     private String photoINEBack;
-    private Uri uriINEBack;
     private String photoINEFront;
-    private Uri uriINEFront;
     private Integer electoralActor;
     private Integer idItemEA;
     private Integer subItemElectoralActor;
@@ -29,6 +25,8 @@ public class ElectoralProfile implements Serializable {
 
 
     public ElectoralProfile(){
+        photoINEBack = "";
+        photoINEFront = "";
     }
 
     public String getOcrINE() {
@@ -149,21 +147,5 @@ public class ElectoralProfile implements Serializable {
 
     public void setIdSubItemEA(Integer idSubItemEA) {
         this.idSubItemEA = idSubItemEA;
-    }
-
-    public Uri getUriINEBack() {
-        return uriINEBack;
-    }
-
-    public void setUriINEBack(Uri uriINEBack) {
-        this.uriINEBack = uriINEBack;
-    }
-
-    public Uri getUriINEFront() {
-        return uriINEFront;
-    }
-
-    public void setUriINEFront(Uri uriINEFront) {
-        this.uriINEFront = uriINEFront;
     }
 }
