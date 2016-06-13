@@ -56,20 +56,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     private static Users SESSION_DATA;
     private static ProfileManager PROFILE_MANAGER;
-
     private ProgressDialog pDialog;
-
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1;
-
-    public static final int MEDIA_TYPE_IMAGE = 1;
-    public static final int MEDIA_TYPE_VIDEO = 2;
-
     private static int idActualCameraBtn;
-    private Uri fileUri;
-
     private MarshMallowPermission marshMallowPermission = new MarshMallowPermission(this);
-
     private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+    String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,38 +85,20 @@ public class NavigationDrawerActivity extends AppCompatActivity
         finishFragment.add(R.id.profiles_fragment_container, new PersonalProfileFragment(), Constants.FRAGMENT_PERSONAL_TAG);
         finishFragment.commit();
 
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
-
-        /*
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        */
         mAlbumStorageDirFactory = new BaseAlbumDirFactory();
     }
 
     public void onStart() {
         super.onStart();
+    }
 
-
+    /* Photo album for this application */
+    private String getAlbumName() {
+        return "Profiles";
     }
 
     @Override
     public void onClick(View v) {
-
     }
 
     @Override
@@ -344,13 +318,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
             if (!marshMallowPermission.checkPermissionForExternalStorage()) {
                 marshMallowPermission.requestPermissionForExternalStorage();
             } else {
-
-                /*
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-                }*/
-
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 // Ensure that there's a camera activity to handle the intent
                 if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -363,8 +330,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
                     }
                     // Continue only if the File was successfully created
                     if (photoFile != null) {
-                        //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(photoFile));
-
                         // Save a file: path for use with ACTION_VIEW intents
                         mCurrentPhotoPath = photoFile.getAbsolutePath();
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
@@ -375,14 +340,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
         }
     }
 
-    String mCurrentPhotoPath;
-
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File albumF = getAlbumDir();
-        //File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -393,86 +355,38 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     private File getAlbumDir() {
         File storageDir = null;
-
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-
             storageDir = mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
-
             if (storageDir != null) {
                 if (! storageDir.mkdirs()) {
                     if (! storageDir.exists()){
-                        //Log.d("CameraSample", "failed to create directory");
                         return null;
                     }
                 }
             }
 
-        } else {
-            //Log.v(getString(R.string.app_name), "External storage is not mounted READ/WRITE.");
         }
         return storageDir;
-    }
-
-    /* Photo album for this application */
-    private String getAlbumName() {
-        return "Profiles";
-    }
-
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
-
-    public String getRealPathFromURI(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-        return cursor.getString(idx);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                // Image captured and saved to fileUri specified in the Intent
                 try {
-
-                    /*
-                    Bundle extras = data.getExtras();
-                    Bitmap photo = (Bitmap) extras.get("data");
-
-                    // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
-                    Uri tempUri = getImageUri(getApplicationContext(), photo);
-
-                    // CALL THIS METHOD TO GET THE ACTUAL PATH
-                    File finalFile = new File(getRealPathFromURI(tempUri));
-
-                    finalFile.getName();
-
-
-                    System.out.println(finalFile.getAbsolutePath());
-
-                    String encode = FileServices.attachImg(this,finalFile);
-
-                    if (idActualCameraBtn == R.id.pictureBtnBack) {
-                        PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(encode);
-                    } else {
-                        PROFILE_MANAGER.getElectoralProfile().setPhotoINEFront(encode);
-                    }
-                    */
-
                     Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                     File f = new File(mCurrentPhotoPath);
                     Uri contentUri = Uri.fromFile(f);
                     mediaScanIntent.setData(contentUri);
                     this.sendBroadcast(mediaScanIntent);
-                    //String encode = FileServices.attachImg(this,f);
-
-                    //PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(FileServices.attachImg(this,f));
-                    //PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(encode);
-                    PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(FileServices.attachImg(this,contentUri));
+                    switch (idActualCameraBtn){
+                        case R.id.pictureBtnBack:
+                            PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(FileServices.attachImg(this,contentUri));
+                            break;
+                        case R.id.pictureBtnFront:
+                            PROFILE_MANAGER.getElectoralProfile().setPhotoINEFront(FileServices.attachImg(this,contentUri));
+                            break;
+                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -496,8 +410,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public ProfileManager getProfileManager() {
         return PROFILE_MANAGER;
     }
-
-
 
     private class AsyncProfile extends AsyncTask<Void, Void, Boolean> {
 
