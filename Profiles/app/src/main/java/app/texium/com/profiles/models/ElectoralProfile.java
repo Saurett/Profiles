@@ -28,7 +28,8 @@ public class ElectoralProfile implements Serializable {
     private Integer idSubItemEA;
 
 
-    public ElectoralProfile(){}
+    public ElectoralProfile(){
+    }
 
     public String getOcrINE() {
         return ocrINE;

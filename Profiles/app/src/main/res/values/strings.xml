@@ -20,6 +20,7 @@
     <string name="default_attaching_img_error">Error intentando adjuntar imagen</string>
     <string name="directory_name_corp_chat">chats</string>
     <string name="directory_name_images">images</string>
+    <string name="default_field_required">Este campo es requerido</string>
 
     <!-- Conjunto de Strings para el View GameSpinner -->
     <string-array name="Games">

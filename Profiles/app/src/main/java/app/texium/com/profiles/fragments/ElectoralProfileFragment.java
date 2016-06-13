@@ -51,6 +51,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
     private ArrayList<SubItemElectoralActor> subItemEAs;
 
     private static ProfileManager _PROFILE_MANAGER;
+    private boolean cancelMove = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,8 +90,10 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                 txtOCR.setText(_PROFILE_MANAGER.getElectoralProfile().getOcrINE());
             if (null != _PROFILE_MANAGER.getElectoralProfile().getElectoralKEY())
                 txtElectoralKey.setText(_PROFILE_MANAGER.getElectoralProfile().getElectoralKEY());
-            if (null != _PROFILE_MANAGER.getElectoralProfile().getElectoralSection())
-                txtElectoralSection.setText(String.valueOf(_PROFILE_MANAGER.getElectoralProfile().getElectoralSection()));
+            if (null != _PROFILE_MANAGER.getElectoralProfile().getElectoralSection()) {
+                String tempES = String.valueOf(_PROFILE_MANAGER.getElectoralProfile().getElectoralSection());
+                txtElectoralSection.setText(tempES.equals("0") ? null : tempES);
+            }
             if (null != _PROFILE_MANAGER.getElectoralProfile().getValidityINE())
                 txtValidityINE.setText(_PROFILE_MANAGER.getElectoralProfile().getValidityINE());
             if (null != _PROFILE_MANAGER.getElectoralProfile().getLocalDistrict())
@@ -143,6 +146,8 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
                 if (txtElectoralSection.getText().toString().length() > 0) {
                     electoralProfile.setElectoralSection(Integer.valueOf(txtElectoralSection.getText().toString()));
+                } else {
+                    electoralProfile.setElectoralSection(0);
                 }
 
                 electoralProfile.setLocalDistrict(txtLocalDistrict.getText().toString());
@@ -155,6 +160,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                 electoralProfile.setIdItemEA(positionElectoralActor);
                 electoralProfile.setIdSubItemEA(positionSubItemEA);
                 electoralProfile.setPhotoINEBack(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEBack());
+                electoralProfile.setPhotoINEFront(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEFront());
 
                 _PROFILE_MANAGER.setElectoralProfile(electoralProfile);
 
@@ -169,6 +175,8 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
                 if (txtElectoralSection.getText().toString().length() > 0) {
                     electoralProfile.setElectoralSection(Integer.valueOf(txtElectoralSection.getText().toString()));
+                } else {
+                    electoralProfile.setElectoralSection(0);
                 }
 
                 electoralProfile.setLocalDistrict(txtLocalDistrict.getText().toString());
@@ -181,6 +189,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                 electoralProfile.setIdItemEA(positionElectoralActor);
                 electoralProfile.setIdSubItemEA(positionSubItemEA);
                 electoralProfile.setPhotoINEBack(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEBack());
+                electoralProfile.setPhotoINEFront(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEFront());
 
                 _PROFILE_MANAGER.setElectoralProfile(electoralProfile);
 
@@ -420,5 +429,4 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
             }
         }
     }
-
 }

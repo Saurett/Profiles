@@ -4,6 +4,7 @@ package app.texium.com.profiles.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
     private CheckBox checkBox, checkBox2, checkBox3, checkBox4, checkBoxWoman, checkBoxMan;
 
     private static ProfileManager _PROFILE_MANAGER;
+    boolean cancelMove = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -145,22 +147,27 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
                 activityListener.showCalendar(v, txtDate, txtAge);
                 break;
             case R.id.nextBtnPersonalProfile:
-                PersonalProfile personalProfile = new PersonalProfile();
 
-                personalProfile.setName(txtName.getText().toString());
-                personalProfile.setFirstSurname(txtFirstSurname.getText().toString());
-                personalProfile.setSecondSurname(txtSecondSurname.getText().toString());
-                personalProfile.setBirthDate(txtDate.getText().toString());
-                personalProfile.setAgeProfile(txtAge.getText().toString());
-                personalProfile.setCivilState(getCheckedCivilState().getText().toString());
-                personalProfile.setSex(getCheckedSex().getText().toString());
-                personalProfile.setNationality(txtNationality.getText().toString());
-                personalProfile.setBirthPlace(txtPlace.getText().toString());
+                attemptMove();
 
-                _PROFILE_MANAGER.setPersonalProfile(personalProfile);
+                if (!cancelMove) {
+                    PersonalProfile personalProfile = new PersonalProfile();
 
-                activityListener.updateProfile(_PROFILE_MANAGER);
-                activityListener.moveFragments(v);
+                    personalProfile.setName(txtName.getText().toString());
+                    personalProfile.setFirstSurname(txtFirstSurname.getText().toString());
+                    personalProfile.setSecondSurname(txtSecondSurname.getText().toString());
+                    personalProfile.setBirthDate(txtDate.getText().toString());
+                    personalProfile.setAgeProfile(txtAge.getText().toString());
+                    personalProfile.setCivilState(getCheckedCivilState().getText().toString());
+                    personalProfile.setSex(getCheckedSex().getText().toString());
+                    personalProfile.setNationality(txtNationality.getText().toString());
+                    personalProfile.setBirthPlace(txtPlace.getText().toString());
+
+                    _PROFILE_MANAGER.setPersonalProfile(personalProfile);
+
+                    activityListener.updateProfile(_PROFILE_MANAGER);
+                    activityListener.moveFragments(v);
+                }
                 break;
             default:
                 boolean checked = ((CheckBox) v).isChecked();
@@ -259,5 +266,39 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
         }
 
         return checked;
+    }
+
+    public void attemptMove() {
+
+        cancelMove = false;
+
+        txtName.setError(null);
+        txtFirstSurname.setError(null);
+
+        String name = txtName.getText().toString();
+        String fSurname = txtFirstSurname .getText().toString();
+
+        checkValid(R.id.name,name);
+        checkValid(R.id.firstSurname,fSurname);
+
+    }
+
+    private void checkValid(int id, String value) {
+
+       if (TextUtils.isEmpty(value)) {
+           switch (id) {
+               case R.id.name:
+                   txtName.setError(getActivity().getString(R.string.default_field_required));
+                   txtName.requestFocus();
+                   cancelMove = true;
+                   break;
+               case R.id.firstSurname:
+                   txtFirstSurname.setError(getActivity().getString(R.string.default_field_required));
+                   txtFirstSurname.requestFocus();
+                   cancelMove = true;
+                   break;
+           }
+       }
+
     }
 }
