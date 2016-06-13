@@ -355,6 +355,7 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
                             stateSpinner.setAdapter(adapter);
                             stateSpinner.setSelection(selectionState);
 
+                            locationSpinner.setVisibility(View.INVISIBLE);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -398,6 +399,8 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
                                     ? _PROFILE_MANAGER.getAddressProfile().getIdItemMunicipal() : 0;
                             municipalitySpinner.setAdapter(adapter);
                             municipalitySpinner.setSelection(selectionMunicipal);
+
+                            locationSpinner.setVisibility(View.INVISIBLE);
 
                         } catch (Exception e) {
                             e.printStackTrace();
