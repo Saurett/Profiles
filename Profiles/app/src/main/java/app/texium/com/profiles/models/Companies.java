@@ -10,6 +10,16 @@ public class Companies {
     private String name;
     private Integer idStatus;
 
+    public Integer getIdGroup() {
+        return idGroup;
+    }
+
+    public void setIdGroup(Integer idGroup) {
+        this.idGroup = idGroup;
+    }
+
+    private Integer idGroup;
+
     public Companies() {
 
     }

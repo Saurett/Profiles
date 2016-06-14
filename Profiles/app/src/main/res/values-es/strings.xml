@@ -14,6 +14,12 @@
     <string name="default_attaching_img_error">Error intentando adjuntar imagen</string>
     <string name="directory_name_images">images</string>
     <string name="default_field_required">Este campo es requerido</string>
+    <string name="default_question_delete_back">¿ Desea eliminar la imagen asociada a la Credencial INE (Reverso) ?</string>
+    <string name="default_question_delete_front">¿ Desea eliminar la imagen asociada a la Credencial INE (Frente) ?</string>
+    <string name="default_title_alert_dialog">Importante</string>
+    <string name="default_positive_button">Confirmar</string>
+    <string name="default_negative_button">Cancelar</string>
+    <string name="default_delete_img_msg">Imagen borrada correctamente</string>
 
     <!-- Conjunto de Strings para el View GameSpinner -->
     <string-array name="Games">

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,12 @@ import android.widget.Toast;
 
 import org.ksoap2.serialization.SoapObject;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
 import app.texium.com.profiles.R;
+import app.texium.com.profiles.databases.BDProfileManagerQuery;
 import app.texium.com.profiles.models.AcademyLevels;
 import app.texium.com.profiles.models.Careers;
 import app.texium.com.profiles.models.Companies;
@@ -204,10 +207,12 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
         private SoapObject soapObjectCompany;
         private Integer webServiceOperation;
         private String textError;
+        private Boolean localAccess;
 
         private AsyncProfessional(Integer wsOperation) {
             webServiceOperation = wsOperation;
             textError = "";
+            localAccess = false;
         }
 
         @Override
@@ -235,22 +240,19 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
                         validOperation = (soapObjectCompany.getPropertyCount() > 0);
                         break;
                 }
-            } catch (Exception e) {
+            } catch (ConnectException e) {
+
                 textError = e.getMessage();
                 validOperation = false;
-            }
 
-            return validOperation;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-
-            pDialog.dismiss();
-            if(success) {
+                e.printStackTrace();
+                Log.e("WebServiceException", "Unknown error : " + e.getMessage());
 
                 switch (webServiceOperation) {
                     case Constants.WS_KEY_SPINNER_ALL_PROFESSIONAL_SERVICE:
+                        validOperation = true;
+                        localAccess = true;
+
                         academyList = new ArrayList<>();
                         academyLevels = new ArrayList<>();
                         academyList.add("Seleccione un nivel de estudio ...");
@@ -267,82 +269,155 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
                         companies = new ArrayList<>();
                         companyList.add("Seleccione una empresa ...");
 
-                        if (soapObjectAL.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObjectAL.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+                        try {
+                            academyLevels = BDProfileManagerQuery.getAllAL(getContext());
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
-
-                                    AcademyLevels al = new AcademyLevels();
-                                    al.setIdItem(i);
-                                    al.setIdAcademyLevel(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    al.setDescription(soItem.getProperty(Constants.SOAP_OBJECT_KEY_DESCRIPTION).toString());
-                                    al.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
-
-                                    academyLevels.add(al);
-                                    academyList.add(al.getDescription());
-                                }
+                            for (AcademyLevels data :
+                                    academyLevels) {
+                                academyList.add(data.getDescription());
                             }
+
+                            careers = BDProfileManagerQuery.getAllCareers(getContext());
+
+                            for (Careers data :
+                                    careers) {
+                                careerList.add(data.getName());
+                            }
+
+                            professionalTitles = BDProfileManagerQuery.getAllPT(getContext());
+
+                            for (ProfessionalTitles data :
+                                    professionalTitles) {
+                                professionalTitleList.add(data.getName());
+                            }
+
+                            companies = BDProfileManagerQuery.getAllCompany(getContext(), SESSION_DATA.getIdGroup());
+
+                            for (Companies data :
+                                    companies) {
+                                companyList.add(data.getName());
+                            }
+
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                            localAccess = false;
                         }
 
-                        if (soapObjectCareer.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObjectCareer.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+                        break;
+                }
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
-                                    Careers career = new Careers();
-                                    career.setIdItem(i);
-                                    career.setIdCareer(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    career.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
-                                    career.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+            } catch (Exception e) {
+                textError = e.getMessage();
+                validOperation = false;
+            }
 
-                                    careers.add(career);
-                                    careerList.add(career.getName());
+            return validOperation;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+            pDialog.dismiss();
+            if(success) {
+
+                switch (webServiceOperation) {
+                    case Constants.WS_KEY_SPINNER_ALL_PROFESSIONAL_SERVICE:
+
+                        if (!localAccess) {
+                            academyList = new ArrayList<>();
+                            academyLevels = new ArrayList<>();
+                            academyList.add("Seleccione un nivel de estudio ...");
+
+                            careerList = new ArrayList<>();
+                            careers = new ArrayList<>();
+                            careerList.add("Seleccione una carrera ...");
+
+                            professionalTitleList = new ArrayList<>();
+                            professionalTitles = new ArrayList<>();
+                            professionalTitleList.add("Seleccione ultimo titulo obtenido ...");
+
+                            companyList = new ArrayList<>();
+                            companies = new ArrayList<>();
+                            companyList.add("Seleccione una empresa ...");
+
+                            if (soapObjectAL.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                SoapObject soDiffGram = (SoapObject) soapObjectAL.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                    SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                    for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                        SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                        AcademyLevels al = new AcademyLevels();
+                                        al.setIdItem(i);
+                                        al.setIdAcademyLevel(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                        al.setDescription(soItem.getProperty(Constants.SOAP_OBJECT_KEY_DESCRIPTION).toString());
+                                        al.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                        academyLevels.add(al);
+                                        academyList.add(al.getDescription());
+                                    }
                                 }
                             }
-                        }
 
-                        if (soapObjectPT.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObjectPT.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+                            if (soapObjectCareer.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                SoapObject soDiffGram = (SoapObject) soapObjectCareer.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                    SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+                                    for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                        SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
-                                   ProfessionalTitles pt = new ProfessionalTitles();
-                                    pt.setIdItem(i);
-                                    pt.setIdProfessionalTitle(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    pt.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
-                                    pt.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+                                        Careers career = new Careers();
+                                        career.setIdItem(i);
+                                        career.setIdCareer(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                        career.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+                                        career.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
 
-                                    professionalTitles.add(pt);
-                                    professionalTitleList.add(pt.getName());
+                                        careers.add(career);
+                                        careerList.add(career.getName());
+                                    }
                                 }
                             }
-                        }
 
-                        if (soapObjectCompany.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObjectCompany.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+                            if (soapObjectPT.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                SoapObject soDiffGram = (SoapObject) soapObjectPT.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                    SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+                                    for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                        SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
-                                    Companies company = new Companies();
-                                    company.setIdItem(i);
-                                    company.setIdCompany(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    company.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
-                                    company.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+                                        ProfessionalTitles pt = new ProfessionalTitles();
+                                        pt.setIdItem(i);
+                                        pt.setIdProfessionalTitle(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                        pt.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+                                        pt.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
 
-                                    companies.add(company);
-                                    companyList.add(company.getName());
+                                        professionalTitles.add(pt);
+                                        professionalTitleList.add(pt.getName());
+                                    }
+                                }
+                            }
+
+                            if (soapObjectCompany.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                SoapObject soDiffGram = (SoapObject) soapObjectCompany.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                    SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                    for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                        SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                        Companies company = new Companies();
+                                        company.setIdItem(i);
+                                        company.setIdCompany(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                        company.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+                                        company.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                        companies.add(company);
+                                        companyList.add(company.getName());
+                                    }
                                 }
                             }
                         }

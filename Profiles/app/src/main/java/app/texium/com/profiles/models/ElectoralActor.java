@@ -7,6 +7,7 @@ public class ElectoralActor {
 
     private Integer idItem;
     private Integer idElectoralActor;
+    private Integer idFather;
     private String name;
 
     public ElectoralActor() {
@@ -35,5 +36,13 @@ public class ElectoralActor {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getIdFather() {
+        return idFather;
+    }
+
+    public void setIdFather(Integer idFather) {
+        this.idFather = idFather;
     }
 }

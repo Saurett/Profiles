@@ -10,6 +10,7 @@ public class Careers {
     private String name;
     private Integer idStatus;
 
+
     public Careers() {
 
     }

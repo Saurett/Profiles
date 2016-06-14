@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +22,11 @@ import android.widget.Toast;
 import org.ksoap2.serialization.SoapObject;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 
 import app.texium.com.profiles.R;
+import app.texium.com.profiles.databases.BDProfileManagerQuery;
 import app.texium.com.profiles.models.ElectoralActor;
 import app.texium.com.profiles.models.ElectoralProfile;
 import app.texium.com.profiles.models.PoliticalParties;
@@ -263,15 +266,15 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
     public void showQuestion(int id) {
 
-        String temp = (R.id.deleteBtnBack == id) ? "¿ Desea eliminar la imagen asociada a la Credencial INE (Reverso) ?"
-                : "¿ Desea eliminar la imagen asociada a la Credencial INE (Frente) ?";
+        String temp = (R.id.deleteBtnBack == id) ? getActivity().getString(R.string.default_question_delete_back)
+                : getActivity().getString(R.string.default_question_delete_front);
 
         AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
-        ad.setTitle("Importante");
+        ad.setTitle(getActivity().getString(R.string.default_title_alert_dialog));
         ad.setMessage(temp);
         ad.setCancelable(false);
-        ad.setPositiveButton("Confirmar",this);
-        ad.setNegativeButton("Cancelar",this);
+        ad.setPositiveButton(getActivity().getString(R.string.default_positive_button), this);
+        ad.setNegativeButton(getActivity().getString(R.string.default_negative_button), this);
         ad.show();
     }
 
@@ -280,7 +283,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
                 _PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack("");
-                Toast.makeText(getActivity(),"Imagen borrada correctamente", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.default_delete_img_msg, Toast.LENGTH_SHORT).show();
                 deleteBtnBack.setVisibility(View.INVISIBLE);
                 break;
         }
@@ -294,16 +297,19 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         private Integer webServiceOperation;
         private Integer webServiceID;
         private String textError;
+        private Boolean localAccess;
 
         private AsyncElectoral(Integer wsOperation) {
             webServiceOperation = wsOperation;
             textError = "";
+            localAccess = false;
         }
 
         private AsyncElectoral(Integer wsOperation, Integer wsID) {
             webServiceOperation = wsOperation;
             webServiceID = wsID;
             textError = "";
+            localAccess = false;
         }
 
         @Override
@@ -325,7 +331,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                 switch (webServiceOperation) {
                     case Constants.WS_KEY_SPINNER_ALL_ELECTORAL_SERVICE:
                         soPoliticalParty = SoapServices.getSpinnerPP(getContext());
-                        soElectoralActor = SoapServices.getSpinnerElectoralActor(getContext());
+                        soElectoralActor = SoapServices.getSpinnerAllEA(getContext());
                         validOperation = (soElectoralActor.getPropertyCount() > 0);
                         break;
                     case Constants.WS_KEY_SPINNER_SUB_ITEM_EA_SERVICE:
@@ -333,6 +339,80 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                         validOperation = (soSubItemElectoralActor.getPropertyCount() > 0);
                         break;
                 }
+            } catch (ConnectException e) {
+
+                textError = e.getMessage();
+                validOperation = false;
+
+                e.printStackTrace();
+                Log.e("WebServiceException", "Unknown error : " + e.getMessage());
+
+                switch (webServiceOperation) {
+                    case Constants.WS_KEY_SPINNER_ALL_ELECTORAL_SERVICE:
+                        validOperation = true;
+
+                        list = new ArrayList<>();
+                        politicalParties = new ArrayList<>();
+
+                        electoralActorList = new ArrayList<>();
+                        electoralActors = new ArrayList<>();
+
+                        try {
+                            politicalParties = BDProfileManagerQuery.getAllPP(getContext());
+
+                            for (PoliticalParties data :
+                                    politicalParties) {
+                                list.add(data.getAcronymName());
+                            }
+
+                            electoralActors = BDProfileManagerQuery.getAllEA(getContext(), 0);
+
+                            for (ElectoralActor data :
+                                    electoralActors) {
+                                if (data.getIdFather() == 0) electoralActorList.add(data.getName());
+                            }
+
+                            localAccess = true;
+
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                            localAccess = false;
+                        }
+
+                        break;
+                    case Constants.WS_KEY_SPINNER_SUB_ITEM_EA_SERVICE:
+
+                        validOperation = true;
+
+                        subItemEAList = new ArrayList<>();
+                        subItemEAs = new ArrayList<>();
+
+                        try {
+                            ArrayList<ElectoralActor> temp = BDProfileManagerQuery.getAllEA(getContext(), webServiceID);
+
+                            for (ElectoralActor data :
+                                    temp) {
+                                SubItemElectoralActor item = new SubItemElectoralActor();
+
+                                item.setName(data.getName());
+                                item.setIdSubItemEA(data.getIdElectoralActor());
+
+                                subItemEAs.add(item);
+                                subItemEAList.add(data.getName());
+                            }
+
+                            localAccess = true;
+
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                            localAccess = false;
+                        }
+
+
+                        break;
+                }
+
+
             } catch (Exception e) {
                 textError = e.getMessage();
                 validOperation = false;
@@ -351,55 +431,59 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
                     case Constants.WS_KEY_SPINNER_ALL_ELECTORAL_SERVICE:
 
-                        list = new ArrayList<>();
-                        politicalParties = new ArrayList<>();
+                        if (!localAccess) {
 
-                        electoralActorList = new ArrayList<>();
-                        electoralActors = new ArrayList<>();
+                            list = new ArrayList<>();
+                            politicalParties = new ArrayList<>();
+
+                            electoralActorList = new ArrayList<>();
+                            electoralActors = new ArrayList<>();
 
 
-                        if (soPoliticalParty.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soPoliticalParty.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+                            if (soPoliticalParty.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                SoapObject soDiffGram = (SoapObject) soPoliticalParty.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                    SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+                                    for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                        SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
-                                    PoliticalParties pp = new PoliticalParties();
-                                    pp.setIdItem(i);
-                                    pp.setIdPP(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    pp.setAcronymName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ACRONYM_NAME).toString());
-                                    pp.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+                                        PoliticalParties pp = new PoliticalParties();
+                                        pp.setIdItem(i);
+                                        pp.setIdPP(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                        pp.setAcronymName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ACRONYM_NAME).toString());
+                                        pp.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
 
-                                    politicalParties.add(pp);
-                                    list.add(pp.getAcronymName());
+                                        politicalParties.add(pp);
+                                        list.add(pp.getAcronymName());
+                                    }
                                 }
                             }
-                        }
 
-                        if (soElectoralActor.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soElectoralActor.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+                            if (soElectoralActor.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                SoapObject soDiffGram = (SoapObject) soElectoralActor.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                    SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+                                    for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                        SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
-                                    ElectoralActor ea = new ElectoralActor();
-                                    ea.setIdItem(i);
-                                    ea.setIdElectoralActor(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    ea.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+                                        ElectoralActor ea = new ElectoralActor();
 
-                                    electoralActors.add(ea);
-                                    electoralActorList.add(ea.getName());
+                                        ea.setIdItem(i);
+                                        ea.setIdElectoralActor(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                        ea.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+
+                                        if (!soItem.hasProperty(Constants.SOAP_OBJECT_KEY_FATHER)) {
+                                            electoralActors.add(ea);
+                                            electoralActorList.add(ea.getName());
+                                        }
+                                    }
                                 }
                             }
                         }
 
                         try {
-                            //ArrayList<String> list =  BDProfileManagerQuery.getAllPP(getContext());
-
                             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                                     android.R.layout.simple_spinner_item,
                                     android.R.id.text1, list);
@@ -425,24 +509,27 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
                     case Constants.WS_KEY_SPINNER_SUB_ITEM_EA_SERVICE:
 
-                        subItemEAList = new ArrayList<>();
-                        subItemEAs = new ArrayList<>();
+                        if (!localAccess) {
 
-                        if (soSubItemElectoralActor.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soSubItemElectoralActor.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+                            subItemEAList = new ArrayList<>();
+                            subItemEAs = new ArrayList<>();
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+                            if (soSubItemElectoralActor.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                SoapObject soDiffGram = (SoapObject) soSubItemElectoralActor.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                    SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                    SubItemElectoralActor subItemEA = new SubItemElectoralActor();
-                                    subItemEA.setIdItem(i);
-                                    subItemEA.setIdSubItemEA(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    subItemEA.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+                                    for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                        SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
-                                    subItemEAs.add(subItemEA);
-                                    subItemEAList.add(subItemEA.getName());
+                                        SubItemElectoralActor subItemEA = new SubItemElectoralActor();
+                                        subItemEA.setIdItem(i);
+                                        subItemEA.setIdSubItemEA(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                        subItemEA.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+
+                                        subItemEAs.add(subItemEA);
+                                        subItemEAList.add(subItemEA.getName());
+                                    }
                                 }
                             }
                         }
