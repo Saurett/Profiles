@@ -15,6 +15,7 @@ public class ProfileManager implements Serializable {
     private StructureProfile structureProfile;
     private CommentProfile commentProfile;
     private SocialNetworkProfile socialNetworkProfile;
+    private Users userProfile;
 
     public ProfileManager() {
         this.personalProfile = new PersonalProfile();
@@ -89,5 +90,13 @@ public class ProfileManager implements Serializable {
 
     public void setCommentProfile(CommentProfile commentProfile) {
         this.commentProfile = commentProfile;
+    }
+
+    public Users getUserProfile() {
+        return userProfile;
+    }
+
+    public void setUserProfile(Users userProfile) {
+        this.userProfile = userProfile;
     }
 }

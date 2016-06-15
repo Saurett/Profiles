@@ -16,6 +16,7 @@ import app.texium.com.profiles.models.Locations;
 import app.texium.com.profiles.models.Municipalities;
 import app.texium.com.profiles.models.PoliticalParties;
 import app.texium.com.profiles.models.ProfessionalTitles;
+import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.States;
 import app.texium.com.profiles.models.Users;
 
@@ -26,6 +27,94 @@ public class BDProfileManagerQuery {
 
     static String BDName = "BDProfileManager";
     static Integer BDVersion = 13;
+
+    public static void addProfile(Context context, ProfileManager temp) throws Exception {
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName, null, BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            ContentValues cv = new ContentValues();
+
+            //PERSONAL
+            cv.put(BDProfileManager.ColumnProfiles.NAME, temp.getPersonalProfile().getName());
+            cv.put(BDProfileManager.ColumnProfiles.FIRST_SURNAME, temp.getPersonalProfile().getFirstSurname());
+            cv.put(BDProfileManager.ColumnProfiles.SECOND_SURNAME, temp.getPersonalProfile().getSecondSurname());
+            cv.put(BDProfileManager.ColumnProfiles.BIRTH_DATE, temp.getPersonalProfile().getBirthDate());
+            cv.put(BDProfileManager.ColumnProfiles.BIRTH_PLACE, temp.getPersonalProfile().getBirthPlace());
+            cv.put(BDProfileManager.ColumnProfiles.NATIONALITY, temp.getPersonalProfile().getNationality());
+            cv.put(BDProfileManager.ColumnProfiles.GENDER, temp.getPersonalProfile().getSex());
+            cv.put(BDProfileManager.ColumnProfiles.MARITAL_STATUS, temp.getPersonalProfile().getCivilState());
+
+            //ELECTORAL
+            cv.put(BDProfileManager.ColumnProfiles.OCR_INE, temp.getElectoralProfile().getOcrINE());
+            cv.put(BDProfileManager.ColumnProfiles.ELECTORAL_ID, temp.getElectoralProfile().getElectoralKEY());
+            cv.put(BDProfileManager.ColumnProfiles.VALIDITY_INE, temp.getElectoralProfile().getValidityINE());
+            cv.put(BDProfileManager.ColumnProfiles.ELECTORAL_SECTION, temp.getElectoralProfile().getElectoralSection());
+            cv.put(BDProfileManager.ColumnProfiles.FEDERAL_DISTRICT, temp.getElectoralProfile().getFederalDistrict());
+            cv.put(BDProfileManager.ColumnProfiles.ID_ELECTORAL_ACTOR, temp.getElectoralProfile().getElectoralActor());
+            cv.put(BDProfileManager.ColumnProfiles.ID_ELECTORAL_ACTOR_SON, temp.getElectoralProfile().getSubItemElectoralActor());
+            cv.put(BDProfileManager.ColumnProfiles.POLITICAL_PARTY, temp.getElectoralProfile().getPoliticalParty());
+            cv.put(BDProfileManager.ColumnProfiles.FRONT_PHOTO, temp.getElectoralProfile().getPhotoINEFront());
+            cv.put(BDProfileManager.ColumnProfiles.BACK_PHOTO, temp.getElectoralProfile().getPhotoINEBack());
+
+            //ADDRESS
+            cv.put(BDProfileManager.ColumnProfiles.ID_STATE, temp.getAddressProfile().getIdState());
+            cv.put(BDProfileManager.ColumnProfiles.ID_MUNICIPAL, temp.getAddressProfile().getIdMunicipal());
+            cv.put(BDProfileManager.ColumnProfiles.ID_LOCATION, temp.getAddressProfile().getIdLocation());
+            cv.put(BDProfileManager.ColumnProfiles.STREET, temp.getAddressProfile().getStreet());
+            cv.put(BDProfileManager.ColumnProfiles.EXT_NUM, temp.getAddressProfile().getNumExt());
+            cv.put(BDProfileManager.ColumnProfiles.INT_NUM, temp.getAddressProfile().getNumInt());
+            cv.put(BDProfileManager.ColumnProfiles.CITY_COLONY, temp.getAddressProfile().getCity());
+            cv.put(BDProfileManager.ColumnProfiles.DIVISION, temp.getAddressProfile().getDivision());
+            cv.put(BDProfileManager.ColumnProfiles.POSTAL_CODE, temp.getAddressProfile().getPostalCode());
+
+            //CONTACT
+            cv.put(BDProfileManager.ColumnProfiles.PERSONAL_EMAIL, temp.getContactProfile().getPersonalEmail());
+            cv.put(BDProfileManager.ColumnProfiles.PROFESSIONAL_EMAIL, temp.getContactProfile().getProfessionalEmail());
+            cv.put(BDProfileManager.ColumnProfiles.CELLPHONE, temp.getContactProfile().getCellPhoneNumber());
+            cv.put(BDProfileManager.ColumnProfiles.HOME_PHONE, temp.getContactProfile().getHomePhoneNumber());
+            cv.put(BDProfileManager.ColumnProfiles.OFFICE_PHONE, temp.getContactProfile().getOfficePhoneNumber());
+            cv.put(BDProfileManager.ColumnProfiles.OTHER_PHONE, temp.getContactProfile().getOtherPhoneNumber());
+            cv.put(BDProfileManager.ColumnProfiles.CURP, temp.getContactProfile().getCurp());
+            cv.put(BDProfileManager.ColumnProfiles.RFC, temp.getContactProfile().getRfc());
+
+            //PROFESSIONAL
+            cv.put(BDProfileManager.ColumnProfiles.NSS, temp.getProfessionalProfile().getNss());
+            cv.put(BDProfileManager.ColumnProfiles.ID_LEVEL, temp.getProfessionalProfile().getLevel());
+            cv.put(BDProfileManager.ColumnProfiles.ID_CAREER, temp.getProfessionalProfile().getCareer());
+            cv.put(BDProfileManager.ColumnProfiles.ID_TITLE, temp.getProfessionalProfile().getProfessionalTitle());
+            cv.put(BDProfileManager.ColumnProfiles.ACTUAL_JOB, temp.getProfessionalProfile().getActualJob());
+            cv.put(BDProfileManager.ColumnProfiles.ID_COMPANY, temp.getProfessionalProfile().getCompany());
+            cv.put(BDProfileManager.ColumnProfiles.RESUME, temp.getProfessionalProfile().getProfessionalResume());
+
+            //STRUCTURE
+            cv.put(BDProfileManager.ColumnProfiles.COMMITTEE, temp.getProfessionalProfile().getNss());
+            cv.put(BDProfileManager.ColumnProfiles.REFERENCE, temp.getProfessionalProfile().getLevel());
+            cv.put(BDProfileManager.ColumnProfiles.LINK, temp.getProfessionalProfile().getCareer());
+            cv.put(BDProfileManager.ColumnProfiles.COORDINATOR, temp.getProfessionalProfile().getProfessionalTitle());
+
+            //COMMENTS
+            cv.put(BDProfileManager.ColumnProfiles.COMMENT, temp.getCommentProfile().getComment());
+
+            //SOCIAL NETWORK PROFILE
+            cv.put(BDProfileManager.ColumnProfiles.FACEBOOK, temp.getSocialNetworkProfile().getFacebook());
+            cv.put(BDProfileManager.ColumnProfiles.TWITTER, temp.getSocialNetworkProfile().getTwitter());
+            cv.put(BDProfileManager.ColumnProfiles.INSTAGRAM, temp.getSocialNetworkProfile().getInstagram());
+
+            //USER - GROUP
+            cv.put(BDProfileManager.ColumnProfiles.FACEBOOK, temp.getUserProfile().getIdUser());
+            cv.put(BDProfileManager.ColumnProfiles.TWITTER, temp.getUserProfile().getIdGroup());
+
+            bd.insert(BDProfileManager.PROFILES_TABLE_NAME, null, cv);
+            bd.close();
+
+            Log.i("SQLite: ", "Add content in the bd with id :" + temp.getPersonalProfile().getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception", "Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+    }
 
     public static Users getUserByCredentials(Context context, Users u) throws Exception {
         Users data = new Users();

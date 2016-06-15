@@ -27,5 +27,6 @@
     <string name="default_delete_img_msg">Imagen borrada correctamente</string>
     <string name="default_save_profile">Registro perfil</string>
     <string name="default_loading_msg">Espere un momento por favor</string>
+    <string name="default_save_local">Perfil almacenado de manera local</string>
 
 </resources>

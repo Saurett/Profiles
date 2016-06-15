@@ -29,6 +29,7 @@ import org.ksoap2.serialization.SoapPrimitive;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -450,6 +451,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 soapObjectCompany,soapObjectState, soMunicipal, soLocation;
         private Integer webServiceOperation;
         private String textError;
+        private Boolean localAccess;
 
         private AsyncProfile(Integer wsOperation) {
             webServiceOperation = wsOperation;
@@ -486,7 +488,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
             try {
                 switch (webServiceOperation) {
                     case Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE:
-                        soapPrimitive = SoapServices.saveProfile(getApplicationContext(), PROFILE_MANAGER, SESSION_DATA);
+                        PROFILE_MANAGER.setUserProfile(SESSION_DATA);
+                        soapPrimitive = SoapServices.saveProfile(getApplicationContext(), PROFILE_MANAGER);
                         validOperation = (soapPrimitive != null);
                         break;
                     case Constants.WS_KEY_SPINNER_ALL_SPINNER:
@@ -627,11 +630,32 @@ public class NavigationDrawerActivity extends AppCompatActivity
                         soapObjectCareer = SoapServices.getSpinnerCareer(getApplicationContext());
                         soapObjectPT = SoapServices.getSpinnerProfessionalTitles(getApplicationContext());
                         soapObjectCompany = SoapServices.getSpinnerAllCompanies(getApplicationContext());
-                        //soapObject = SoapServices.getAllAddress(getApplicationContext());adm
 
                         validOperation = (soElectoralActor.getPropertyCount() > 0);
                         break;
                 }
+            } catch (ConnectException e) {
+                textError = e.getMessage();
+                validOperation = false;
+
+
+                e.printStackTrace();
+                Log.e("WebServiceException", "Unknown error : " + e.getMessage());
+
+                switch (webServiceOperation) {
+                    case Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE:
+
+                        try {
+                            BDProfileManagerQuery.addProfile(getApplicationContext(),PROFILE_MANAGER);
+                            localAccess = true;
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                            localAccess = false;
+                        }
+
+                        break;
+                }
+
             } catch (Exception e) {
                 textError = e.getMessage();
                 validOperation = false;
@@ -669,7 +693,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             actualFragment.add(R.id.profiles_fragment_container, new PersonalProfileFragment(), Constants.FRAGMENT_PERSONAL_TAG);
                             actualFragment.commit();
 
-                            String tempText = soapPrimitive.toString();
+                            String tempText = (localAccess) ? getString(R.string.default_save_local) : soapPrimitive.toString();
                             Toast.makeText(getApplicationContext(), tempText, Toast.LENGTH_LONG).show();
 
                         } catch (Exception e) {

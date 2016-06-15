@@ -18,7 +18,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
     public static final String ELECTORAL_ACTOR_TABLE_NAME = "ElectoralActor";
     public static final String OBTAINED_DOCUMENT_TABLE_NAME = "ObtainedDocument";
     public static final String ELECTORAL_SECTIONS_TABLE_NAME = "ElectoralSections";
-    public static final String PROFILES_TABLE_NAME = "ElectoralSections";
+    public static final String PROFILES_TABLE_NAME = "Profiles";
 
     public static final String STRING_TYPE = "text";
     public static final String INT_TYPE = "integer";
@@ -145,7 +145,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
         public static final String ID_COMPANY = "idCompany";
         public static final String RESUME = "resume";
         //STRUCTURE
-        public static final String COMMITTE = "committee";
+        public static final String COMMITTEE = "committee";
         public static final String REFERENCE = "reference";
         public static final String LINK = "link";
         public static final String COORDINATOR = "coordinator";
@@ -300,7 +300,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
                     ColumnProfiles.ID_COMPANY + " " + INT_TYPE + "," +
                     ColumnProfiles.RESUME + " " + STRING_TYPE + "," +
                     //STRUCTURE
-                    ColumnProfiles.COMMITTE + " " + STRING_TYPE + "," +
+                    ColumnProfiles.COMMITTEE + " " + STRING_TYPE + "," +
                     ColumnProfiles.REFERENCE + " " + STRING_TYPE + "," +
                     ColumnProfiles.LINK + " " + STRING_TYPE + "," +
                     ColumnProfiles.COORDINATOR + " " + STRING_TYPE + "," +
@@ -312,7 +312,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
                     ColumnProfiles.INSTAGRAM + " " + STRING_TYPE + "," +
                     //USER - GROUP
                     ColumnProfiles.ID_GROUP + " " + INT_TYPE + "," +
-                    ColumnProfiles.ID_USER + " " + INT_TYPE + "," +
+                    ColumnProfiles.ID_USER + " " + INT_TYPE +
             ")";
 
     public static  final String DROP_TABLE_IF_EXISTS = "drop table if exists ";

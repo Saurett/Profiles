@@ -17,7 +17,6 @@ import java.net.SocketTimeoutException;
 
 import app.texium.com.profiles.R;
 import app.texium.com.profiles.models.ProfileManager;
-import app.texium.com.profiles.models.Users;
 import app.texium.com.profiles.utils.Constants;
 
 /**
@@ -919,7 +918,7 @@ public class SoapServices {
         return soapObject;
     }
 
-    public static SoapPrimitive saveProfile(Context context, ProfileManager profileManager, Users actualUser) throws Exception {
+    public static SoapPrimitive saveProfile(Context context, ProfileManager profileManager) throws Exception {
         SoapPrimitive soapPrimitive;
         try {
             String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_SAVE_PROFILE;
@@ -989,8 +988,8 @@ public class SoapServices {
             Request.addProperty(Constants.WEB_SERVICE_PARAM_TWITTER, profileManager.getSocialNetworkProfile().getTwitter());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_INSTAGRAM, profileManager.getSocialNetworkProfile().getInstagram());
 
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_GROUP, actualUser.getIdGroup());
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_USER, actualUser.getIdUser());
+            Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_GROUP, profileManager.getUserProfile().getIdGroup());
+            Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_USER, profileManager.getUserProfile().getIdUser());
 
             SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             soapEnvelope.dotNet = true;
