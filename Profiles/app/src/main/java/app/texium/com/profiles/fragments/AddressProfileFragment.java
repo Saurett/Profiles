@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +21,12 @@ import android.widget.Toast;
 
 import org.ksoap2.serialization.SoapObject;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
 import app.texium.com.profiles.R;
+import app.texium.com.profiles.databases.BDProfileManagerQuery;
 import app.texium.com.profiles.models.AddressProfile;
 import app.texium.com.profiles.models.Locations;
 import app.texium.com.profiles.models.Municipalities;
@@ -252,6 +255,7 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
         private Integer webServiceIdState;
         private Integer webServiceIdMunicipal;
         private String textError;
+        private Boolean localAccess;
 
         private AsyncAddress(Integer wsOperation) {
             webServiceOperation = wsOperation;
@@ -302,6 +306,84 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
                         validOperation = (soapObject.getPropertyCount() > 0);
                         break;
                 }
+            } catch (ConnectException e) {
+                textError = e.getMessage();
+                validOperation = false;
+
+                e.printStackTrace();
+                Log.e("WebServiceException", "Unknown error : " + e.getMessage());
+
+                switch (webServiceOperation) {
+                    case Constants.WS_KEY_SPINNER_ADDRESS_STATE_SERVICE:
+                        validOperation = true;
+
+                        stateList = new ArrayList<>();
+                        states = new ArrayList<>();
+                        stateList.add("Seleccione un estado ...");
+
+                        try {
+                            states = BDProfileManagerQuery.getAllState(getContext());
+
+                            for (States data :
+                                    states) {
+                                stateList.add(data.getStateName());
+                            }
+
+                            localAccess = true;
+
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                            localAccess = false;
+                        }
+
+                        break;
+                    case Constants.WS_KEY_SPINNER_ADDRESS_MUNICIPAL_SERVICE:
+                        validOperation = true;
+
+                        municipalList = new ArrayList<>();
+                        municipalities = new ArrayList<>();
+                        municipalList.add("Seleccione un municipio ...");
+
+                        try {
+                            municipalities = BDProfileManagerQuery.getAllMunicipal(getContext(), webServiceIdState);
+
+                            for (Municipalities data :
+                                    municipalities) {
+                                municipalList.add(data.getMunicipalName());
+                            }
+
+                            localAccess = true;
+
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                            localAccess = false;
+                        }
+                        break;
+                    case Constants.WS_KEY_SPINNER_ADDRESS_LOCATION_SERVICE:
+                        validOperation = true;
+
+                        locations = new ArrayList<>();
+                        locationList = new ArrayList<>();
+                        locationList.add("Seleccione una localidad ...");
+
+                        try {
+                            locations = BDProfileManagerQuery.getAllLocation(getContext(),
+                                    webServiceIdState,
+                                    webServiceIdMunicipal);
+
+                            for (Locations data :
+                                    locations) {
+                                locationList.add(data.getLocationName());
+                            }
+
+                            localAccess = true;
+
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                            localAccess = false;
+                        }
+                        break;
+                }
             } catch (Exception e) {
                 textError = e.getMessage();
                 validOperation = false;
@@ -318,27 +400,30 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
 
                 switch (webServiceOperation) {
                     case Constants.WS_KEY_SPINNER_ADDRESS_STATE_SERVICE:
-                        stateList = new ArrayList<>();
-                        states = new ArrayList<>();
-                        stateList.add("Seleccione un estado ...");
 
-                        if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+                        if (!localAccess) {
+                            stateList = new ArrayList<>();
+                            states = new ArrayList<>();
+                            stateList.add("Seleccione un estado ...");
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+                            if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                    SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                    States state = new States();
-                                    state.setIdItem(i);
-                                    state.setIdState(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
-                                    state.setAcronymName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
-                                    state.setStateName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
-                                    state.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+                                    for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                        SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
-                                    states.add(state);
-                                    stateList.add(state.getStateName());
+                                        States state = new States();
+                                        state.setIdItem(i);
+                                        state.setIdState(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
+                                        state.setAcronymName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
+                                        state.setStateName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
+                                        state.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                        states.add(state);
+                                        stateList.add(state.getStateName());
+                                    }
                                 }
                             }
                         }
@@ -362,29 +447,32 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
                         }
                         break;
                     case Constants.WS_KEY_SPINNER_ADDRESS_MUNICIPAL_SERVICE:
-                        municipalList = new ArrayList<>();
-                        municipalities = new ArrayList<>();
-                        municipalList.add("Seleccione un municipio ...");
 
-                        if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+                        if (!localAccess) {
+                            municipalList = new ArrayList<>();
+                            municipalities = new ArrayList<>();
+                            municipalList.add("Seleccione un municipio ...");
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+                            if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                    SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                    Municipalities municipal = new Municipalities();
-                                    municipal.setIdItem(i);
-                                    municipal.setIdState(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
-                                    municipal.setStateName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
-                                    municipal.setStateAcronym(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
-                                    municipal.setIdMunicipal(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_ID).toString()));
-                                    municipal.setMunicipalName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString());
-                                    municipal.setIdstatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+                                    for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                        SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
-                                    municipalities.add(municipal);
-                                    municipalList.add(municipal.getMunicipalName());
+                                        Municipalities municipal = new Municipalities();
+                                        municipal.setIdItem(i);
+                                        municipal.setIdState(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
+                                        municipal.setStateName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
+                                        municipal.setStateAcronym(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
+                                        municipal.setIdMunicipal(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_ID).toString()));
+                                        municipal.setMunicipalName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString());
+                                        municipal.setIdstatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                        municipalities.add(municipal);
+                                        municipalList.add(municipal.getMunicipalName());
+                                    }
                                 }
                             }
                         }
@@ -408,34 +496,38 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
 
                         break;
                     case Constants.WS_KEY_SPINNER_ADDRESS_LOCATION_SERVICE:
-                        locations = new ArrayList<>();
-                        locationList = new ArrayList<>();
-                        locationList.add("Seleccione una localidad ...");
 
-                        if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+                        if (!localAccess) {
+                            locations = new ArrayList<>();
+                            locationList = new ArrayList<>();
+                            locationList.add("Seleccione una localidad ...");
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+                            if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                    SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                    Locations location = new Locations();
-                                    location.setIdItem(i);
-                                    location.setIdState(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
-                                    location.setStateName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
-                                    location.setStateAcronym(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
-                                    location.setIdMunicipal(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_ID).toString()));
-                                    location.setMunicipalName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString());
-                                    location.setIdLocation(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_ID).toString()));
-                                    location.setLocationName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_NAME).toString());
-                                    location.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+                                    for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                        SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                        Locations location = new Locations();
+                                        location.setIdItem(i);
+                                        location.setIdState(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
+                                        location.setStateName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
+                                        location.setStateAcronym(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
+                                        location.setIdMunicipal(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_ID).toString()));
+                                        location.setMunicipalName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString());
+                                        location.setIdLocation(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_ID).toString()));
+                                        location.setLocationName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_NAME).toString());
+                                        location.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
 
 
-                                    locations.add(location);
-                                    locationList.add(location.getLocationName());
+                                        locations.add(location);
+                                        locationList.add(location.getLocationName());
+                                    }
                                 }
                             }
+
                         }
 
                         try {

@@ -12,8 +12,11 @@ import app.texium.com.profiles.models.AcademyLevels;
 import app.texium.com.profiles.models.Careers;
 import app.texium.com.profiles.models.Companies;
 import app.texium.com.profiles.models.ElectoralActor;
+import app.texium.com.profiles.models.Locations;
+import app.texium.com.profiles.models.Municipalities;
 import app.texium.com.profiles.models.PoliticalParties;
 import app.texium.com.profiles.models.ProfessionalTitles;
+import app.texium.com.profiles.models.States;
 import app.texium.com.profiles.models.Users;
 
 /**
@@ -22,7 +25,7 @@ import app.texium.com.profiles.models.Users;
 public class BDProfileManagerQuery {
 
     static String BDName = "BDProfileManager";
-    static Integer BDVersion = 10;
+    static Integer BDVersion = 13;
 
     public static Users getUserByCredentials(Context context, Users u) throws Exception {
         Users data = new Users();
@@ -46,6 +49,280 @@ public class BDProfileManagerQuery {
 
                     Log.i("SQLite: ", "Get user in the bd with idUser :" + data.getIdUser()
                             + " username : " + data.getUserName() + " password :" + data.getPassword());
+                } while (result.moveToNext());
+            }
+
+            bd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception","Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+        return data;
+    }
+
+    public static States getStateById(Context context, States pp) throws Exception {
+        States data = new States();
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            Cursor result = bd.rawQuery("select * from "+ BDProfileManager.ADDRESS_TABLE_NAME +
+                    " where "+ BDProfileManager.ColumnAddress.ESTATE_ID +" = '" + pp.getIdState() + "'" +
+                    " and " + BDProfileManager.ColumnAddress.MUNICIPALITY_ID + " is null" +
+                    " and " + BDProfileManager.ColumnAddress.CITY_ID + " is null",null);
+
+            if (result.moveToFirst()) {
+                do {
+
+                    data.setIdState(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_ID)));
+                    data.setStateName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_NAME)));
+
+                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdState());
+                } while (result.moveToNext());
+            }
+
+            bd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception","Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+        return data;
+    }
+
+    public static void addState(Context context, States temp) throws Exception {
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName, null, BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            ContentValues cv = new ContentValues();
+
+            cv.put(BDProfileManager.ColumnAddress.ESTATE_ID, temp.getIdState() );
+            cv.put(BDProfileManager.ColumnAddress.ESTATE_NAME, temp.getStateName());
+
+            bd.insert(BDProfileManager.ADDRESS_TABLE_NAME, null, cv);
+            bd.close();
+
+            Log.i("SQLite: ", "Add content in the bd with id :" + temp.getIdState());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception", "Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+    }
+
+    public static ArrayList<States> getAllState(Context context) throws Exception {
+        ArrayList<States> data = new ArrayList<>();
+
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            Cursor result = bd.rawQuery("select * from "+ BDProfileManager.ADDRESS_TABLE_NAME +
+                    " where " + BDProfileManager.ColumnAddress.ESTATE_ID + " > 0" +
+                    " and " + BDProfileManager.ColumnAddress.MUNICIPALITY_ID + " is null" +
+                    " and " + BDProfileManager.ColumnAddress.CITY_ID + " is null" +
+                    " order by " + BDProfileManager.ColumnAddress.ESTATE_ID + " ASC"
+                    ,null);
+
+            if (result.moveToFirst()) {
+                do {
+                    States pp = new States();
+
+                    pp.setIdState(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_ID)));
+                    pp.setStateName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_NAME)));
+
+                    data.add(pp);
+
+                } while (result.moveToNext());
+            }
+
+            bd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception","Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+        return data;
+    }
+
+    public static Municipalities getMunicipalById(Context context, Municipalities temp) throws Exception {
+        Municipalities data = new Municipalities();
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            Cursor result = bd.rawQuery("select * from "+ BDProfileManager.ADDRESS_TABLE_NAME +
+                    " where "+ BDProfileManager.ColumnAddress.MUNICIPALITY_ID +" = " + temp.getIdMunicipal() +
+                    " and " + BDProfileManager.ColumnAddress.ESTATE_ID +" = " + temp.getIdState() +
+                    " and " + BDProfileManager.ColumnAddress.CITY_ID + " is null",null);
+
+            if (result.moveToFirst()) {
+                do {
+
+                    data.setIdState(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_ID)));
+                    data.setStateName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_NAME)));
+                    data.setIdMunicipal(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.MUNICIPALITY_ID)));
+                    data.setMunicipalName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.MUNICIPALITY_NAME)));
+
+                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdMunicipal());
+                } while (result.moveToNext());
+            }
+
+            bd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception","Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+        return data;
+    }
+
+    public static void addMunicipal(Context context, Municipalities temp) throws Exception {
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName, null, BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            ContentValues cv = new ContentValues();
+
+            cv.put(BDProfileManager.ColumnAddress.ESTATE_ID, temp.getIdState() );
+            cv.put(BDProfileManager.ColumnAddress.ESTATE_NAME, temp.getStateName());
+            cv.put(BDProfileManager.ColumnAddress.MUNICIPALITY_ID, temp.getIdMunicipal() );
+            cv.put(BDProfileManager.ColumnAddress.MUNICIPALITY_NAME, temp.getMunicipalName());
+
+            bd.insert(BDProfileManager.ADDRESS_TABLE_NAME, null, cv);
+            bd.close();
+
+            Log.i("SQLite: ", "Add content in the bd with id :" + temp.getIdMunicipal());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception", "Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+    }
+
+    public static ArrayList<Municipalities> getAllMunicipal(Context context, int idState) throws Exception {
+        ArrayList<Municipalities> data = new ArrayList<>();
+
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            Cursor result = bd.rawQuery("select * from "+ BDProfileManager.ADDRESS_TABLE_NAME +
+                            " where " + BDProfileManager.ColumnAddress.ESTATE_ID + " = " + idState +
+                            " and " + BDProfileManager.ColumnAddress.MUNICIPALITY_ID + " > 0 "+
+                            " and " + BDProfileManager.ColumnAddress.CITY_ID + " is null"
+                    ,null);
+
+            if (result.moveToFirst()) {
+                do {
+                    Municipalities pp = new Municipalities();
+
+                    pp.setIdState(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_ID)));
+                    pp.setStateName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_NAME)));
+                    pp.setIdMunicipal(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.MUNICIPALITY_ID)));
+                    pp.setMunicipalName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.MUNICIPALITY_NAME)));
+
+                    data.add(pp);
+
+                } while (result.moveToNext());
+            }
+
+            bd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception","Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+        return data;
+    }
+
+    public static Locations getLocationById(Context context, Locations temp) throws Exception {
+        Locations data = new Locations();
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            Cursor result = bd.rawQuery("select * from "+ BDProfileManager.ADDRESS_TABLE_NAME +
+                    " where "+ BDProfileManager.ColumnAddress.MUNICIPALITY_ID +" = " + temp.getIdMunicipal() +
+                    " and " + BDProfileManager.ColumnAddress.ESTATE_ID +" = " + temp.getIdState() +
+                    " and " + BDProfileManager.ColumnAddress.CITY_ID +" = " + temp.getIdLocation() ,null);
+
+            if (result.moveToFirst()) {
+                do {
+
+                    data.setIdState(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_ID)));
+                    data.setStateName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_NAME)));
+                    data.setIdMunicipal(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.MUNICIPALITY_ID)));
+                    data.setMunicipalName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.MUNICIPALITY_NAME)));
+                    data.setIdLocation(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.CITY_ID)));
+                    data.setMunicipalName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.CITY_NAME)));
+
+                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdLocation());
+                } while (result.moveToNext());
+            }
+
+            bd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception","Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+        return data;
+    }
+
+    public static void addLocation(Context context, Locations temp) throws Exception {
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName, null, BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            ContentValues cv = new ContentValues();
+
+            cv.put(BDProfileManager.ColumnAddress.ESTATE_ID, temp.getIdState() );
+            cv.put(BDProfileManager.ColumnAddress.ESTATE_NAME, temp.getStateName());
+            cv.put(BDProfileManager.ColumnAddress.MUNICIPALITY_ID, temp.getIdMunicipal() );
+            cv.put(BDProfileManager.ColumnAddress.MUNICIPALITY_NAME, temp.getMunicipalName());
+            cv.put(BDProfileManager.ColumnAddress.CITY_ID, temp.getIdLocation() );
+            cv.put(BDProfileManager.ColumnAddress.CITY_NAME, temp.getLocationName());
+
+            bd.insert(BDProfileManager.ADDRESS_TABLE_NAME, null, cv);
+            bd.close();
+
+            Log.i("SQLite: ", "Add content in the bd with id :" + temp.getIdMunicipal());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception", "Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+    }
+
+    public static ArrayList<Locations> getAllLocation(Context context, int idState, int idMunicipal) throws Exception {
+        ArrayList<Locations> data = new ArrayList<>();
+
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            Cursor result = bd.rawQuery("select * from "+ BDProfileManager.ADDRESS_TABLE_NAME +
+                            " where " + BDProfileManager.ColumnAddress.ESTATE_ID + " = " + idState +
+                            " and " + BDProfileManager.ColumnAddress.MUNICIPALITY_ID + " = " + idMunicipal +
+                            " and " + BDProfileManager.ColumnAddress.CITY_ID + " > 0 "
+                    ,null);
+
+            if (result.moveToFirst()) {
+                do {
+                    Locations pp = new Locations();
+
+                    pp.setIdState(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_ID)));
+                    pp.setStateName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_NAME)));
+                    pp.setIdMunicipal(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.MUNICIPALITY_ID)));
+                    pp.setMunicipalName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.MUNICIPALITY_NAME)));
+                    pp.setIdLocation(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.CITY_ID)));
+                    pp.setLocationName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.CITY_NAME)));
+
+                    data.add(pp);
+
                 } while (result.moveToNext());
             }
 

@@ -472,7 +472,7 @@ public class SoapServices {
             e.printStackTrace();
             Log.e("Soap ConnectException", e.getMessage());
             throw new ConnectException(context.getString(R.string.default_connect_error));
-        } catch (SocketTimeoutException e) {
+        } catch (java.net.SocketTimeoutException e) {
             e.printStackTrace();
             Log.e("Soap SocketTimeoutException", e.getMessage());
             throw new ConnectException(context.getString(R.string.default_connect_error));

@@ -1,18 +1,23 @@
 <resources>
-    <string name="app_name">Perfiles</string>
-    <string name="password_login_error">La contraseña no es valida</string>
-    <string name="username_login_error">Este campo es requerido</string>
-    <string name="default_login_error">El usuario y contraseña no coninciden</string>
-    <string name="default_user_unregister">Usuario no registrado</string>
-    <string name="default_incorrect_password">La contraseña es incorrecta</string>
+    <string name="app_name">Profiles</string>
+    <string name="password_login_error">La Contraseña no es valida.</string>
+    <string name="username_login_error">El campo es requerido.</string>
+    <string name="default_login_error">El usuario y contraseña no coinciden.</string>
+    <string name="default_user_unregister">Usuario no registrado.</string>
+    <string name="default_incorrect_password">Contrasela incorrecta.</string>
     <string name="default_exception_error">Error inesperado.</string>
-    <string name="default_connect_error">Una falla en la conección del servidor ha sido detectada.</string>
-    <string name="default_soap_error">Error inesperado (SOAP).</string>
+    <string name="default_connect_error">Una falla la conexion con el servidor ha sido detectada.</string>
+    <string name="default_soap_error">Unexpected soap error.</string>
+    <string name="title_activity_navigation_drawer">NavigationDrawerActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Configuración</string>
     <string name="finish_profile">Finalizar</string>
     <string name="next_profile">Siguiente</string>
     <string name="back_profile">Anterior</string>
     <string name="default_attaching_img_error">Error intentando adjuntar imagen</string>
-    <string name="directory_name_images">images</string>
     <string name="default_field_required">Este campo es requerido</string>
     <string name="default_question_delete_back">¿ Desea eliminar la imagen asociada a la Credencial INE (Reverso) ?</string>
     <string name="default_question_delete_front">¿ Desea eliminar la imagen asociada a la Credencial INE (Frente) ?</string>
@@ -20,13 +25,7 @@
     <string name="default_positive_button">Confirmar</string>
     <string name="default_negative_button">Cancelar</string>
     <string name="default_delete_img_msg">Imagen borrada correctamente</string>
+    <string name="default_save_profile">Registro perfil</string>
+    <string name="default_loading_msg">Espere un momento por favor</string>
 
-    <!-- Conjunto de Strings para el View GameSpinner -->
-    <string-array name="Games">
-        <item>League of Legends</item>
-        <item>Diablo III</item>
-        <item>God of War</item>
-        <item>Halo 4</item>
-        <item>StarCraft II</item>
-    </string-array>
 </resources>

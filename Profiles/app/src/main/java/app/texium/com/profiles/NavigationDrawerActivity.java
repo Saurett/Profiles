@@ -16,6 +16,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,9 +47,12 @@ import app.texium.com.profiles.models.AcademyLevels;
 import app.texium.com.profiles.models.Careers;
 import app.texium.com.profiles.models.Companies;
 import app.texium.com.profiles.models.ElectoralActor;
+import app.texium.com.profiles.models.Locations;
+import app.texium.com.profiles.models.Municipalities;
 import app.texium.com.profiles.models.PoliticalParties;
 import app.texium.com.profiles.models.ProfessionalTitles;
 import app.texium.com.profiles.models.ProfileManager;
+import app.texium.com.profiles.models.States;
 import app.texium.com.profiles.models.Users;
 import app.texium.com.profiles.services.FileServices;
 import app.texium.com.profiles.services.MarshMallowPermission;
@@ -439,10 +443,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
         return PROFILE_MANAGER;
     }
 
-    private class AsyncProfile extends AsyncTask<Void, Void, Boolean> {
+    private class AsyncProfile extends AsyncTask<Void, String, Boolean> {
 
         private SoapPrimitive soapPrimitive;
-        private SoapObject soPoliticalParty, soElectoralActor, soapObjectAL, soapObjectCareer,soapObjectPT, soapObjectCompany;
+        private SoapObject soPoliticalParty, soElectoralActor, soapObjectAL, soapObjectCareer,soapObjectPT,
+                soapObjectCompany,soapObjectState, soMunicipal, soLocation;
         private Integer webServiceOperation;
         private String textError;
 
@@ -453,12 +458,24 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         @Override
         protected void onPreExecute() {
-            pDialog = new ProgressDialog(NavigationDrawerActivity.this);
-            pDialog.setMessage("Espere un momento por favor");
-            pDialog.setTitle("Registro perfil");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.show();
+            switch (webServiceOperation) {
+                case Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE:
+                    pDialog = new ProgressDialog(NavigationDrawerActivity.this);
+                    pDialog.setMessage(getString(R.string.default_loading_msg));
+                    pDialog.setTitle(getString(R.string.default_save_profile));
+                    pDialog.setIndeterminate(false);
+                    pDialog.setCancelable(false);
+                    pDialog.show();
+                    break;
+                case Constants.WS_KEY_SPINNER_ALL_SPINNER:
+                    pDialog = new ProgressDialog(NavigationDrawerActivity.this);
+                    pDialog.setMessage(getString(R.string.default_loading_msg));
+                    pDialog.setTitle("Descargando actualizaciones de catalogos");
+                    pDialog.setIndeterminate(false);
+                    pDialog.setCancelable(false);
+                    pDialog.show();
+                    break;
+            }
         }
 
         @Override
@@ -473,13 +490,144 @@ public class NavigationDrawerActivity extends AppCompatActivity
                         validOperation = (soapPrimitive != null);
                         break;
                     case Constants.WS_KEY_SPINNER_ALL_SPINNER:
+                        soapObjectState = SoapServices.getSpinnerStates(getApplicationContext());
+
+                        if (soapObjectState.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soapObjectState.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int iE = 0; iE < soNewDataSet.getPropertyCount(); iE++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(iE);
+
+                                    States state = new States();
+
+                                    state.setIdItem(iE);
+                                    state.setIdState(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
+                                    state.setAcronymName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
+                                    state.setStateName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
+                                    state.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                    int tempItem = iE + 1;
+                                    String title = "Descargando Catalogo de Direcciones";
+                                    String msg = "Descargando paquete " + tempItem + " de " + soNewDataSet.getPropertyCount() ;
+
+                                    publishProgress(title,msg,String.valueOf(tempItem), String.valueOf(soNewDataSet.getPropertyCount()));
+                                    Log.i("Estados","Descargando catalgo de " + state.getStateName());
+
+                                    if (state.getIdState() != 27) continue;
+
+                                    try {
+
+                                        States data = BDProfileManagerQuery.getStateById(getApplicationContext(),state);
+
+                                        Integer exist = (data.getIdState() != null )
+                                                ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                        switch (exist) {
+                                            case Constants.INACTIVE:
+                                                BDProfileManagerQuery.addState(getApplicationContext(),state);
+                                                Log.i("Estados","Registrando estado : " + state.getStateName());
+                                                break;
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    soMunicipal = SoapServices.getSpinnerMunicipal(getApplicationContext(), state.getIdState());
+
+                                    if (soMunicipal.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                        SoapObject soDiffGramM = (SoapObject) soMunicipal.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                        if (soDiffGramM.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                            SoapObject soNewDataSetM = (SoapObject) soDiffGramM.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                            for (int iM = 0; iM < soNewDataSetM.getPropertyCount(); iM++) {
+                                                SoapObject soItemM = (SoapObject) soNewDataSetM.getProperty(iM);
+
+                                                Municipalities municipal = new Municipalities();
+
+                                                municipal.setIdItem(iM);
+                                                municipal.setIdState(Integer.valueOf(soItemM.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
+                                                municipal.setStateName(soItemM.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
+                                                municipal.setStateAcronym(soItemM.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
+                                                municipal.setIdMunicipal(Integer.valueOf(soItemM.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_ID).toString()));
+                                                municipal.setMunicipalName(soItemM.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString());
+                                                municipal.setIdstatus(Integer.valueOf(soItemM.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                                try {
+
+                                                    Municipalities data = BDProfileManagerQuery.getMunicipalById(getApplicationContext(),municipal);
+
+                                                    Integer exist = (data.getIdMunicipal() != null )
+                                                            ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                                    switch (exist) {
+                                                        case Constants.INACTIVE:
+                                                            BDProfileManagerQuery.addMunicipal(getApplicationContext(),municipal);
+                                                            Log.i("Municipios","Registrando Municipio : " + municipal.getMunicipalName());
+                                                            break;
+                                                    }
+
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                soLocation = SoapServices.getSpinnerLocation(getApplicationContext(), municipal.getIdState(),municipal.getIdMunicipal());
+
+                                                if (soLocation.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                                    SoapObject soDiffGramL = (SoapObject) soLocation.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                                    if (soDiffGramL.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                                        SoapObject soNewDataSetL = (SoapObject) soDiffGramL.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                                        for (int iL = 0; iL < soNewDataSetL.getPropertyCount(); iL++) {
+                                                            SoapObject soItemL = (SoapObject) soNewDataSetL.getProperty(iL);
+
+                                                            Locations location = new Locations();
+                                                            location.setIdItem(iL);
+                                                            location.setIdState(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
+                                                            location.setStateName(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
+                                                            location.setStateAcronym(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
+                                                            location.setIdMunicipal(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_ID).toString()));
+                                                            location.setMunicipalName(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString());
+                                                            location.setIdLocation(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_ID).toString()));
+                                                            location.setLocationName(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_NAME).toString());
+                                                            location.setIdStatus(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                                            try {
+
+                                                                Locations data = BDProfileManagerQuery.getLocationById(getApplicationContext(),location);
+
+                                                                Integer exist = (data.getIdMunicipal() != null )
+                                                                        ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                                                switch (exist) {
+                                                                    case Constants.INACTIVE:
+                                                                        BDProfileManagerQuery.addLocation(getApplicationContext(),location);
+                                                                        Log.i("Localidad","Registrando Localidad : " + location.getLocationName());
+                                                                        break;
+                                                                }
+
+                                                            } catch (Exception e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         soPoliticalParty = SoapServices.getSpinnerPP(getApplicationContext());
                         soElectoralActor = SoapServices.getSpinnerAllEA(getApplicationContext());
                         soapObjectAL = SoapServices.getSpinnerAcademyLevels(getApplicationContext());
                         soapObjectCareer = SoapServices.getSpinnerCareer(getApplicationContext());
                         soapObjectPT = SoapServices.getSpinnerProfessionalTitles(getApplicationContext());
                         soapObjectCompany = SoapServices.getSpinnerAllCompanies(getApplicationContext());
-                        //soapObject = SoapServices.getAllAddress(getApplicationContext());
+                        //soapObject = SoapServices.getAllAddress(getApplicationContext());adm
 
                         validOperation = (soElectoralActor.getPropertyCount() > 0);
                         break;
@@ -490,6 +638,19 @@ public class NavigationDrawerActivity extends AppCompatActivity
             }
 
             return validOperation;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... progress) {
+            pDialog.setTitle(progress[0]);
+            pDialog.setMessage(progress[1]);
+
+            if (null != progress[3]) {
+
+                pDialog.setProgress(Integer.valueOf(progress[2]));
+                pDialog.setMax(Integer.valueOf(progress[3]));
+            }
+
         }
 
         @Override
@@ -707,7 +868,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                     company.setIdCompany(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
                                     company.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
                                     company.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
-                                    company.setIdGroup(Integer.valueOf(soItem.getProperty(Constants.WEB_SERVICE_PARAM_ID_GROUP).toString()));
+                                    company.setIdGroup((soItem.hasProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_GROUP))
+                                            ? Integer.valueOf(soItem.getProperty(Constants.WEB_SERVICE_PARAM_ID_GROUP).toString())
+                                    : 0);
 
                                     try {
 

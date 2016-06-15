@@ -18,8 +18,6 @@
     <string name="next_profile">Siguiente</string>
     <string name="back_profile">Anterior</string>
     <string name="default_attaching_img_error">Error intentando adjuntar imagen</string>
-    <string name="directory_name_corp_chat">chats</string>
-    <string name="directory_name_images">images</string>
     <string name="default_field_required">Este campo es requerido</string>
     <string name="default_question_delete_back">¿ Desea eliminar la imagen asociada a la Credencial INE (Reverso) ?</string>
     <string name="default_question_delete_front">¿ Desea eliminar la imagen asociada a la Credencial INE (Frente) ?</string>
@@ -27,13 +25,7 @@
     <string name="default_positive_button">Confirmar</string>
     <string name="default_negative_button">Cancelar</string>
     <string name="default_delete_img_msg">Imagen borrada correctamente</string>
+    <string name="default_save_profile">Registro perfil</string>
+    <string name="default_loading_msg">Espere un momento por favor</string>
 
-    <!-- Conjunto de Strings para el View GameSpinner -->
-    <string-array name="Games">
-        <item>League of Legends</item>
-        <item>Devil III</item>
-        <item>God of War</item>
-        <item>Halo 4</item>
-        <item>StarCraft II</item>
-    </string-array>
 </resources>
