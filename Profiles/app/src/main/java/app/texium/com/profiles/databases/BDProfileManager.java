@@ -18,6 +18,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
     public static final String ELECTORAL_ACTOR_TABLE_NAME = "ElectoralActor";
     public static final String OBTAINED_DOCUMENT_TABLE_NAME = "ObtainedDocument";
     public static final String ELECTORAL_SECTIONS_TABLE_NAME = "ElectoralSections";
+    public static final String PROFILES_TABLE_NAME = "ElectoralSections";
 
     public static final String STRING_TYPE = "text";
     public static final String INT_TYPE = "integer";
@@ -91,6 +92,72 @@ public class BDProfileManager extends SQLiteOpenHelper {
         public static final String ELECTORAL_SECTION_ID = "idElectoralSection";
         public static final String LOCAL_DISTRICT = "localDistrict";
         public static final String ESTATE_ID = "idEstate";
+    }
+
+    public static class ColumnProfiles{
+        //PERSONAL
+        public static final String PROFILE_CVE = "cveProfile";
+        public static final String NAME = "name";
+        public static final String FIRST_SURNAME = "firstSurname";
+        public static final String SECOND_SURNAME = "secondSurname";
+        public static final String BIRTH_DATE = "birthDate";
+        public static final String BIRTH_PLACE = "birthPlace";
+        public static final String NATIONALITY = "nationality";
+        public static final String GENDER = "gender";
+        public static final String MARITAL_STATUS = "maritalStatus";
+        //ELECTORAL
+        public static final String OCR_INE = "ocrIne";
+        public static final String ELECTORAL_ID = "electoralId";
+        public static final String VALIDITY_INE = "validityIne";
+        public static final String ELECTORAL_SECTION = "electoralSection";
+        public static final String FEDERAL_DISTRICT = "federalDistrict";
+        public static final String ELECTORAL_ADVISER = "electoralAdviser";
+        public static final String ID_ELECTORAL_ACTOR = "idElectoralActor";
+        public static final String ID_ELECTORAL_ACTOR_SON = "idElectoralActorSon";
+        public static final String POLITICAL_PARTY = "politicalParty";
+        public static final String FRONT_PHOTO = "frontPhoto";
+        public static final String BACK_PHOTO = "backPhoto";
+        //ADDRESS
+        public static final String ID_STATE = "idState";
+        public static final String ID_MUNICIPAL = "idMunicipal";
+        public static final String ID_LOCATION = "idLocation";
+        public static final String STREET = "street";
+        public static final String EXT_NUM = "extNum";
+        public static final String INT_NUM = "intNum";
+        public static final String CITY_COLONY = "cityColony";
+        public static final String DIVISION = "division";
+        public static final String POSTAL_CODE = "postalCode";
+        //CONTACT
+        public static final String PERSONAL_EMAIL = "personalEmail";
+        public static final String PROFESSIONAL_EMAIL = "professionalEmail";
+        public static final String CELLPHONE = "cellphone";
+        public static final String HOME_PHONE = "homePhone";
+        public static final String OFFICE_PHONE = "officePhone";
+        public static final String OTHER_PHONE = "otherPhone";
+        public static final String CURP = "curp";
+        public static final String RFC = "rfc";
+        //PROFESSIONAL
+        public static final String NSS = "nss";
+        public static final String ID_LEVEL = "idLevel";
+        public static final String ID_CAREER = "idCareer";
+        public static final String ID_TITLE = "idTitle";
+        public static final String ACTUAL_JOB = "actualJob";
+        public static final String ID_COMPANY = "idCompany";
+        public static final String RESUME = "resume";
+        //STRUCTURE
+        public static final String COMMITTE = "committee";
+        public static final String REFERENCE = "reference";
+        public static final String LINK = "link";
+        public static final String COORDINATOR = "coordinator";
+        //COMMENTS
+        public static final String COMMENT = "comment";
+        //SOCIAL NETWORK PROFILE
+        public static final String FACEBOOK = "facebook";
+        public static final String TWITTER = "twitter";
+        public static final String INSTAGRAM = "instagram";
+
+        public static final String ID_GROUP = "idGroup";
+        public static final String ID_USER = "idUser";
     }
 
     public static final String CREATE_USERS_TABLE_SCRIPT =
@@ -181,6 +248,73 @@ public class BDProfileManager extends SQLiteOpenHelper {
                     ColumnElectoralSections.ESTATE_ID + " " + INT_TYPE +
                     ")";
 
+    public static final String CREATE_PROFILE_TABLE_SCRIPT =
+            "create table " + PROFILES_TABLE_NAME + "(" +
+                    //PROFILE
+                    ColumnProfiles.PROFILE_CVE + " " + INT_TYPE + " primary key autoincrement," +
+                    ColumnProfiles.NAME + " " + STRING_TYPE + "," +
+                    ColumnProfiles.FIRST_SURNAME + " " + STRING_TYPE + "," +
+                    ColumnProfiles.SECOND_SURNAME + " " + STRING_TYPE + "," +
+                    ColumnProfiles.BIRTH_DATE + " " + STRING_TYPE + "," +
+                    ColumnProfiles.BIRTH_PLACE + " " + STRING_TYPE + "," +
+                    ColumnProfiles.NATIONALITY + " " + STRING_TYPE + "," +
+                    ColumnProfiles.GENDER + " " + STRING_TYPE + "," +
+                    ColumnProfiles.MARITAL_STATUS + " " + STRING_TYPE + "," +
+                    //ELECTORAL
+                    ColumnProfiles.OCR_INE + " " + STRING_TYPE + "," +
+                    ColumnProfiles.ELECTORAL_ID + " " + INT_TYPE + "," +
+                    ColumnProfiles.VALIDITY_INE + " " + STRING_TYPE + "," +
+                    ColumnProfiles.ELECTORAL_SECTION + " " + INT_TYPE + "," +
+                    ColumnProfiles.FEDERAL_DISTRICT + " " + STRING_TYPE + "," +
+                    ColumnProfiles.ELECTORAL_ADVISER + " " + STRING_TYPE + "," +
+                    ColumnProfiles.ID_ELECTORAL_ACTOR + " " + INT_TYPE + "," +
+                    ColumnProfiles.ID_ELECTORAL_ACTOR_SON + " " + INT_TYPE + "," +
+                    ColumnProfiles.POLITICAL_PARTY + " " + INT_TYPE + "," +
+                    ColumnProfiles.FRONT_PHOTO + " " + STRING_TYPE + "," +
+                    ColumnProfiles.BACK_PHOTO + " " + STRING_TYPE + "," +
+                    //ADDRESS
+                    ColumnProfiles.ID_STATE + " " + INT_TYPE + "," +
+                    ColumnProfiles.ID_MUNICIPAL + " " + INT_TYPE + "," +
+                    ColumnProfiles.ID_LOCATION + " " + INT_TYPE + "," +
+                    ColumnProfiles.STREET + " " + STRING_TYPE + "," +
+                    ColumnProfiles.EXT_NUM + " " + STRING_TYPE + "," +
+                    ColumnProfiles.INT_NUM + " " + STRING_TYPE + "," +
+                    ColumnProfiles.CITY_COLONY + " " + STRING_TYPE + "," +
+                    ColumnProfiles.DIVISION + " " + STRING_TYPE + "," +
+                    ColumnProfiles.POSTAL_CODE + " " + INT_TYPE + "," +
+                    //CONTACT
+                    ColumnProfiles.PERSONAL_EMAIL + " " + STRING_TYPE + "," +
+                    ColumnProfiles.PROFESSIONAL_EMAIL + " " + STRING_TYPE + "," +
+                    ColumnProfiles.CELLPHONE + " " + STRING_TYPE + "," +
+                    ColumnProfiles.HOME_PHONE + " " + STRING_TYPE + "," +
+                    ColumnProfiles.OFFICE_PHONE + " " + STRING_TYPE + "," +
+                    ColumnProfiles.OTHER_PHONE + " " + STRING_TYPE + "," +
+                    ColumnProfiles.CURP + " " + STRING_TYPE + "," +
+                    ColumnProfiles.RFC + " " + STRING_TYPE + "," +
+                    //PROFESSIONAL
+                    ColumnProfiles.NSS + " " + STRING_TYPE + "," +
+                    ColumnProfiles.ID_LEVEL + " " + INT_TYPE + "," +
+                    ColumnProfiles.ID_CAREER + " " + INT_TYPE + "," +
+                    ColumnProfiles.ID_TITLE + " " + INT_TYPE + "," +
+                    ColumnProfiles.ACTUAL_JOB + " " + STRING_TYPE + "," +
+                    ColumnProfiles.ID_COMPANY + " " + INT_TYPE + "," +
+                    ColumnProfiles.RESUME + " " + STRING_TYPE + "," +
+                    //STRUCTURE
+                    ColumnProfiles.COMMITTE + " " + STRING_TYPE + "," +
+                    ColumnProfiles.REFERENCE + " " + STRING_TYPE + "," +
+                    ColumnProfiles.LINK + " " + STRING_TYPE + "," +
+                    ColumnProfiles.COORDINATOR + " " + STRING_TYPE + "," +
+                    //COMMENTS
+                    ColumnProfiles.COMMENT + " " + STRING_TYPE + "," +
+                    //SOCIAL NETWORK PROFILE
+                    ColumnProfiles.FACEBOOK + " " + STRING_TYPE + "," +
+                    ColumnProfiles.TWITTER + " " + STRING_TYPE + "," +
+                    ColumnProfiles.INSTAGRAM + " " + STRING_TYPE + "," +
+                    //USER - GROUP
+                    ColumnProfiles.ID_GROUP + " " + INT_TYPE + "," +
+                    ColumnProfiles.ID_USER + " " + INT_TYPE + "," +
+            ")";
+
     public static  final String DROP_TABLE_IF_EXISTS = "drop table if exists ";
 
     public BDProfileManager(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -198,6 +332,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
         db.execSQL(CREATE_ELECTORAL_ACTOR_TABLE_SCRIPT);
         db.execSQL(CREATE_OBTAINED_DOCUMENT_ACTOR_TABLE_SCRIPT);
         db.execSQL(CREATE_ELECTORAL_SECTIONS_TABLE_SCRIPT);
+        db.execSQL(CREATE_PROFILE_TABLE_SCRIPT);
 
         db.execSQL(INSERT_DEFAULT_USER_SCRIPT);
     }
@@ -214,6 +349,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
         db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.ELECTORAL_ACTOR_TABLE_NAME);
         db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.OBTAINED_DOCUMENT_TABLE_NAME);
         db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.ELECTORAL_SECTIONS_TABLE_NAME);
+        db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.PROFILES_TABLE_NAME);
 
         db.execSQL(CREATE_USERS_TABLE_SCRIPT);
         db.execSQL(CREATE_PP_TABLE_SCRIPT);
@@ -224,6 +360,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
         db.execSQL(CREATE_ELECTORAL_ACTOR_TABLE_SCRIPT);
         db.execSQL(CREATE_OBTAINED_DOCUMENT_ACTOR_TABLE_SCRIPT);
         db.execSQL(CREATE_ELECTORAL_SECTIONS_TABLE_SCRIPT);
+        db.execSQL(CREATE_PROFILE_TABLE_SCRIPT);
 
         db.execSQL(INSERT_DEFAULT_USER_SCRIPT);
     }
