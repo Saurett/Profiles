@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,12 +32,13 @@ import app.texium.com.profiles.models.ElectoralActor;
 import app.texium.com.profiles.models.ElectoralProfile;
 import app.texium.com.profiles.models.PoliticalParties;
 import app.texium.com.profiles.models.ProfileManager;
+import app.texium.com.profiles.models.Sections;
 import app.texium.com.profiles.models.SubItemElectoralActor;
 import app.texium.com.profiles.services.SoapServices;
 import app.texium.com.profiles.utils.Constants;
 
 
-public class ElectoralProfileFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener, DialogInterface.OnClickListener {
+public class ElectoralProfileFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener, DialogInterface.OnClickListener, View.OnFocusChangeListener {
 
     static FragmentProfileListener activityListener;
 
@@ -92,6 +94,8 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         politicalSpinner.setOnItemSelectedListener(this);
         electoralActorSpinner.setOnItemSelectedListener(this);
         subItemEASpinner.setOnItemSelectedListener(this);
+
+        txtElectoralSection.setOnFocusChangeListener(this);
 
         if (null != _PROFILE_MANAGER) {
             if (null != _PROFILE_MANAGER.getElectoralProfile().getOcrINE())
@@ -227,6 +231,36 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         }
     }
 
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+            case DialogInterface.BUTTON_POSITIVE:
+                _PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack("");
+                Toast.makeText(getActivity(), R.string.default_delete_img_msg, Toast.LENGTH_SHORT).show();
+                deleteBtnBack.setVisibility(View.INVISIBLE);
+                break;
+        }
+
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if(!hasFocus){
+
+            String section = txtElectoralSection.getText().toString();
+            txtLocalDistrict.setText(null);
+
+            if (!TextUtils.isEmpty(section)) {
+                AsyncElectoral ws = new AsyncElectoral(
+                        Constants.WS_KEY_ELECTORAL_SECTION,
+                        Integer.valueOf(section));
+                ws.execute();
+
+            }
+        }
+    }
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -278,22 +312,10 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         ad.show();
     }
 
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-            case DialogInterface.BUTTON_POSITIVE:
-                _PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack("");
-                Toast.makeText(getActivity(), R.string.default_delete_img_msg, Toast.LENGTH_SHORT).show();
-                deleteBtnBack.setVisibility(View.INVISIBLE);
-                break;
-        }
-
-    }
-
 
     private class AsyncElectoral extends AsyncTask<Void, Void, Boolean> {
 
-        private SoapObject soPoliticalParty, soElectoralActor, soSubItemElectoralActor;
+        private SoapObject soPoliticalParty, soElectoralActor, soSubItemElectoralActor, soDistric;
         private Integer webServiceOperation;
         private Integer webServiceID;
         private String textError;
@@ -337,6 +359,10 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                     case Constants.WS_KEY_SPINNER_SUB_ITEM_EA_SERVICE:
                         soSubItemElectoralActor = SoapServices.getSpinnerSubItemEA(getContext(), webServiceID);
                         validOperation = (soSubItemElectoralActor.getPropertyCount() > 0);
+                        break;
+                    case Constants.WS_KEY_ELECTORAL_SECTION:
+                        soDistric = SoapServices.getSection(getContext(), webServiceID);
+                        validOperation = (soDistric.getPropertyCount() > 0 );
                         break;
                 }
             } catch (ConnectException e) {
@@ -547,6 +573,17 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                        break;
+                    case Constants.WS_KEY_ELECTORAL_SECTION:
+
+                        Sections section = new Sections();
+                        section.setId(Integer.valueOf(soDistric.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+
+                        section.setLocalDistrict((soDistric.hasProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT))
+                                ? soDistric.getProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT).toString()
+                        : null);
+
+                        txtLocalDistrict.setText(section.getLocalDistrict());
                         break;
 
                 }

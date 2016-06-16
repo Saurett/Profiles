@@ -59,6 +59,7 @@ public final class Constants {
     public static final int WS_KEY_SPINNER_SAVE_PROFILE_SERVICE = 10;
     public static final int WS_KEY_SPINNER_ALL_SPINNER = 11;
     public static final int WS_KEY_DEFAULT_SYNC = 12;
+    public static final int WS_KEY_ELECTORAL_SECTION = 13;
 
     //endregion WEB SERVICE ID//
 
@@ -95,6 +96,7 @@ public final class Constants {
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_ALL_EA = "Perfiles/ConsultaTipoActorElectoralTodos";
     public static final String WEB_SERVICE_SOAP_ACTION_ALL_ADDRESS= "Perfiles/ConsultaDirecciones";
     public static final String WEB_SERVICE_SOAP_ACTION_ELECTORAL_KEY = "Perfiles/ExisteClaveElector";
+    public static final String WEB_SERVICE_SOAP_ACTION_SECTION = "Perfiles/ConsultaSeccionElectoral";
     public static final String WEB_SERVICE_NAMESPACE = "Perfiles";
     public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
     //public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
@@ -121,6 +123,7 @@ public final class Constants {
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_ALL_EA = "ConsultaTipoActorElectoralTodos";
     public static final String WEB_SERVICE_METHOD_NAME_ALL_ADDRESS= "ConsultaDirecciones";
     public static final String WEB_SERVICE_METHOD_NAME_ELECTORAL_KEY = "ExisteClaveElector";
+    public static final String WEB_SERVICE_METHOD_NAME_SECTION = "ConsultaSeccionElectoral";
     //endregion SOAP OPERATION//
 
     //region WEB SERVICE PARAMS//
@@ -183,6 +186,7 @@ public final class Constants {
     public static final String WEB_SERVICE_PARAM_ID_GROUP = "IDGrupo";
     public static final String WEB_SERVICE_PARAM_ID_USER = "IDUsuario";
     public static final String WEB_SERVICE_PARAM_ID_FATHER = "IDPadre";
+    public static final String WEB_SERVICE_PARAM_ID_SECTION = "IDSeccion";
 
     //endregion WEB SERVICE PARAMS//
 
@@ -213,6 +217,7 @@ public final class Constants {
     public static final String SOAP_OBJECT_KEY_NAME = "Nombre";
     public static final String SOAP_OBJECT_KEY_ACRONYM_NAME = "Siglas";
     public static final String SOAP_OBJECT_KEY_FATHER = "Padre";
+    public static final String SOAP_OBJECT_KEY_LOCAL_DISTRICT = "DistritoLocal";
 
     //endregion SOAP KEYS//
 
