@@ -158,7 +158,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         AlertDialog.Builder ad = new AlertDialog.Builder(this);
         ad.setTitle(getString(R.string.default_title_alert_dialog));
-        ad.setMessage("¿Desea sincronizar con el servidor?");
+        ad.setMessage(getString(R.string.default_sync_question));
         ad.setCancelable(false);
         ad.setPositiveButton(getString(R.string.default_positive_button), this);
         ad.setNegativeButton(getString(R.string.default_negative_button), this);
@@ -489,6 +489,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         private AsyncProfile(Integer wsOperation) {
             webServiceOperation = wsOperation;
             textError = "";
+            localAccess = false;
         }
 
         @Override
@@ -530,6 +531,13 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 switch (webServiceOperation) {
                     case Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE:
                         PROFILE_MANAGER.setUserProfile(SESSION_DATA);
+                        soapPrimitive = SoapServices.validateINE(getApplicationContext(), PROFILE_MANAGER);
+
+                        if (Boolean.valueOf(soapPrimitive.toString())) {
+                            textError = "Ya existe la clave de elector " + PROFILE_MANAGER.getElectoralProfile().getElectoralKEY();
+                            return false;
+                        }
+
                         soapPrimitive = SoapServices.saveProfile(getApplicationContext(), PROFILE_MANAGER);
                         validOperation = (soapPrimitive != null);
                         break;
@@ -546,8 +554,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                             publishProgress(title,msg,String.valueOf(ti), String.valueOf(profiles.size()));
 
-                            soapPrimitive = SoapServices.saveProfile(getApplicationContext(), pm);
+                            soapPrimitive = SoapServices.validateINE(getApplicationContext(), PROFILE_MANAGER);
 
+                            if (Boolean.valueOf(soapPrimitive.toString())) {
+                                textError = "Ya existe la clave de elector " + PROFILE_MANAGER.getElectoralProfile().getElectoralKEY();
+                                return false;
+                            }
+
+                            soapPrimitive = SoapServices.saveProfile(getApplicationContext(), pm);
                             BDProfileManagerQuery.deleteProfile(getApplicationContext(),pm);
 
                             validOperation = (soapPrimitive != null);
@@ -689,12 +703,35 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             }
                         }
 
-                        soPoliticalParty = SoapServices.getSpinnerPP(getApplicationContext());
-                        soElectoralActor = SoapServices.getSpinnerAllEA(getApplicationContext());
-                        soapObjectAL = SoapServices.getSpinnerAcademyLevels(getApplicationContext());
-                        soapObjectCareer = SoapServices.getSpinnerCareer(getApplicationContext());
-                        soapObjectPT = SoapServices.getSpinnerProfessionalTitles(getApplicationContext());
-                        soapObjectCompany = SoapServices.getSpinnerAllCompanies(getApplicationContext());
+                        String title = "Cargando Catalogos";
+
+                        int updates = 6;
+                        for (int update = 0; update < updates; update++) {
+
+                            String msg  = "Cargando paquete " + update + " de " + updates ;
+                            publishProgress(title, msg, String.valueOf(update + 1), String.valueOf(updates));
+
+                            switch (update + 1) {
+                                case 1:
+                                    soPoliticalParty = SoapServices.getSpinnerPP(getApplicationContext());
+                                    break;
+                                case 2:
+                                    soElectoralActor = SoapServices.getSpinnerAllEA(getApplicationContext());
+                                    break;
+                                case 3:
+                                    soapObjectAL = SoapServices.getSpinnerAcademyLevels(getApplicationContext());
+                                    break;
+                                case 4:
+                                    soapObjectCareer = SoapServices.getSpinnerCareer(getApplicationContext());
+                                    break;
+                                case 5:
+                                    soapObjectPT = SoapServices.getSpinnerProfessionalTitles(getApplicationContext());
+                                    break;
+                                case 6:
+                                    soapObjectCompany = SoapServices.getSpinnerAllCompanies(getApplicationContext());
+                                    break;
+                            }
+                        }
 
                         validOperation = (soElectoralActor.getPropertyCount() > 0);
                         break;
@@ -820,7 +857,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                             ? Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_FATHER).toString())
                                             : 0
                                     );
-
 
                                     try {
 
@@ -990,31 +1026,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
                         Toast.makeText(NavigationDrawerActivity.this, R.string.default_sync_ok, Toast.LENGTH_LONG).show();
                         break;
                 }
-
-                        /*
-                        if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
-
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
-
-                                    Locations location = new Locations();
-                                    location.setIdItem(i);
-                                    location.setIdState(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ID).toString()));
-                                    location.setStateName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
-                                    location.setStateAcronym(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_ACRONYM_NAME).toString());
-                                    location.setIdMunicipal(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_ID).toString()));
-                                    location.setMunicipalName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString());
-                                    location.setIdLocation(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_ID).toString()));
-                                    location.setLocationName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_NAME).toString());
-                                    location.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
-
-                                }
-                            }
-                        }
-                        */
             } else {
                 pDialog.dismiss();
                 String tempText = (textError.isEmpty() ? "Error desconocido" : textError);

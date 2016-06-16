@@ -94,9 +94,10 @@ public final class Constants {
     public static final String WEB_SERVICE_SOAP_ACTION_SAVE_PROFILE = "Perfiles/AgregarPersona";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_ALL_EA = "Perfiles/ConsultaTipoActorElectoralTodos";
     public static final String WEB_SERVICE_SOAP_ACTION_ALL_ADDRESS= "Perfiles/ConsultaDirecciones";
+    public static final String WEB_SERVICE_SOAP_ACTION_ELECTORAL_KEY = "Perfiles/ExisteClaveElector";
     public static final String WEB_SERVICE_NAMESPACE = "Perfiles";
-    //public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
-    public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
+    public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
+    //public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
 
 
     //public static final String WEB_SERVICE_URL = "http://187.216.220.51/ServicioWeb/Servicio_Android.asmx";
@@ -119,6 +120,7 @@ public final class Constants {
     public static final String WEB_SERVICE_METHOD_NAME_SAVE_PROFILE = "AgregarPersona";
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_ALL_EA = "ConsultaTipoActorElectoralTodos";
     public static final String WEB_SERVICE_METHOD_NAME_ALL_ADDRESS= "ConsultaDirecciones";
+    public static final String WEB_SERVICE_METHOD_NAME_ELECTORAL_KEY = "ExisteClaveElector";
     //endregion SOAP OPERATION//
 
     //region WEB SERVICE PARAMS//

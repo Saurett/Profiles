@@ -31,5 +31,6 @@
     <string name="action_sync">Sincronizar</string>
     <string name="default_sync_title">Sincronizando</string>
     <string name="default_sync_ok">Sincronizado Correctamente</string>
+    <string name="default_sync_question">¿Desea sincronizar con el servidor?</string>
 
 </resources>

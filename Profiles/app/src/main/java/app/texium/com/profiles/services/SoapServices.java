@@ -1040,29 +1040,18 @@ public class SoapServices {
         return soapPrimitive;
     }
 
-
-   /*
-
-    public static SoapPrimitive sendFile(Context context, Integer task, Integer user, List<String> encodedImage) throws Exception {
+    public static SoapPrimitive validateINE(Context context, ProfileManager profileManager) throws Exception {
         SoapPrimitive soapPrimitive;
         try {
-            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_SEND_FILE;
-            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_NAME_SEND_FILE;
+            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_ELECTORAL_KEY;
+            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_NAME_ELECTORAL_KEY;
             String NAMESPACE = Constants.WEB_SERVICE_NAMESPACE;
             String URL = Constants.WEB_SERVICE_URL;
 
             SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
 
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_TASK_ID, task);
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_TASK_ID_USER, user);
-            SoapObject soapFiles = new SoapObject(NAMESPACE, Constants.WEB_SERVICE_PARAM_TASK_FILE);
-
-            for (String encode: encodedImage) {
-                soapFiles.addProperty(Constants.WEB_SERVICE_PARAM_OBJECT_STRING,encode);
-            }
-
-            Request.addSoapObject(soapFiles);
-
+            //Personal profile
+            Request.addProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_KEY, profileManager.getElectoralProfile().getElectoralKEY());
 
             SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             soapEnvelope.dotNet = true;
@@ -1073,79 +1062,42 @@ public class SoapServices {
             transport.call(SOAP_ACTION, soapEnvelope);
             soapPrimitive = (SoapPrimitive) soapEnvelope.getResponse();
 
+        } catch (EOFException e) {
+            e.printStackTrace();
+            Log.e("Soap EOFException", e.getMessage());
+            throw new ConnectException(context.getString(R.string.default_exception_error));
         } catch (ConnectException e) {
             e.printStackTrace();
             Log.e("Soap ConnectException", e.getMessage());
-            throw  new ConnectException(context.getString(R.string.default_connect_error));
-        } catch (SocketTimeoutException e ) {
+            throw new ConnectException(context.getString(R.string.default_connect_error));
+        } catch (SocketTimeoutException e) {
             e.printStackTrace();
             Log.e("Soap SocketTimeoutException", e.getMessage());
-            throw  new SocketTimeoutException(context.getString(R.string.default_connect_error));
-        } catch (HttpResponseException e){
+            throw new ConnectException(context.getString(R.string.default_connect_error));
+        } catch (java.net.SocketException e) {
             e.printStackTrace();
-            Log.e("Soap HttpResponseException",e.getMessage());
-            throw new Exception(context.getString(R.string.default_soap_error));
-        } catch (SoapFault e){
+            Log.e("Soap SocketException", e.getMessage());
+            throw new ConnectException(context.getString(R.string.default_connect_error));
+        } catch (HttpResponseException e) {
             e.printStackTrace();
-            Log.e("Soap Fault",e.getMessage());
-            throw new Exception(e.getMessage());
+            Log.e("Soap HttpResponseException", e.getMessage());
+            throw new ConnectException(context.getString(R.string.default_soap_error));
+        } catch (SoapFault e) {
+            e.printStackTrace();
+            Log.e("Soap Fault", e.getMessage());
+            throw new ConnectException(e.getMessage());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            Log.e("Soap Exception", e.getMessage());
+            throw new ConnectException(context.getString(R.string.default_connect_error));
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("Soap Exception", e.getMessage());
-            throw new Exception(context.getString(R.string.default_exception_error));
+            throw new ConnectException(context.getString(R.string.default_exception_error));
         }
+
+
 
         return soapPrimitive;
     }
-
-    public static SoapPrimitive updateLocation(Context context, Integer team, String latitude, String longitude, Integer user) throws Exception {
-        SoapPrimitive soapPrimitive;
-        try {
-            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_ACTION_UPDATE_LOCATION;
-            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_NAME_UPDATE_LOCATION;
-            String NAMESPACE = Constants.WEB_SERVICE_NAMESPACE;
-            String URL = Constants.WEB_SERVICE_URL;
-
-            SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
-
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_TASK_ID_TEAM, team);
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_TASK_LATITUDE, latitude);
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_TASK_LONGITUDE, longitude);
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_TASK_ID_USER, user);
-
-            SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            soapEnvelope.dotNet = true;
-            soapEnvelope.setOutputSoapObject(Request);
-
-            HttpTransportSE transport = new HttpTransportSE(URL);
-
-            transport.call(SOAP_ACTION, soapEnvelope);
-            soapPrimitive = (SoapPrimitive) soapEnvelope.getResponse();
-
-        } catch (ConnectException e) {
-            e.printStackTrace();
-            Log.e("Soap ConnectException", e.getMessage());
-            throw  new ConnectException(context.getString(R.string.default_connect_error));
-        } catch (SocketTimeoutException e ) {
-            e.printStackTrace();
-            Log.e("Soap SocketTimeoutException", e.getMessage());
-            throw  new SocketTimeoutException(context.getString(R.string.default_connect_error));
-        } catch (HttpResponseException e){
-            e.printStackTrace();
-            Log.e("Soap HttpResponseException",e.getMessage());
-            throw new Exception(context.getString(R.string.default_soap_error));
-        } catch (SoapFault e){
-            e.printStackTrace();
-            Log.e("Soap Fault",e.getMessage());
-            throw new Exception(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("Soap Exception", e.getMessage());
-            throw new Exception(context.getString(R.string.default_exception_error));
-        }
-
-        return soapPrimitive;
-    }
-
-    */
 }
