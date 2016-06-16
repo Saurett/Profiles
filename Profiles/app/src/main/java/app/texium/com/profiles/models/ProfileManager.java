@@ -26,6 +26,7 @@ public class ProfileManager implements Serializable {
         this.structureProfile = new StructureProfile();
         this.commentProfile = new CommentProfile();
         this.socialNetworkProfile = new SocialNetworkProfile();
+        this.userProfile = new Users();
     }
 
     public PersonalProfile getPersonalProfile() {

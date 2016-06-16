@@ -14,6 +14,7 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.io.EOFException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 import app.texium.com.profiles.R;
 import app.texium.com.profiles.models.ProfileManager;
@@ -947,7 +948,7 @@ public class SoapServices {
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR, profileManager.getElectoralProfile().getElectoralActor());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_SON, profileManager.getElectoralProfile().getSubItemElectoralActor());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_POLITICAL_PARTY, profileManager.getElectoralProfile().getPoliticalParty());
-            Request.addProperty(Constants.WEB_SERVICE_PARAM_FRONT_PHOTO, profileManager.getElectoralProfile().getPhotoINEBack());
+            Request.addProperty(Constants.WEB_SERVICE_PARAM_FRONT_PHOTO, profileManager.getElectoralProfile().getPhotoINEFront());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_BACK_PHOTO, profileManager.getElectoralProfile().getPhotoINEBack());
             //Address Profile
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_STATE, profileManager.getAddressProfile().getIdState());
@@ -1003,7 +1004,7 @@ public class SoapServices {
         } catch (EOFException e) {
             e.printStackTrace();
             Log.e("Soap EOFException", e.getMessage());
-            throw new Exception(context.getString(R.string.default_exception_error));
+            throw new ConnectException(context.getString(R.string.default_exception_error));
         } catch (ConnectException e) {
             e.printStackTrace();
             Log.e("Soap ConnectException", e.getMessage());
@@ -1011,24 +1012,30 @@ public class SoapServices {
         } catch (SocketTimeoutException e) {
             e.printStackTrace();
             Log.e("Soap SocketTimeoutException", e.getMessage());
-            throw new SocketTimeoutException(context.getString(R.string.default_connect_error));
+            throw new ConnectException(context.getString(R.string.default_connect_error));
         } catch (java.net.SocketException e) {
             e.printStackTrace();
             Log.e("Soap SocketException", e.getMessage());
-            throw new Exception(context.getString(R.string.default_connect_error));
+            throw new ConnectException(context.getString(R.string.default_connect_error));
         } catch (HttpResponseException e) {
             e.printStackTrace();
             Log.e("Soap HttpResponseException", e.getMessage());
-            throw new Exception(context.getString(R.string.default_soap_error));
+            throw new ConnectException(context.getString(R.string.default_soap_error));
         } catch (SoapFault e) {
             e.printStackTrace();
             Log.e("Soap Fault", e.getMessage());
-            throw new Exception(e.getMessage());
+            throw new ConnectException(e.getMessage());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            Log.e("Soap Exception", e.getMessage());
+            throw new ConnectException(context.getString(R.string.default_connect_error));
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("Soap Exception", e.getMessage());
-            throw new Exception(context.getString(R.string.default_exception_error));
+            throw new ConnectException(context.getString(R.string.default_exception_error));
         }
+
+
 
         return soapPrimitive;
     }

@@ -28,5 +28,8 @@
     <string name="default_save_profile">Registro perfil</string>
     <string name="default_loading_msg">Espere un momento por favor</string>
     <string name="default_save_local">Perfil almacenado de manera local</string>
+    <string name="action_sync">Sincronizar</string>
+    <string name="default_sync_title">Sincronizando</string>
+    <string name="default_sync_ok">Sincronizado Correctamente</string>
 
 </resources>

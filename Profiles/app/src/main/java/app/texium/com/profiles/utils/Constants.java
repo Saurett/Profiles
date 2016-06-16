@@ -58,7 +58,7 @@ public final class Constants {
     public static final int WS_KEY_SPINNER_SUB_ITEM_EA_SERVICE = 9;
     public static final int WS_KEY_SPINNER_SAVE_PROFILE_SERVICE = 10;
     public static final int WS_KEY_SPINNER_ALL_SPINNER = 11;
-    public static final int WS_KEY_SPINNER_ALL_EA = 12;
+    public static final int WS_KEY_DEFAULT_SYNC = 12;
 
     //endregion WEB SERVICE ID//
 
@@ -95,8 +95,8 @@ public final class Constants {
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_ALL_EA = "Perfiles/ConsultaTipoActorElectoralTodos";
     public static final String WEB_SERVICE_SOAP_ACTION_ALL_ADDRESS= "Perfiles/ConsultaDirecciones";
     public static final String WEB_SERVICE_NAMESPACE = "Perfiles";
-    public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
-    //public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
+    //public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
+    public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
 
 
     //public static final String WEB_SERVICE_URL = "http://187.216.220.51/ServicioWeb/Servicio_Android.asmx";

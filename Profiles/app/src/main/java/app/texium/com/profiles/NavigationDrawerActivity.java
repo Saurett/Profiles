@@ -1,6 +1,7 @@
 package app.texium.com.profiles;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -31,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import app.texium.com.profiles.databases.BDProfileManagerQuery;
@@ -61,7 +64,7 @@ import app.texium.com.profiles.services.SoapServices;
 import app.texium.com.profiles.utils.Constants;
 
 public class NavigationDrawerActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FragmentProfileListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FragmentProfileListener, View.OnClickListener, DialogInterface.OnClickListener {
 
     private static Users SESSION_DATA;
     private static ProfileManager PROFILE_MANAGER;
@@ -151,6 +154,28 @@ public class NavigationDrawerActivity extends AppCompatActivity
         return true;
     }
 
+    public void showQuestion() {
+
+        AlertDialog.Builder ad = new AlertDialog.Builder(this);
+        ad.setTitle(getString(R.string.default_title_alert_dialog));
+        ad.setMessage("¿Desea sincronizar con el servidor?");
+        ad.setCancelable(false);
+        ad.setPositiveButton(getString(R.string.default_positive_button), this);
+        ad.setNegativeButton(getString(R.string.default_negative_button), this);
+        ad.show();
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+            case DialogInterface.BUTTON_POSITIVE:
+                AsyncProfile wsSyncServer = new AsyncProfile(Constants.WS_KEY_DEFAULT_SYNC);
+                wsSyncServer.execute();
+                break;
+        }
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -158,9 +183,17 @@ public class NavigationDrawerActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        /*
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+        */
+
+        switch (id) {
+            case R.id.action_sync:
+                showQuestion();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -477,6 +510,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
                     pDialog.setCancelable(false);
                     pDialog.show();
                     break;
+                case Constants.WS_KEY_DEFAULT_SYNC:
+                    pDialog = new ProgressDialog(NavigationDrawerActivity.this);
+                    pDialog.setMessage(getString(R.string.default_loading_msg));
+                    pDialog.setTitle(getString(R.string.default_sync_title));
+                    pDialog.setIndeterminate(false);
+                    pDialog.setCancelable(false);
+                    pDialog.show();
+                    break;
             }
         }
 
@@ -492,7 +533,29 @@ public class NavigationDrawerActivity extends AppCompatActivity
                         soapPrimitive = SoapServices.saveProfile(getApplicationContext(), PROFILE_MANAGER);
                         validOperation = (soapPrimitive != null);
                         break;
+                    case Constants.WS_KEY_DEFAULT_SYNC:
+                        ArrayList<ProfileManager> profiles = BDProfileManagerQuery.getAllProfiles(getApplicationContext());
+
+                        if (profiles.size() == 0) validOperation = true;
+
+                        int ti = 1;
+                        for (ProfileManager pm : profiles) {
+
+                            String title = getString(R.string.default_sync_title);
+                            String msg = "Enviando perfil " + ti + " de " + profiles.size() ;
+
+                            publishProgress(title,msg,String.valueOf(ti), String.valueOf(profiles.size()));
+
+                            soapPrimitive = SoapServices.saveProfile(getApplicationContext(), pm);
+
+                            BDProfileManagerQuery.deleteProfile(getApplicationContext(),pm);
+
+                            validOperation = (soapPrimitive != null);
+                        }
+
+                        break;
                     case Constants.WS_KEY_SPINNER_ALL_SPINNER:
+
                         soapObjectState = SoapServices.getSpinnerStates(getApplicationContext());
 
                         if (soapObjectState.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
@@ -515,9 +578,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                     String title = "Descargando Catalogo de Direcciones";
                                     String msg = "Descargando paquete " + tempItem + " de " + soNewDataSet.getPropertyCount() ;
 
-                                    publishProgress(title,msg,String.valueOf(tempItem), String.valueOf(soNewDataSet.getPropertyCount()));
-                                    Log.i("Estados","Descargando catalgo de " + state.getStateName());
-
                                     if (state.getIdState() != 27) continue;
 
                                     try {
@@ -532,7 +592,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                                 BDProfileManagerQuery.addState(getApplicationContext(),state);
                                                 Log.i("Estados","Registrando estado : " + state.getStateName());
                                                 break;
+                                            default:
+                                                continue;
                                         }
+
+                                        publishProgress(title,msg,String.valueOf(tempItem), String.valueOf(soNewDataSet.getPropertyCount()));
+                                        Log.i("Estados","Descargando catalgo de " + state.getStateName());
 
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -647,6 +712,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                         try {
                             BDProfileManagerQuery.addProfile(getApplicationContext(),PROFILE_MANAGER);
+                            validOperation = true;
                             localAccess = true;
                         } catch (Exception e1) {
                             e1.printStackTrace();
@@ -695,6 +761,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                             String tempText = (localAccess) ? getString(R.string.default_save_local) : soapPrimitive.toString();
                             Toast.makeText(getApplicationContext(), tempText, Toast.LENGTH_LONG).show();
+
+                            PROFILE_MANAGER = new ProfileManager();
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -917,6 +985,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
                         }
 
                         pDialog.dismiss();
+                    default:
+                        pDialog.dismiss();
+                        Toast.makeText(NavigationDrawerActivity.this, R.string.default_sync_ok, Toast.LENGTH_LONG).show();
+                        break;
                 }
 
                         /*

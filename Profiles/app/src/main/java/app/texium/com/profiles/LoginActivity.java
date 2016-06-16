@@ -1,5 +1,6 @@
 package app.texium.com.profiles;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
@@ -16,7 +17,9 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 
 import java.net.ConnectException;
+import java.util.ArrayList;
 
+import app.texium.com.profiles.databases.BDProfileManager;
 import app.texium.com.profiles.databases.BDProfileManagerQuery;
 import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.Users;
@@ -30,6 +33,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button loginButton;
 
     private int actionFlag = Constants.LOGIN_FORM;
+    private ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         passwordLogin = (EditText) findViewById(R.id.password);
 
         loginButton.setOnClickListener(this);
+
+        AsyncCallWS ws = new AsyncCallWS(Constants.WS_KEY_DEFAULT_SYNC);
+        ws.execute();
 
     }
 
@@ -103,7 +110,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
-    private class AsyncCallWS extends AsyncTask<Void, Void, Boolean> {
+    private class AsyncCallWS extends AsyncTask<Void, String, Boolean> {
 
         private SoapObject soapObject;
         private SoapPrimitive soapPrimitive;
@@ -129,12 +136,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         @Override
         protected void onPreExecute() {
             showProgress(true);
+
+            switch (webServiceOperation) {
+                case Constants.WS_KEY_DEFAULT_SYNC:
+                    pDialog = new ProgressDialog(LoginActivity.this);
+                    pDialog.setMessage(getString(R.string.default_loading_msg));
+                    pDialog.setTitle(getString(R.string.default_sync_title));
+                    pDialog.setIndeterminate(false);
+                    pDialog.setCancelable(false);
+                    pDialog.show();
+                    break;
+            }
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            Boolean validOperation;
+            Boolean validOperation = false;
 
             try{
                 switch (webServiceOperation) {
@@ -147,6 +165,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Integer id = Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ACTOR).toString());
 
                         validOperation = (id > 0);
+                        break;
+                    case Constants.WS_KEY_DEFAULT_SYNC:
+                        ArrayList<ProfileManager> profiles = BDProfileManagerQuery.getAllProfiles(getApplicationContext());
+
+                        if (profiles.size() == 0) validOperation = true;
+
+                        int tempItem = 1;
+                        for (ProfileManager pm : profiles) {
+
+                            String title = "Sincronizando";
+                            String msg = "Enviando perfil " + tempItem + " de " + profiles.size() ;
+
+                            publishProgress(title,msg,String.valueOf(tempItem), String.valueOf(profiles.size()));
+
+                            soapPrimitive = SoapServices.saveProfile(getApplicationContext(), pm);
+
+                            BDProfileManagerQuery.deleteProfile(getApplicationContext(),pm);
+
+                            validOperation = (soapPrimitive != null);
+                        }
+
                         break;
                     default:
                         validOperation = false;
@@ -198,8 +237,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         @Override
+        protected void onProgressUpdate(String... progress) {
+            pDialog.setTitle(progress[0]);
+            pDialog.setMessage(progress[1]);
+
+            if (null != progress[3]) {
+
+                pDialog.setProgress(Integer.valueOf(progress[2]));
+                pDialog.setMax(Integer.valueOf(progress[3]));
+            }
+
+        }
+
+        @Override
         protected void onPostExecute(final Boolean success) {
             showProgress(false);
+
+            if (webServiceOperation == Constants.WS_KEY_DEFAULT_SYNC) pDialog.cancel();
+
+
             if(success) {
 
                 Intent intentNavigationDrawer = new Intent(LoginActivity.this,NavigationDrawerActivity.class);
@@ -226,7 +282,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         } else {
 
                             user.setIdUser(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_USER).toString()));
-                            //user.setCveUser(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ACTOR).toString()));
                             user.setIdActor(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ACTOR).toString()));
                             user.setIdGroup(Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_GROUP).toString()));
                             user.setUserName(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_USERNAME).toString());
@@ -247,7 +302,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         startActivity(intentNavigationDrawer);
                         break;
                     default:
-                        Toast.makeText(LoginActivity.this, "TEST", Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, R.string.default_sync_ok, Toast.LENGTH_LONG).show();
                         break;
                 }
             } else {

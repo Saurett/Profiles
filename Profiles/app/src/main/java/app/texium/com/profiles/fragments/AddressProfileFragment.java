@@ -260,12 +260,14 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
         private AsyncAddress(Integer wsOperation) {
             webServiceOperation = wsOperation;
             textError = "";
+            localAccess = false;
         }
 
         private AsyncAddress(Integer wsOperation, Integer wsIdItem) {
             webServiceOperation = wsOperation;
             webServiceIdState = wsIdItem;
             textError = "";
+            localAccess = false;
         }
 
         private AsyncAddress(Integer wsOperation, Integer wsState, Integer wsMunicipal) {
@@ -273,6 +275,7 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
             webServiceIdState = wsState;
             webServiceIdMunicipal = wsMunicipal;
             textError = "";
+            localAccess = false;
         }
 
         @Override

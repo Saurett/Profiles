@@ -34,6 +34,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
         public static final String ACTOR_ID = "idActor";
         public static final String ACTOR_NAME = "actorName";
         public static final String ROL_ID = "idRol";
+        public static final String GROUP_ID = "idGroup";
     }
 
     public static class ColumnPoliticalParties {
@@ -168,7 +169,8 @@ public class BDProfileManager extends SQLiteOpenHelper {
                     ColumnUsers.PASSWORD + " " + STRING_TYPE + "," +
                     ColumnUsers.ACTOR_ID + " " + INT_TYPE + "," +
                     ColumnUsers.ACTOR_NAME + " " + STRING_TYPE + "," +
-                    ColumnUsers.ROL_ID + " " + INT_TYPE +
+                    ColumnUsers.ROL_ID + " " + INT_TYPE + "," +
+                    ColumnUsers.GROUP_ID + " " + INT_TYPE +
                     ")";
 
     public static final String INSERT_DEFAULT_USER_SCRIPT =
@@ -179,8 +181,9 @@ public class BDProfileManager extends SQLiteOpenHelper {
                     ColumnUsers.PASSWORD + "," +
                     ColumnUsers.ACTOR_ID + "," +
                     ColumnUsers.ACTOR_NAME + "," +
-                    ColumnUsers.ROL_ID + ")" +
-            "values ( 1, 1, 'admin', 'fredgomez',1,'Fred Gomez', 1)";
+                    ColumnUsers.ROL_ID + "," +
+                    ColumnUsers.GROUP_ID + ")" +
+            "values ( 1, 1, 'admin', 'fredgomez',1,'Fred Gomez', 1, 1)";
 
     public static final String CREATE_PP_TABLE_SCRIPT =
             "create table " + PP_TABLE_NAME + "(" +

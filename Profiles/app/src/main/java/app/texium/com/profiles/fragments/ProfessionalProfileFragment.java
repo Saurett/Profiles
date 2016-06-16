@@ -294,6 +294,7 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
                             companies.addAll(companies = BDProfileManagerQuery.getAllCompany(getContext(), 0));
                             companies.addAll(BDProfileManagerQuery.getAllCompany(getContext(), SESSION_DATA.getIdGroup()));
 
+
                             for (Companies data :
                                     companies) {
                                 companyList.add(data.getName());
