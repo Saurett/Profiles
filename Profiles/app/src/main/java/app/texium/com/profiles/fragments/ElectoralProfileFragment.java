@@ -59,6 +59,8 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
     private static ProfileManager _PROFILE_MANAGER;
 
+    boolean cancelMove = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -158,61 +160,69 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         switch (v.getId()) {
             case R.id.backBtnElectoralProfile:
 
-                electoralProfile.setOcrINE(txtOCR.getText().toString());
-                electoralProfile.setElectoralKEY(txtElectoralKey.getText().toString());
-                electoralProfile.setValidityINE(txtValidityINE.getText().toString());
+                attemptMove();
 
-                if (txtElectoralSection.getText().toString().length() > 0) {
-                    electoralProfile.setElectoralSection(Integer.valueOf(txtElectoralSection.getText().toString()));
-                } else {
-                    electoralProfile.setElectoralSection(0);
+                if (!cancelMove) {
+                    electoralProfile.setOcrINE(txtOCR.getText().toString());
+                    electoralProfile.setElectoralKEY(txtElectoralKey.getText().toString());
+                    electoralProfile.setValidityINE(txtValidityINE.getText().toString());
+
+                    if (txtElectoralSection.getText().toString().length() > 0) {
+                        electoralProfile.setElectoralSection(Integer.valueOf(txtElectoralSection.getText().toString()));
+                    } else {
+                        electoralProfile.setElectoralSection(0);
+                    }
+
+                    electoralProfile.setLocalDistrict(txtLocalDistrict.getText().toString());
+                    electoralProfile.setFederalDistrict(txtFederalDistrict.getText().toString());
+                    electoralProfile.setElectoralAdviser(txtElectoralAdviser.getText().toString());
+                    electoralProfile.setPoliticalParty(idPoliticalParty);
+                    electoralProfile.setElectoralActor(idElectoralActor);
+                    electoralProfile.setSubItemElectoralActor(idSubItemEA);
+                    electoralProfile.setIdItemPP(positionPP);
+                    electoralProfile.setIdItemEA(positionElectoralActor);
+                    electoralProfile.setIdSubItemEA(positionSubItemEA);
+                    electoralProfile.setPhotoINEBack(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEBack());
+                    electoralProfile.setPhotoINEFront(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEFront());
+
+                    _PROFILE_MANAGER.setElectoralProfile(electoralProfile);
+
+                    activityListener.updateProfile(_PROFILE_MANAGER);
+                    activityListener.moveFragments(v);
                 }
-
-                electoralProfile.setLocalDistrict(txtLocalDistrict.getText().toString());
-                electoralProfile.setFederalDistrict(txtFederalDistrict.getText().toString());
-                electoralProfile.setElectoralAdviser(txtElectoralAdviser.getText().toString());
-                electoralProfile.setPoliticalParty(idPoliticalParty);
-                electoralProfile.setElectoralActor(idElectoralActor);
-                electoralProfile.setSubItemElectoralActor(idSubItemEA);
-                electoralProfile.setIdItemPP(positionPP);
-                electoralProfile.setIdItemEA(positionElectoralActor);
-                electoralProfile.setIdSubItemEA(positionSubItemEA);
-                electoralProfile.setPhotoINEBack(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEBack());
-                electoralProfile.setPhotoINEFront(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEFront());
-
-                _PROFILE_MANAGER.setElectoralProfile(electoralProfile);
-
-                activityListener.updateProfile(_PROFILE_MANAGER);
-                activityListener.moveFragments(v);
                 break;
             case R.id.nextBtnElectoralProfile:
 
-                electoralProfile.setOcrINE(txtOCR.getText().toString());
-                electoralProfile.setElectoralKEY(txtElectoralKey.getText().toString());
-                electoralProfile.setValidityINE(txtValidityINE.getText().toString());
+                attemptMove();
 
-                if (txtElectoralSection.getText().toString().length() > 0) {
-                    electoralProfile.setElectoralSection(Integer.valueOf(txtElectoralSection.getText().toString()));
-                } else {
-                    electoralProfile.setElectoralSection(0);
+                if (!cancelMove) {
+                    electoralProfile.setOcrINE(txtOCR.getText().toString());
+                    electoralProfile.setElectoralKEY(txtElectoralKey.getText().toString());
+                    electoralProfile.setValidityINE(txtValidityINE.getText().toString());
+
+                    if (txtElectoralSection.getText().toString().length() > 0) {
+                        electoralProfile.setElectoralSection(Integer.valueOf(txtElectoralSection.getText().toString()));
+                    } else {
+                        electoralProfile.setElectoralSection(0);
+                    }
+
+                    electoralProfile.setLocalDistrict(txtLocalDistrict.getText().toString());
+                    electoralProfile.setFederalDistrict(txtFederalDistrict.getText().toString());
+                    electoralProfile.setElectoralAdviser(txtElectoralAdviser.getText().toString());
+                    electoralProfile.setPoliticalParty(idPoliticalParty);
+                    electoralProfile.setElectoralActor(idElectoralActor);
+                    electoralProfile.setSubItemElectoralActor(idSubItemEA);
+                    electoralProfile.setIdItemPP(positionPP);
+                    electoralProfile.setIdItemEA(positionElectoralActor);
+                    electoralProfile.setIdSubItemEA(positionSubItemEA);
+                    electoralProfile.setPhotoINEBack(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEBack());
+                    electoralProfile.setPhotoINEFront(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEFront());
+
+                    _PROFILE_MANAGER.setElectoralProfile(electoralProfile);
+
+                    activityListener.updateProfile(_PROFILE_MANAGER);
+                    activityListener.moveFragments(v);
                 }
-
-                electoralProfile.setLocalDistrict(txtLocalDistrict.getText().toString());
-                electoralProfile.setFederalDistrict(txtFederalDistrict.getText().toString());
-                electoralProfile.setElectoralAdviser(txtElectoralAdviser.getText().toString());
-                electoralProfile.setPoliticalParty(idPoliticalParty);
-                electoralProfile.setElectoralActor(idElectoralActor);
-                electoralProfile.setSubItemElectoralActor(idSubItemEA);
-                electoralProfile.setIdItemPP(positionPP);
-                electoralProfile.setIdItemEA(positionElectoralActor);
-                electoralProfile.setIdSubItemEA(positionSubItemEA);
-                electoralProfile.setPhotoINEBack(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEBack());
-                electoralProfile.setPhotoINEFront(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEFront());
-
-                _PROFILE_MANAGER.setElectoralProfile(electoralProfile);
-
-                activityListener.updateProfile(_PROFILE_MANAGER);
-                activityListener.moveFragments(v);
                 break;
             case R.id.pictureBtnBack:
             case R.id.pictureBtnFront:
@@ -246,7 +256,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if(!hasFocus){
+        if (!hasFocus) {
 
             String section = txtElectoralSection.getText().toString();
             txtLocalDistrict.setText(null);
@@ -362,7 +372,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                         break;
                     case Constants.WS_KEY_ELECTORAL_SECTION:
                         soDistric = SoapServices.getSection(getContext(), webServiceID);
-                        validOperation = (soDistric.getPropertyCount() > 0 );
+                        validOperation = (soDistric.getPropertyCount() > 0);
                         break;
                 }
             } catch (ConnectException e) {
@@ -433,7 +443,6 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                             e1.printStackTrace();
                             localAccess = false;
                         }
-
 
                         break;
                 }
@@ -581,7 +590,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
                         section.setLocalDistrict((soDistric.hasProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT))
                                 ? soDistric.getProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT).toString()
-                        : null);
+                                : null);
 
                         txtLocalDistrict.setText(section.getLocalDistrict());
                         break;
@@ -594,5 +603,31 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
             }
         }
+    }
+
+    public void attemptMove() {
+
+        cancelMove = false;
+
+        txtElectoralKey.setError(null);
+
+        String electoralKey = txtElectoralKey.getText().toString();
+
+        checkValid(R.id.electoralKey, electoralKey);
+
+    }
+
+    private void checkValid(int id, String value) {
+
+        if (TextUtils.isEmpty(value)) {
+            switch (id) {
+                case R.id.electoralKey:
+                    txtElectoralKey.setError(getActivity().getString(R.string.default_field_required));
+                    txtElectoralKey.requestFocus();
+                    cancelMove = true;
+                    break;
+            }
+        }
+
     }
 }

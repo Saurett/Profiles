@@ -19,7 +19,6 @@ import org.ksoap2.serialization.SoapPrimitive;
 import java.net.ConnectException;
 import java.util.ArrayList;
 
-import app.texium.com.profiles.databases.BDProfileManager;
 import app.texium.com.profiles.databases.BDProfileManagerQuery;
 import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.Users;
@@ -29,7 +28,7 @@ import app.texium.com.profiles.utils.Constants;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText usernameLogin, passwordLogin;
-    private View mLoginFormView,mProgressView;
+    private View mLoginFormView, mProgressView;
     private Button loginButton;
 
     private int actionFlag = Constants.LOGIN_FORM;
@@ -80,13 +79,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String password = passwordLogin.getText().toString();
 
         if (TextUtils.isEmpty(password)) {
-            passwordLogin.setError(getString(R.string.password_login_error),null);
+            passwordLogin.setError(getString(R.string.password_login_error), null);
             passwordLogin.requestFocus();
             cancel = true;
         }
 
         if (TextUtils.isEmpty(username)) {
-            usernameLogin.setError(getString(R.string.username_login_error),null);
+            usernameLogin.setError(getString(R.string.username_login_error), null);
             usernameLogin.requestFocus();
             cancel = true;
         }
@@ -95,7 +94,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             switch (actionFlag) {
                 case Constants.LOGIN_FORM:
-                    AsyncCallWS wsLogin = new AsyncCallWS(Constants.WS_KEY_LOGIN_SERVICE,username,password);
+                    AsyncCallWS wsLogin = new AsyncCallWS(Constants.WS_KEY_LOGIN_SERVICE, username, password);
                     wsLogin.execute();
                     break;
                 default:
@@ -125,7 +124,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             textError = "";
         }
 
-        private AsyncCallWS(Integer wsOperation,String wsUsername, String wsPassword) {
+        private AsyncCallWS(Integer wsOperation, String wsUsername, String wsPassword) {
             webServiceOperation = wsOperation;
             username = wsUsername;
             password = wsPassword;
@@ -154,19 +153,56 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             Boolean validOperation = false;
 
-            try{
+            try {
                 switch (webServiceOperation) {
                     case Constants.WS_KEY_PUBLIC_TEST:
-                        SoapServices.calculate(getApplicationContext(),username);
+                        SoapServices.calculate(getApplicationContext(), username);
                         validOperation = true;
                         break;
                     case Constants.WS_KEY_LOGIN_SERVICE:
-                        soapObject = SoapServices.checkUser(getApplicationContext(),username,password);
+                        soapObject = SoapServices.checkUser(getApplicationContext(), username, password);
                         Integer id = Integer.valueOf(soapObject.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ACTOR).toString());
 
                         validOperation = (id > 0);
                         break;
                     case Constants.WS_KEY_DEFAULT_SYNC:
+
+                        soapObject = SoapServices.getServerAllUsers(getApplicationContext());
+
+                        if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGramL = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGramL.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSetL = (SoapObject) soDiffGramL.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int iL = 0; iL < soNewDataSetL.getPropertyCount(); iL++) {
+                                    SoapObject soItemL = (SoapObject) soNewDataSetL.getProperty(iL);
+
+                                    Users user = new Users();
+
+                                    user.setIdUser(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_USER).toString()));
+                                    user.setIdActor(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ACTOR).toString()));
+                                    user.setIdGroup(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_GROUP).toString()));
+                                    user.setUserName(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_USERNAME).toString());
+                                    user.setPassword(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_PASSWORD).toString());
+                                    user.setIdRol(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_ROL).toString()));
+                                    user.setRolName(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_ROL_NAME).toString());
+
+                                    try {
+                                        Users tempUser = BDProfileManagerQuery.getUserByCredentials(getApplicationContext(), user);
+
+                                        if (tempUser.getIdUser() == null)
+                                            BDProfileManagerQuery.addUser(getApplicationContext(), user);
+                                        if (tempUser.getIdUser() != null)
+                                            BDProfileManagerQuery.updateUser(getApplicationContext(), user);
+
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                        Log.e("SQLite Exception ", ex.getMessage());
+                                    }
+                                }
+                            }
+                        }
+
                         ArrayList<ProfileManager> profiles = BDProfileManagerQuery.getAllProfiles(getApplicationContext());
 
                         if (profiles.size() == 0) validOperation = true;
@@ -175,13 +211,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         for (ProfileManager pm : profiles) {
 
                             String title = "Sincronizando";
-                            String msg = "Enviando perfil " + tempItem + " de " + profiles.size() ;
+                            String msg = "Enviando perfil " + tempItem + " de " + profiles.size();
 
-                            publishProgress(title,msg,String.valueOf(tempItem), String.valueOf(profiles.size()));
+                            publishProgress(title, msg, String.valueOf(tempItem), String.valueOf(profiles.size()));
 
                             soapPrimitive = SoapServices.saveProfile(getApplicationContext(), pm);
 
-                            BDProfileManagerQuery.deleteProfile(getApplicationContext(),pm);
+                            BDProfileManagerQuery.deleteProfile(getApplicationContext(), pm);
 
                             validOperation = (soapPrimitive != null);
                         }
@@ -191,7 +227,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         validOperation = false;
                         break;
                 }
-            } catch (ConnectException e){
+            } catch (ConnectException e) {
 
                 textError = (e != null) ? e.getMessage() : "Unknown error";
                 validOperation = false;
@@ -229,6 +265,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 textError = e.getMessage();
                 validOperation = false;
             }
@@ -256,9 +293,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if (webServiceOperation == Constants.WS_KEY_DEFAULT_SYNC) pDialog.cancel();
 
 
-            if(success) {
+            if (success) {
 
-                Intent intentNavigationDrawer = new Intent(LoginActivity.this,NavigationDrawerActivity.class);
+                Intent intentNavigationDrawer = new Intent(LoginActivity.this, NavigationDrawerActivity.class);
                 Users user = new Users();
 
                 switch (webServiceOperation) {
@@ -307,7 +344,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             } else {
                 String tempTextMsg = (textError.isEmpty() ? getString(R.string.default_login_error) : textError);
-                Toast.makeText(LoginActivity.this,tempTextMsg, Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, tempTextMsg, Toast.LENGTH_LONG).show();
             }
         }
 

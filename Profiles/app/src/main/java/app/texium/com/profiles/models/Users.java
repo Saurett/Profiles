@@ -14,6 +14,7 @@ public class Users implements Serializable {
     private Integer idActor;
     private String actorName;
     private Integer idRol;
+    private String rolName;
     private Integer idGroup;
 
     public Users() {
@@ -82,5 +83,13 @@ public class Users implements Serializable {
 
     public void setIdGroup(Integer idGroup) {
         this.idGroup = idGroup;
+    }
+
+    public String getRolName() {
+        return rolName;
+    }
+
+    public void setRolName(String rolName) {
+        this.rolName = rolName;
     }
 }

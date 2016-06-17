@@ -91,15 +91,15 @@ public final class Constants {
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_PROFESSIONAL_TITLES = "Perfiles/ConsultaDocumentosObtenidos";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_COMPANIES = "Perfiles/ConsultaEmpresas";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_ALL_COMPANIES = "Perfiles/ConsultaTodoEmpresas";
-    public static final String WEB_SERVICE_SOAP_ACTION_ALL_USERS = "192.168.12.10/LoginMovil";
+    public static final String WEB_SERVICE_SOAP_ACTION_ALL_USERS = "Perfiles/ConsultarUsuarios";
     public static final String WEB_SERVICE_SOAP_ACTION_SAVE_PROFILE = "Perfiles/AgregarPersona";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_ALL_EA = "Perfiles/ConsultaTipoActorElectoralTodos";
     public static final String WEB_SERVICE_SOAP_ACTION_ALL_ADDRESS= "Perfiles/ConsultaDirecciones";
     public static final String WEB_SERVICE_SOAP_ACTION_ELECTORAL_KEY = "Perfiles/ExisteClaveElector";
     public static final String WEB_SERVICE_SOAP_ACTION_SECTION = "Perfiles/ConsultaSeccionElectoral";
     public static final String WEB_SERVICE_NAMESPACE = "Perfiles";
-    public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
-    //public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
+    //public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
+    public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
 
 
     //public static final String WEB_SERVICE_URL = "http://187.216.220.51/ServicioWeb/Servicio_Android.asmx";
@@ -118,7 +118,7 @@ public final class Constants {
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_PROFESSIONAL_TITLES = "ConsultaDocumentosObtenidos";
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_COMPANIES = "ConsultaEmpresas";
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_ALL_COMPANIES = "ConsultaTodoEmpresas";
-    public static final String WEB_SERVICE_METHOD_NAME_ALL_USERS = "LoginMovil";
+    public static final String WEB_SERVICE_METHOD_NAME_ALL_USERS = "ConsultarUsuarios";
     public static final String WEB_SERVICE_METHOD_NAME_SAVE_PROFILE = "AgregarPersona";
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_ALL_EA = "ConsultaTipoActorElectoralTodos";
     public static final String WEB_SERVICE_METHOD_NAME_ALL_ADDRESS= "ConsultaDirecciones";
@@ -218,6 +218,8 @@ public final class Constants {
     public static final String SOAP_OBJECT_KEY_ACRONYM_NAME = "Siglas";
     public static final String SOAP_OBJECT_KEY_FATHER = "Padre";
     public static final String SOAP_OBJECT_KEY_LOCAL_DISTRICT = "DistritoLocal";
+    public static final String SOAP_OBJECT_KEY_ROL_NAME = "nombreRol";
+    public static final String SOAP_OBJECT_KEY_PASSWORD = "password";
 
     //endregion SOAP KEYS//
 

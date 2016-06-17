@@ -218,6 +218,57 @@ public class BDProfileManagerQuery {
         return data;
     }
 
+    public static void addUser(Context context,Users u) throws Exception {
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName, null, BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            ContentValues cv = new ContentValues();
+
+            cv.put(BDProfileManager.ColumnUsers.USER_ID, u.getIdUser());
+            cv.put(BDProfileManager.ColumnUsers.USERNAME,u.getUserName());
+            cv.put(BDProfileManager.ColumnUsers.ACTOR_ID,u.getIdActor());
+            cv.put(BDProfileManager.ColumnUsers.ACTOR_NAME, u.getActorName());
+            cv.put(BDProfileManager.ColumnUsers.PASSWORD,u.getPassword());
+            cv.put(BDProfileManager.ColumnUsers.ROL_ID,u.getIdRol());
+            cv.put(BDProfileManager.ColumnUsers.GROUP_ID,u.getIdGroup());
+
+            bd.insert(BDProfileManager.USERS_TABLE_NAME, null, cv);
+            bd.close();
+
+            Log.i("SQLite: ", "Add user in the bd with user_id : " + u.getIdUser());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception", "Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+    }
+
+    public static void updateUser(Context context, Users u) throws Exception {
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName, null, BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            ContentValues cv = new ContentValues();
+
+            cv.put(BDProfileManager.ColumnUsers.ACTOR_ID,u.getIdActor());
+            cv.put(BDProfileManager.ColumnUsers.ACTOR_NAME, u.getActorName());
+            cv.put(BDProfileManager.ColumnUsers.PASSWORD,u.getPassword());
+            cv.put(BDProfileManager.ColumnUsers.ROL_ID,u.getIdRol());
+            cv.put(BDProfileManager.ColumnUsers.GROUP_ID,u.getIdGroup());
+
+            bd.update(BDProfileManager.USERS_TABLE_NAME, cv,
+                    BDProfileManager.ColumnUsers.USER_ID + " = " + u.getIdUser(), null);
+            bd.close();
+
+            Log.i("SQLite: ", "Update user in the bd with user_id : " + u.getIdUser());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception", "Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+    }
+
     public static void deleteProfile(Context context, ProfileManager data) throws Exception {
         try {
             BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
@@ -240,6 +291,41 @@ public class BDProfileManagerQuery {
     }
 
     public static Users getUserByCredentials(Context context, Users u) throws Exception {
+        Users data = new Users();
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            Cursor result = bd.rawQuery("select * from users where userName = '" + u.getUserName()
+                    + "'",null);
+
+            if (result.moveToFirst()) {
+                do {
+
+                    data.setCveUser(result.getInt(0));
+                    data.setIdUser(result.getInt(1));
+                    data.setUserName(result.getString(2));
+                    data.setPassword(result.getString(3));
+                    data.setIdActor(result.getInt(4));
+                    data.setActorName(result.getString(5));
+                    data.setIdRol(result.getInt(6));
+                    data.setIdGroup(result.getInt(result.getColumnIndex(BDProfileManager.ColumnUsers.GROUP_ID)));
+
+                    Log.i("SQLite: ", "Get user in the bd with idUser :" + data.getIdUser()
+                            + " username : " + data.getUserName() + " password :" + data.getPassword());
+                } while (result.moveToNext());
+            }
+
+            bd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception","Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+        return data;
+    }
+
+    public static Users getAllUsers(Context context, Users u) throws Exception {
         Users data = new Users();
         try {
             BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
