@@ -46,6 +46,8 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
         txtNationality = (EditText) view.findViewById(R.id.nationality);
         txtPlace = (EditText) view.findViewById(R.id.birthPlace);
 
+        txtNationality.setText("Mexicana");
+
         checkBox = (CheckBox) view.findViewById(R.id.checkBox);
         checkBox2 = (CheckBox) view.findViewById(R.id.checkBox2);
         checkBox3 = (CheckBox) view.findViewById(R.id.checkBox3);
@@ -120,6 +122,8 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
 
             }
         }
+
+
 
         return view;
     }

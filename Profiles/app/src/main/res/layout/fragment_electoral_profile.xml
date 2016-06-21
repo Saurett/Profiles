@@ -56,7 +56,7 @@
                     android:background="@drawable/shape_form"
                     android:hint="OCR INE"
                     android:inputType="textVisiblePassword"
-                    android:maxLength="18"
+                    android:maxLength="13"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:singleLine="true"

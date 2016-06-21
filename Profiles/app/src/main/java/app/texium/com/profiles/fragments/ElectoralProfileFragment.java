@@ -48,6 +48,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
     private static int positionPP, positionElectoralActor, positionSubItemEA;
     private static int idPoliticalParty, idElectoralActor, idSubItemEA;
+    private static int tempDeleteBtn;
 
     private Spinner politicalSpinner, electoralActorSpinner, subItemEASpinner;
 
@@ -246,9 +247,20 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
-                _PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack("");
+
+                switch (tempDeleteBtn) {
+                    case R.id.deleteBtnBack:
+                        _PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack("");
+                        deleteBtnBack.setVisibility(View.INVISIBLE);
+                        break;
+                    case R.id.deleteBtnFront:
+                        _PROFILE_MANAGER.getElectoralProfile().setPhotoINEFront("");
+                        deleteBtnFront.setVisibility(View.INVISIBLE);
+                        break;
+                }
+
                 Toast.makeText(getActivity(), R.string.default_delete_img_msg, Toast.LENGTH_SHORT).show();
-                deleteBtnBack.setVisibility(View.INVISIBLE);
+
                 break;
         }
 
@@ -309,6 +321,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
     }
 
     public void showQuestion(int id) {
+        tempDeleteBtn = id;
 
         String temp = (R.id.deleteBtnBack == id) ? getActivity().getString(R.string.default_question_delete_back)
                 : getActivity().getString(R.string.default_question_delete_front);

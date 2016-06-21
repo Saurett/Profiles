@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Profiles</string>
+    <string name="app_name">Perfiles</string>
     <string name="password_login_error">La Contraseña no es valida.</string>
     <string name="username_login_error">El campo es requerido.</string>
     <string name="default_login_error">El usuario y contraseña no coinciden.</string>
