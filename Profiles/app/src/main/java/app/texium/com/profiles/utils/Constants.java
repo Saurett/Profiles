@@ -98,8 +98,8 @@ public final class Constants {
     public static final String WEB_SERVICE_SOAP_ACTION_ELECTORAL_KEY = "Perfiles/ExisteClaveElector";
     public static final String WEB_SERVICE_SOAP_ACTION_SECTION = "Perfiles/ConsultaSeccionElectoral";
     public static final String WEB_SERVICE_NAMESPACE = "Perfiles";
-    public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
-    //public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
+    //public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
+    public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
 
 
     //public static final String WEB_SERVICE_URL = "http://187.216.220.51/ServicioWeb/Servicio_Android.asmx";
