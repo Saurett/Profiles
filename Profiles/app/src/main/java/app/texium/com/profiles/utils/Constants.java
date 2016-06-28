@@ -60,6 +60,7 @@ public final class Constants {
     public static final int WS_KEY_SPINNER_ALL_SPINNER = 11;
     public static final int WS_KEY_DEFAULT_SYNC = 12;
     public static final int WS_KEY_ELECTORAL_SECTION = 13;
+    public static final int WS_KEY_ELECTORAL_KEY = 14;
 
     //endregion WEB SERVICE ID//
 
@@ -91,6 +92,8 @@ public final class Constants {
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_PROFESSIONAL_TITLES = "Perfiles/ConsultaDocumentosObtenidos";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_COMPANIES = "Perfiles/ConsultaEmpresas";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_ALL_COMPANIES = "Perfiles/ConsultaTodoEmpresas";
+    public static final String WEB_SERVICE_SOAP_ACTION_ELECTORAL_KEYS = "Perfiles/ConsultaClavesElector";
+    public static final String WEB_SERVICE_SOAP_ACTION_ELECTORAL_SECTIONS = "Perfiles/ConsultaSeccionesElectorales";
     public static final String WEB_SERVICE_SOAP_ACTION_ALL_USERS = "Perfiles/ConsultarUsuarios";
     public static final String WEB_SERVICE_SOAP_ACTION_SAVE_PROFILE = "Perfiles/AgregarPersona";
     public static final String WEB_SERVICE_SOAP_ACTION_SPINNER_ALL_EA = "Perfiles/ConsultaTipoActorElectoralTodos";
@@ -122,7 +125,8 @@ public final class Constants {
     public static final String WEB_SERVICE_METHOD_NAME_SAVE_PROFILE = "AgregarPersona";
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_ALL_EA = "ConsultaTipoActorElectoralTodos";
     public static final String WEB_SERVICE_METHOD_NAME_ALL_ADDRESS= "ConsultaDirecciones";
-    public static final String WEB_SERVICE_METHOD_NAME_ELECTORAL_KEY = "ExisteClaveElector";
+    public static final String WEB_SERVICE_METHOD_NAME_ELECTORAL_KEY = "ConsultaClavesElector";
+    public static final String WEB_SERVICE_METHOD_NAME_ELECTOTAL_SECTIONS = "ConsultaSeccionesElectorales";
     public static final String WEB_SERVICE_METHOD_NAME_SECTION = "ConsultaSeccionElectoral";
     //endregion SOAP OPERATION//
 
@@ -220,6 +224,7 @@ public final class Constants {
     public static final String SOAP_OBJECT_KEY_LOCAL_DISTRICT = "DistritoLocal";
     public static final String SOAP_OBJECT_KEY_ROL_NAME = "nombreRol";
     public static final String SOAP_OBJECT_KEY_PASSWORD = "password";
+    public static final String SOAP_OBJECT_KEY_ELECTORAL_KEY = "ClaveElector";
 
     //endregion SOAP KEYS//
 

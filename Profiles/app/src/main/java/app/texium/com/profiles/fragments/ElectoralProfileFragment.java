@@ -30,6 +30,7 @@ import app.texium.com.profiles.R;
 import app.texium.com.profiles.databases.BDProfileManagerQuery;
 import app.texium.com.profiles.models.ElectoralActor;
 import app.texium.com.profiles.models.ElectoralProfile;
+import app.texium.com.profiles.models.ElectoralSections;
 import app.texium.com.profiles.models.PoliticalParties;
 import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.Sections;
@@ -160,42 +161,11 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         ElectoralProfile electoralProfile = new ElectoralProfile();
         switch (v.getId()) {
             case R.id.backBtnElectoralProfile:
-
-                attemptMove();
-
-                if (!cancelMove) {
-                    electoralProfile.setOcrINE(txtOCR.getText().toString());
-                    electoralProfile.setElectoralKEY(txtElectoralKey.getText().toString());
-                    electoralProfile.setValidityINE(txtValidityINE.getText().toString());
-
-                    if (txtElectoralSection.getText().toString().length() > 0) {
-                        electoralProfile.setElectoralSection(Integer.valueOf(txtElectoralSection.getText().toString()));
-                    } else {
-                        electoralProfile.setElectoralSection(0);
-                    }
-
-                    electoralProfile.setLocalDistrict(txtLocalDistrict.getText().toString());
-                    electoralProfile.setFederalDistrict(txtFederalDistrict.getText().toString());
-                    electoralProfile.setElectoralAdviser(txtElectoralAdviser.getText().toString());
-                    electoralProfile.setPoliticalParty(idPoliticalParty);
-                    electoralProfile.setElectoralActor(idElectoralActor);
-                    electoralProfile.setSubItemElectoralActor(idSubItemEA);
-                    electoralProfile.setIdItemPP(positionPP);
-                    electoralProfile.setIdItemEA(positionElectoralActor);
-                    electoralProfile.setIdSubItemEA(positionSubItemEA);
-                    electoralProfile.setPhotoINEBack(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEBack());
-                    electoralProfile.setPhotoINEFront(_PROFILE_MANAGER.getElectoralProfile().getPhotoINEFront());
-
-                    _PROFILE_MANAGER.setElectoralProfile(electoralProfile);
-
-                    activityListener.updateProfile(_PROFILE_MANAGER);
-                    activityListener.moveFragments(v);
-                }
-                break;
             case R.id.nextBtnElectoralProfile:
 
                 attemptMove();
 
+
                 if (!cancelMove) {
                     electoralProfile.setOcrINE(txtOCR.getText().toString());
                     electoralProfile.setElectoralKEY(txtElectoralKey.getText().toString());
@@ -224,6 +194,8 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                     activityListener.updateProfile(_PROFILE_MANAGER);
                     activityListener.moveFragments(v);
                 }
+
+
                 break;
             case R.id.pictureBtnBack:
             case R.id.pictureBtnFront:
@@ -458,6 +430,12 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                         }
 
                         break;
+                    case Constants.WS_KEY_ELECTORAL_SECTION:
+
+                        validOperation = true;
+                        localAccess = true;
+
+                        break;
                 }
 
 
@@ -599,11 +577,28 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                     case Constants.WS_KEY_ELECTORAL_SECTION:
 
                         Sections section = new Sections();
-                        section.setId(Integer.valueOf(soDistric.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
 
-                        section.setLocalDistrict((soDistric.hasProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT))
-                                ? soDistric.getProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT).toString()
-                                : null);
+                        if (localAccess) {
+                            ElectoralSections es = new ElectoralSections();
+                            es.setIdElectoralSection(webServiceID);
+
+                            try {
+                                es = BDProfileManagerQuery.getElectoralSection(getContext(),es);
+
+                                section.setId(es.getIdElectoralSection());
+                                section.setLocalDistrict(es.getLocalDistrict());
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+
+                            }
+
+                        } else {
+                            section.setId(Integer.valueOf(soDistric.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                            section.setLocalDistrict((soDistric.hasProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT))
+                                    ? soDistric.getProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT).toString()
+                                    : null);
+                        }
 
                         txtLocalDistrict.setText(section.getLocalDistrict());
                         break;

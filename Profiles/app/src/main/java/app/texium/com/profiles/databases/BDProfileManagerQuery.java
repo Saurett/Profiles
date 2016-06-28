@@ -12,6 +12,8 @@ import app.texium.com.profiles.models.AcademyLevels;
 import app.texium.com.profiles.models.Careers;
 import app.texium.com.profiles.models.Companies;
 import app.texium.com.profiles.models.ElectoralActor;
+import app.texium.com.profiles.models.ElectoralKeys;
+import app.texium.com.profiles.models.ElectoralSections;
 import app.texium.com.profiles.models.Locations;
 import app.texium.com.profiles.models.Municipalities;
 import app.texium.com.profiles.models.PoliticalParties;
@@ -26,7 +28,7 @@ import app.texium.com.profiles.models.Users;
 public class BDProfileManagerQuery {
 
     static String BDName = "BDProfileManager";
-    static Integer BDVersion = 15;
+    static Integer BDVersion = 16;
 
     public static void addProfile(Context context, ProfileManager temp) throws Exception {
         try {
@@ -824,6 +826,91 @@ public class BDProfileManagerQuery {
         return data;
     }
 
+    public static ElectoralKeys getElectoralKey(Context context, ElectoralKeys temp) throws Exception {
+        ElectoralKeys data = new ElectoralKeys();
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            Cursor result = bd.rawQuery("select * from "+ BDProfileManager.ELECTORAL_KEYS_TABLE_NAME +
+                    " where "+ BDProfileManager.ColumnElectoralKeys.ELECTORAL_KEY +" = '" + temp.getElectoralKey() + "'",null);
+
+            if (result.moveToFirst()) {
+                do {
+
+                    data.setElectoralKey(result.getString(result.getColumnIndex(BDProfileManager.ColumnElectoralKeys.ELECTORAL_KEY)));
+
+                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getElectoralKey());
+                } while (result.moveToNext());
+            }
+
+            bd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception","Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+        return data;
+    }
+
+    public static ElectoralSections getElectoralSection(Context context, ElectoralSections temp) throws Exception {
+        ElectoralSections data = new ElectoralSections();
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            Cursor result = bd.rawQuery("select * from "+ BDProfileManager.ELECTORAL_SECTIONS_TABLE_NAME +
+                    " where "+ BDProfileManager.ColumnElectoralSections.ELECTORAL_SECTION_ID +" = '" + temp.getIdElectoralSection() + "'",null);
+
+            if (result.moveToFirst()) {
+                do {
+
+                    data.setLocalDistrict(result.getString(result.getColumnIndex(BDProfileManager.ColumnElectoralSections.LOCAL_DISTRICT)));
+                    data.setIdElectoralSection(result.getInt(result.getColumnIndex(BDProfileManager.ColumnElectoralSections.ELECTORAL_SECTION_ID)));
+
+                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdElectoralSection());
+                } while (result.moveToNext());
+            }
+
+            bd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception","Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+        return data;
+    }
+
+    public static ArrayList<ElectoralSections> getAllElectoralSection(Context context) throws Exception {
+        ArrayList<ElectoralSections> data = new ArrayList<>();
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            Cursor result = bd.rawQuery("select * from "+ BDProfileManager.ELECTORAL_SECTIONS_TABLE_NAME ,null);
+
+            if (result.moveToFirst()) {
+                do {
+
+                    ElectoralSections temp = new ElectoralSections();
+                    temp.setLocalDistrict(result.getString(result.getColumnIndex(BDProfileManager.ColumnElectoralSections.LOCAL_DISTRICT)));
+                    temp.setIdElectoralSection(result.getInt(result.getColumnIndex(BDProfileManager.ColumnElectoralSections.ELECTORAL_SECTION_ID)));
+
+                    data.add(temp);
+
+                    Log.i("SQLite: ", "Get content in the bd with id :" + temp.getIdElectoralSection());
+                } while (result.moveToNext());
+            }
+
+            bd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception","Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+        return data;
+    }
+
     public static void addCompany(Context context, Companies data) throws Exception {
         try {
             BDProfileManager bdTasksManager = new BDProfileManager(context,BDName, null, BDVersion);
@@ -839,6 +926,47 @@ public class BDProfileManagerQuery {
             bd.close();
 
             Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdCompany());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception", "Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+    }
+
+    public static void addElectoralKey(Context context, ElectoralKeys data) throws Exception {
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName, null, BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            ContentValues cv = new ContentValues();
+
+            cv.put(BDProfileManager.ColumnElectoralKeys.ELECTORAL_KEY, data.getElectoralKey() );
+
+            bd.insert(BDProfileManager.ELECTORAL_KEYS_TABLE_NAME, null, cv);
+            bd.close();
+
+            Log.i("SQLite: ", "Add content in the bd with id :" + data.getElectoralKey());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception", "Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+    }
+
+    public static void addElectoralSection(Context context, ElectoralSections data) throws Exception {
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName, null, BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            ContentValues cv = new ContentValues();
+
+            cv.put(BDProfileManager.ColumnElectoralSections.ELECTORAL_SECTION_ID, data.getIdElectoralSection());
+            cv.put(BDProfileManager.ColumnElectoralSections.LOCAL_DISTRICT, data.getLocalDistrict());
+
+            bd.insert(BDProfileManager.ELECTORAL_SECTIONS_TABLE_NAME, null, cv);
+            bd.close();
+
+            Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdElectoralSection());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());

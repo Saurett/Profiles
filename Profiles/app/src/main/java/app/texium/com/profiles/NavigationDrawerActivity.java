@@ -51,6 +51,8 @@ import app.texium.com.profiles.models.AcademyLevels;
 import app.texium.com.profiles.models.Careers;
 import app.texium.com.profiles.models.Companies;
 import app.texium.com.profiles.models.ElectoralActor;
+import app.texium.com.profiles.models.ElectoralKeys;
+import app.texium.com.profiles.models.ElectoralSections;
 import app.texium.com.profiles.models.Locations;
 import app.texium.com.profiles.models.Municipalities;
 import app.texium.com.profiles.models.PoliticalParties;
@@ -193,6 +195,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
         switch (id) {
             case R.id.action_sync:
                 showQuestion();
+                break;
+            case R.id.action_logout:
+                finish();
                 break;
         }
 
@@ -481,7 +486,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         private SoapPrimitive soapPrimitive;
         private SoapObject soPoliticalParty, soElectoralActor, soapObjectAL, soapObjectCareer,soapObjectPT,
-                soapObjectCompany,soapObjectState, soMunicipal, soLocation;
+                soapObjectCompany, soapObjectState, soMunicipal, soLocation, soElectoralKey, soElectoralSection;
         private Integer webServiceOperation;
         private String textError;
         private Boolean localAccess;
@@ -531,11 +536,34 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 switch (webServiceOperation) {
                     case Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE:
                         PROFILE_MANAGER.setUserProfile(SESSION_DATA);
-                        soapPrimitive = SoapServices.validateINE(getApplicationContext(), PROFILE_MANAGER);
 
-                        if (Boolean.valueOf(soapPrimitive.toString())) {
-                            textError = "Ya existe la clave de elector " + PROFILE_MANAGER.getElectoralProfile().getElectoralKEY();
-                            return false;
+                        try {
+                            soapPrimitive = SoapServices.validateINE(getApplicationContext(), PROFILE_MANAGER);
+
+                            if (Boolean.valueOf(soapPrimitive.toString())) {
+                                textError = "Ya existe la clave de elector " + PROFILE_MANAGER.getElectoralProfile().getElectoralKEY();
+                                return false;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+
+                            ElectoralKeys electoralKey = new ElectoralKeys();
+                            electoralKey.setElectoralKey(PROFILE_MANAGER.getElectoralProfile().getElectoralKEY());
+
+                            ElectoralKeys data = BDProfileManagerQuery.getElectoralKey(getApplicationContext(),electoralKey);
+
+                            Integer exist = (data.getElectoralKey() != null )
+                                    ? Constants.ACTIVE : Constants.INACTIVE;
+
+                            switch (exist) {
+                                case Constants.INACTIVE:
+                                    BDProfileManagerQuery.addElectoralKey(getApplicationContext(),electoralKey);
+                                    break;
+                                case Constants.ACTIVE:
+                                    textError = "Ya existe la clave de elector " + PROFILE_MANAGER.getElectoralProfile().getElectoralKEY();
+                                    return false;
+                            }
+
                         }
 
                         soapPrimitive = SoapServices.saveProfile(getApplicationContext(), PROFILE_MANAGER);
@@ -705,7 +733,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                         String title = "Cargando Catalogos";
 
-                        int updates = 6;
+                        int updates = 8;
                         for (int update = 0; update < updates; update++) {
 
                             String msg  = "Cargando paquete " + update + " de " + updates ;
@@ -729,6 +757,17 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                     break;
                                 case 6:
                                     soapObjectCompany = SoapServices.getSpinnerAllCompanies(getApplicationContext());
+                                    break;
+                                case 7:
+                                    soElectoralKey = SoapServices.getElectoralKeys(getApplicationContext());
+                                    break;
+                                case 8 :
+                                    soElectoralSection = new SoapObject();
+                                    ArrayList<ElectoralSections> tempES = BDProfileManagerQuery.getAllElectoralSection(getApplicationContext());
+
+                                    if (tempES.size() == 0) {
+                                        soElectoralSection = SoapServices.getElectoralSection(getApplicationContext());
+                                    }
                                     break;
                             }
                         }
@@ -1012,6 +1051,74 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                                 BDProfileManagerQuery.addCompany(getApplicationContext(),company);
                                                 break;
                                         }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        if (soElectoralKey.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soElectoralKey.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    ElectoralKeys electoralKey = new ElectoralKeys();
+
+                                    electoralKey.setIdItem(i);
+                                    electoralKey.setElectoralKey(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ELECTORAL_KEY).toString());
+
+                                    try {
+
+                                        ElectoralKeys data = BDProfileManagerQuery.getElectoralKey(getApplicationContext(),electoralKey);
+
+                                        Integer exist = (data.getElectoralKey() != null )
+                                                ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                        switch (exist) {
+                                            case Constants.INACTIVE:
+                                                BDProfileManagerQuery.addElectoralKey(getApplicationContext(),electoralKey);
+                                                break;
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        if (soElectoralSection.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soElectoralSection.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    ElectoralSections electoralSection  = new ElectoralSections();
+
+                                    electoralSection.setIdItem(i);
+                                    electoralSection.setIdElectoralSection(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                    electoralSection.setLocalDistrict(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT).toString());
+
+                                    try {
+
+                                        ElectoralSections data = BDProfileManagerQuery.getElectoralSection(getApplicationContext(),electoralSection);
+
+                                        Integer exist = (data.getIdElectoralSection() != null )
+                                                ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                        switch (exist) {
+                                            case Constants.INACTIVE:
+                                                BDProfileManagerQuery.addElectoralSection(getApplicationContext(),electoralSection);
+                                                break;
+                                        }
+
 
                                     } catch (Exception e) {
                                         e.printStackTrace();

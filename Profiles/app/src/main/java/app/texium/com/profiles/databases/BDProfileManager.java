@@ -19,6 +19,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
     public static final String OBTAINED_DOCUMENT_TABLE_NAME = "ObtainedDocument";
     public static final String ELECTORAL_SECTIONS_TABLE_NAME = "ElectoralSections";
     public static final String PROFILES_TABLE_NAME = "Profiles";
+    public static final String ELECTORAL_KEYS_TABLE_NAME = "ElectoralKeys";
 
     public static final String STRING_TYPE = "text";
     public static final String INT_TYPE = "integer";
@@ -159,6 +160,14 @@ public class BDProfileManager extends SQLiteOpenHelper {
 
         public static final String ID_GROUP = "idGroup";
         public static final String ID_USER = "idUser";
+    }
+
+    public static class ColumnElectoralKeys {
+        public static final String ELECTORAL_KEY_CVE = "cveElectoralKey";
+        public static final String ELECTORAL_KEY_ID = "idElectoralKey";
+        public static final String ELECTORAL_KEY = "electoralKey";
+        public static final String ESTATE_ID = "idEstate";
+
     }
 
     public static final String CREATE_USERS_TABLE_SCRIPT =
@@ -318,6 +327,14 @@ public class BDProfileManager extends SQLiteOpenHelper {
                     ColumnProfiles.ID_USER + " " + INT_TYPE +
             ")";
 
+    public static final String CREATE_ELECTORAL_KEYS_TABLE_SCRIPT =
+            "create table " + ELECTORAL_KEYS_TABLE_NAME + "(" +
+                    ColumnElectoralKeys.ELECTORAL_KEY_CVE + " " + INT_TYPE + " primary key autoincrement," +
+                    ColumnElectoralKeys.ELECTORAL_KEY_ID + " " + INT_TYPE + "," +
+                    ColumnElectoralKeys.ELECTORAL_KEY + " " + STRING_TYPE + "," +
+                    ColumnElectoralKeys.ESTATE_ID + " " + INT_TYPE +
+                    ")";
+
     public static  final String DROP_TABLE_IF_EXISTS = "drop table if exists ";
 
     public BDProfileManager(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -336,6 +353,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
         db.execSQL(CREATE_OBTAINED_DOCUMENT_ACTOR_TABLE_SCRIPT);
         db.execSQL(CREATE_ELECTORAL_SECTIONS_TABLE_SCRIPT);
         db.execSQL(CREATE_PROFILE_TABLE_SCRIPT);
+        db.execSQL(ELECTORAL_KEYS_TABLE_NAME);
 
         db.execSQL(INSERT_DEFAULT_USER_SCRIPT);
     }
@@ -353,6 +371,8 @@ public class BDProfileManager extends SQLiteOpenHelper {
         db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.OBTAINED_DOCUMENT_TABLE_NAME);
         db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.ELECTORAL_SECTIONS_TABLE_NAME);
         db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.PROFILES_TABLE_NAME);
+        db.execSQL(BDProfileManager.DROP_TABLE_IF_EXISTS + BDProfileManager.ELECTORAL_KEYS_TABLE_NAME);
+
 
         db.execSQL(CREATE_USERS_TABLE_SCRIPT);
         db.execSQL(CREATE_PP_TABLE_SCRIPT);
@@ -364,6 +384,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
         db.execSQL(CREATE_OBTAINED_DOCUMENT_ACTOR_TABLE_SCRIPT);
         db.execSQL(CREATE_ELECTORAL_SECTIONS_TABLE_SCRIPT);
         db.execSQL(CREATE_PROFILE_TABLE_SCRIPT);
+        db.execSQL(CREATE_ELECTORAL_KEYS_TABLE_SCRIPT);
 
         db.execSQL(INSERT_DEFAULT_USER_SCRIPT);
     }
