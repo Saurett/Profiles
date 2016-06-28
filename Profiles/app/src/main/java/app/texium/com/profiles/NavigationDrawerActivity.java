@@ -45,6 +45,7 @@ import app.texium.com.profiles.fragments.ElectoralProfileFragment;
 import app.texium.com.profiles.fragments.FragmentProfileListener;
 import app.texium.com.profiles.fragments.PersonalProfileFragment;
 import app.texium.com.profiles.fragments.ProfessionalProfileFragment;
+import app.texium.com.profiles.fragments.SearchProfileFragment;
 import app.texium.com.profiles.fragments.SocialNetworkProfileFragment;
 import app.texium.com.profiles.fragments.StructureProfileFragment;
 import app.texium.com.profiles.models.AcademyLevels;
@@ -193,6 +194,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
         */
 
         switch (id) {
+            case R.id.search_profile:
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction actualFragment = fragmentManager.beginTransaction();
+
+                closeAllFragment();
+
+                actualFragment.add(R.id.profiles_fragment_container, new SearchProfileFragment(), Constants.FRAGMENT_SEARCH_TAG);
+                actualFragment.commit();
+                break;
             case R.id.action_sync:
                 showQuestion();
                 break;
@@ -271,6 +281,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Fragment socialNetwork = fragmentManager.findFragmentByTag(Constants.FRAGMENT_SOCIAL_NETWORK_TAG);
         if (null != socialNetwork) {
             fragmentManager.beginTransaction().remove(socialNetwork).commit();
+        }
+
+        Fragment searchProfile = fragmentManager.findFragmentByTag(Constants.FRAGMENT_SEARCH_TAG);
+        if (null != searchProfile) {
+            fragmentManager.beginTransaction().remove(searchProfile).commit();
         }
     }
 

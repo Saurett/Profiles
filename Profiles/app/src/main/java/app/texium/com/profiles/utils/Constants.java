@@ -43,6 +43,7 @@ public final class Constants {
     public static final String FRAGMENT_STRUCTURE_TAG = "fragment_structure_profile";
     public static final String FRAGMENT_COMMENT_TAG = "fragment_comment_profile";
     public static final String FRAGMENT_SOCIAL_NETWORK_TAG = "fragment_social_network_profile";
+    public static final String FRAGMENT_SEARCH_TAG = "fragment_search_profile";
     //endregion FRAGMENT TAGS//
 
     //region WEB SERVICE ID //
