@@ -353,7 +353,7 @@ public class BDProfileManager extends SQLiteOpenHelper {
         db.execSQL(CREATE_OBTAINED_DOCUMENT_ACTOR_TABLE_SCRIPT);
         db.execSQL(CREATE_ELECTORAL_SECTIONS_TABLE_SCRIPT);
         db.execSQL(CREATE_PROFILE_TABLE_SCRIPT);
-        db.execSQL(ELECTORAL_KEYS_TABLE_NAME);
+        db.execSQL(CREATE_ELECTORAL_KEYS_TABLE_SCRIPT);
 
         db.execSQL(INSERT_DEFAULT_USER_SCRIPT);
     }

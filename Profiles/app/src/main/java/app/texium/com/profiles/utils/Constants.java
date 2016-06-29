@@ -62,6 +62,7 @@ public final class Constants {
     public static final int WS_KEY_DEFAULT_SYNC = 12;
     public static final int WS_KEY_ELECTORAL_SECTION = 13;
     public static final int WS_KEY_ELECTORAL_KEY = 14;
+    public static final int WS_KEY_PROFILE_SEARCH = 15;
 
     //endregion WEB SERVICE ID//
 

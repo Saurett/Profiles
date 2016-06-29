@@ -4,64 +4,72 @@
     android:layout_height="wrap_content"
     android:background="@color/colorPrimary"
     android:backgroundTint="@color/colorPrimaryLight"
+    android:orientation="vertical"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
-    android:paddingTop="20dp"
-    android:orientation="vertical">
+    android:paddingTop="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
+
             <TextView
                 android:id="@+id/profile_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Nombre Completo"
-                android:textSize="20sp"
-                android:layout_weight="1" />
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp" />
+
             <TextView
                 android:id="@+id/profile_city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ciudad Actual"
                 android:paddingTop="5dp"
-                />
+                android:text="Ciudad Actual"
+                android:textColor="@color/colorPrimaryDark" />
         </LinearLayout>
-       <LinearLayout
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_gravity="center_vertical"
-           android:layout_weight="1"
-           android:gravity="end">
-           <Button
-               android:id="@+id/profile_cloud"
-               android:layout_width="30dp"
-               android:layout_height="30dp"
-               android:background="@mipmap/ic_cloud_black"
-               android:layout_marginLeft="8dp"/>
-           <Button
-               android:id="@+id/profile_edit"
-               android:layout_width="30dp"
-               android:layout_height="30dp"
-               android:background="@mipmap/ic_mode_edit_black"
-               android:layout_marginLeft="8dp"/>
-           <Button
-               android:id="@+id/profile_delete"
-               android:layout_width="30dp"
-               android:layout_height="30dp"
-               android:background="@mipmap/ic_close_black"
-               android:layout_marginLeft="8dp"/>
-       </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/profile_cloud"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="8dp"
+                android:background="@mipmap/ic_cloud_black" />
+
+            <Button
+                android:id="@+id/profile_edit"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="8dp"
+                android:background="@mipmap/ic_mode_edit_black" />
+
+            <Button
+                android:id="@+id/profile_delete"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="8dp"
+                android:background="@mipmap/ic_close_black" />
+        </LinearLayout>
     </LinearLayout>
+
     <android.support.v4.widget.Space
         android:layout_width="match_parent"
         android:layout_height="10dp" />
-
 
 
 </LinearLayout>

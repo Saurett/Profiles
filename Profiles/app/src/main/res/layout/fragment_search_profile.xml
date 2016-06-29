@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimary"
     android:backgroundTint="@color/colorPrimaryLight"
     android:layout_alignParentTop="true"
@@ -15,12 +16,26 @@
         <android.support.v7.widget.SearchView
             android:id="@+id/searchView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:queryHint="Captura un nombre"
+        />
+
+        <TextView
+            android:id="@+id/emptyProfile"
+            android:text="No hay datos"
+            android:textSize="30sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:textColor="@color/colorPrimaryDark"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/profile_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
+
 
     </LinearLayout>
 </FrameLayout>
