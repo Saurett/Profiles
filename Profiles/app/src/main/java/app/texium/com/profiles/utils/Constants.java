@@ -63,6 +63,7 @@ public final class Constants {
     public static final int WS_KEY_ELECTORAL_SECTION = 13;
     public static final int WS_KEY_ELECTORAL_KEY = 14;
     public static final int WS_KEY_PROFILE_SEARCH = 15;
+    public static final int WS_KEY_PROFILE_SEARCH_COMPLETE = 16;
 
     //endregion WEB SERVICE ID//
 
@@ -102,9 +103,13 @@ public final class Constants {
     public static final String WEB_SERVICE_SOAP_ACTION_ALL_ADDRESS= "Perfiles/ConsultaDirecciones";
     public static final String WEB_SERVICE_SOAP_ACTION_ELECTORAL_KEY = "Perfiles/ExisteClaveElector";
     public static final String WEB_SERVICE_SOAP_ACTION_SECTION = "Perfiles/ConsultaSeccionElectoral";
+    public static final String WEB_SERVICE_SOAP_SEARCH_PROFILE = "Perfiles/BuscarPersonas";
+    public static final String WEB_SERVICE_SOAP_SEARCH_PROFILE_COMPLETE = "Perfiles/ConsultaPersona";
     public static final String WEB_SERVICE_NAMESPACE = "Perfiles";
-    //public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
-    public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
+    public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
+    //public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
+
+
 
 
     //public static final String WEB_SERVICE_URL = "http://187.216.220.51/ServicioWeb/Servicio_Android.asmx";
@@ -128,8 +133,10 @@ public final class Constants {
     public static final String WEB_SERVICE_METHOD_NAME_SPINNER_ALL_EA = "ConsultaTipoActorElectoralTodos";
     public static final String WEB_SERVICE_METHOD_NAME_ALL_ADDRESS= "ConsultaDirecciones";
     public static final String WEB_SERVICE_METHOD_NAME_ELECTORAL_KEY = "ConsultaClavesElector";
-    public static final String WEB_SERVICE_METHOD_NAME_ELECTOTAL_SECTIONS = "ConsultaSeccionesElectorales";
+    public static final String WEB_SERVICE_METHOD_NAME_ELECTORAL_SECTIONS = "ConsultaSeccionesElectorales";
     public static final String WEB_SERVICE_METHOD_NAME_SECTION = "ConsultaSeccionElectoral";
+    public static final String WEB_SERVICE_METHOD_SEARCH_PROFILE = "BuscarPersonas";
+    public static final String WEB_SERVICE_METHOD_SEARCH_PROFILE_COMPLETE = "ConsultaPersona";
     //endregion SOAP OPERATION//
 
     //region WEB SERVICE PARAMS//
@@ -147,8 +154,10 @@ public final class Constants {
     public static final String WEB_SERVICE_PARAM_SEX = "Sexo";
     public static final String WEB_SERVICE_PARAM_CIVIL_STATE = "EstadoCivil";
     public static final String WEB_SERVICE_PARAM_OCR_INE = "OCRINE";
+    public static final String WEB_SERVICE_PARAM_OCR_INE_PERSONAL = "OCR_INE";
     public static final String WEB_SERVICE_PARAM_ELECTORAL_KEY = "ClaveElector";
     public static final String WEB_SERVICE_PARAM_VALIDITY_INE = "VigenciaINE";
+    public static final String WEB_SERVICE_PARAM_VALIDITY_INE_PERSONAL = "Vigencia_INE";
     public static final String WEB_SERVICE_PARAM_ELECTORAL_SECTION = "SeccionElectoral";
     public static final String WEB_SERVICE_PARAM_FEDERAL_DISTRICT = "DistritoFederal";
     public static final String WEB_SERVICE_PARAM_ELECTORAL_ADVISER = "ConsejeroPolitico";
@@ -157,6 +166,8 @@ public final class Constants {
     public static final String WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_SON = "IDTipoActorElectoralHijo";
     public static final String WEB_SERVICE_PARAM_FRONT_PHOTO = "FotoINEFrente";
     public static final String WEB_SERVICE_PARAM_BACK_PHOTO = "FotoINEReverso";
+    public static final String WEB_SERVICE_PARAM_FRONT_PHOTO_PERSONAL = "FotoINE_Frente";
+    public static final String WEB_SERVICE_PARAM_BACK_PHOTO_PERSONAL = "FotoINE_Reverso";
     public static final String WEB_SERVICE_PARAM_ID_STATE = "IDEstado";
     public static final String WEB_SERVICE_PARAM_ID_MUNICIPAL = "IDMunicipio";
     public static final String WEB_SERVICE_PARAM_ID_LOCATION = "IDLocalidad";
@@ -193,6 +204,8 @@ public final class Constants {
     public static final String WEB_SERVICE_PARAM_ID_USER = "IDUsuario";
     public static final String WEB_SERVICE_PARAM_ID_FATHER = "IDPadre";
     public static final String WEB_SERVICE_PARAM_ID_SECTION = "IDSeccion";
+    public static final String WEB_SERVICE_PARAM_SEARCH_NAME = "Cadena";
+    public static final String WEB_SERVICE_PARAM_ELECTORAL_PROFILE = "PerfilElectoral";
 
     //endregion WEB SERVICE PARAMS//
 
@@ -221,12 +234,15 @@ public final class Constants {
     public static final String SOAP_OBJECT_KEY_DESCRIPTION = "Descripcion";
     public static final String SOAP_OBJECT_KEY_ID = "ID";
     public static final String SOAP_OBJECT_KEY_NAME = "Nombre";
+    public static final String SOAP_OBJECT_FIRST_SURNAME = "ApellidoPaterno";
+    public static final String SOAP_OBJECT_SECOND_SURNAME = "ApellidoMaterno";
     public static final String SOAP_OBJECT_KEY_ACRONYM_NAME = "Siglas";
     public static final String SOAP_OBJECT_KEY_FATHER = "Padre";
     public static final String SOAP_OBJECT_KEY_LOCAL_DISTRICT = "DistritoLocal";
     public static final String SOAP_OBJECT_KEY_ROL_NAME = "nombreRol";
     public static final String SOAP_OBJECT_KEY_PASSWORD = "password";
     public static final String SOAP_OBJECT_KEY_ELECTORAL_KEY = "ClaveElector";
+    public static final String SOAP_OBJECT_KEY_COMPLETE_NAME = "NombreCompleto";
 
     //endregion SOAP KEYS//
 

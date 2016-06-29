@@ -332,6 +332,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         passwordLogin.clearFocus();
 
                         ProfileManager profileManager = new ProfileManager();
+                        profileManager.setUserProfile(user);
 
                         intentNavigationDrawer.putExtra(Constants.ACTIVITY_EXTRA_PARAMS_LOGIN, user);
                         intentNavigationDrawer.putExtra(Constants.ACTIVITY_EXTRA_PARAMS_PROFILE_MANAGER, profileManager);

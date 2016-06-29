@@ -10,28 +10,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.ksoap2.serialization.SoapObject;
 
-import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import app.texium.com.profiles.R;
 import app.texium.com.profiles.adapters.ProfileListAdapter;
 import app.texium.com.profiles.databases.BDProfileManagerQuery;
-import app.texium.com.profiles.models.AcademyLevels;
-import app.texium.com.profiles.models.Careers;
-import app.texium.com.profiles.models.Companies;
-import app.texium.com.profiles.models.ProfessionalTitles;
+import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.Profile;
 import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.services.SoapServices;
@@ -45,39 +39,13 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
     static FragmentProfileListener activityListener;
 
     private static ProfileManager _PROFILE_MANAGER;
-    private static List<Profile> profiles;
+    private static List<Profile> profiles = new ArrayList<>();
     private static ProfileListAdapter profiles_adapter;
 
     private SearchView searchView;
 
-    RecyclerView profile_list;
+    private RecyclerView profile_list, emptyProfile;
 
-    static {
-
-        Profile profile = new Profile();
-        profiles = new ArrayList<>();
-
-        profile.setProfileName("Francisco Javier Díaz Saurett");
-        profile.setProfileCity("Villahermosa, Tabasco");
-        profile.setProfileCloud(0);
-
-        profiles.add(profile);
-
-
-        profile = new Profile();
-        profile.setProfileName("Fred Gomez Leyva");
-        profile.setProfileCity("Villahermosa, Tabasco");
-        profile.setProfileCloud(1);
-
-        profiles.add(profile);
-
-        profile = new Profile();
-        profile.setProfileName("Sasha");
-        profile.setProfileCity("Villahermosa, Tabasco");
-        profile.setProfileCloud(0);
-
-        profiles.add(profile);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,25 +54,19 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
         View view = inflater.inflate(R.layout.fragment_search_profile, container, false);
 
         searchView = (SearchView) view.findViewById(R.id.searchView);
-        TextView emptyProfile = (TextView) view.findViewById(R.id.emptyProfile);
         profile_list = (RecyclerView) view.findViewById(R.id.profile_list);
+        emptyProfile = (RecyclerView) view.findViewById(R.id.emptyProfile);
 
-        profile_list.setVisibility(View.INVISIBLE);
-        emptyProfile.setVisibility(View.VISIBLE);
-
+        //profile_list.setVisibility(View.INVISIBLE);
+        //emptyProfile.setVisibility(View.VISIBLE);
 
         searchView.setOnQueryTextListener(this);
         searchView.setOnCloseListener(this);
         searchView.setFocusable(true);
         searchView.requestFocusFromTouch();
 
-
-
         profiles_adapter = new ProfileListAdapter();
         profiles_adapter.setOnClickListener(this);
-
-
-
 
         return view;
     }
@@ -132,7 +94,7 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
     @Override
     public boolean onQueryTextSubmit(String query) {
         if (!TextUtils.isEmpty(query)) {
-            AsyncSearch wsSearch = new AsyncSearch(Constants.WS_KEY_PROFILE_SEARCH,query);
+            AsyncSearch wsSearch = new AsyncSearch(Constants.WS_KEY_PROFILE_SEARCH, query);
             wsSearch.execute();
             searchView.setQuery("", false);
             searchView.clearFocus();
@@ -150,6 +112,11 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
     public boolean onClose() {
         searchView.setQuery("", false);
         return false;
+    }
+
+    public static void showQuestion(DecodeProfile decodeProfile) {
+        activityListener.updateDecodeProfile(decodeProfile);
+        activityListener.showQuestion();
     }
 
     private class AsyncSearch extends AsyncTask<Void, Void, Boolean> {
@@ -188,17 +155,12 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
 
             Boolean validOperation = false;
 
-            try{
+            try {
                 switch (webServiceOperation) {
                     case Constants.WS_KEY_PROFILE_SEARCH:
-                        /*
-                        soapObjectAL = SoapServices.getSpinnerAcademyLevels(getContext());
-                        soapObjectCareer = SoapServices.getSpinnerCareer(getContext());
-                        soapObjectPT = SoapServices.getSpinnerProfessionalTitles(getContext());
-                        soapObjectCompany = SoapServices.getSpinnerCompanies(getContext(),SESSION_DATA.getIdGroup());
-                        validOperation = (soapObjectCompany.getPropertyCount() > 0);
-                        */
-                        validOperation = true;
+
+                        soapObject = SoapServices.searchProfile(getContext(), webServiceSearch, _PROFILE_MANAGER.getUserProfile().getIdGroup());
+                        validOperation = (soapObject.getPropertyCount() > 0);
                         break;
                 }
             } catch (Exception e) {
@@ -212,25 +174,86 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
         @Override
         protected void onPostExecute(final Boolean success) {
 
-            pDialog.dismiss();
-
-            if(success) {
+            if (success) {
 
                 switch (webServiceOperation) {
                     case Constants.WS_KEY_PROFILE_SEARCH:
 
-                        if (!localAccess) {
+                        try {
+                            profiles_adapter = new ProfileListAdapter();
 
+                            //LOCAL PROFILES
+                            List<Profile> localProfile = BDProfileManagerQuery.getProfiles(getContext(),
+                                    webServiceSearch, _PROFILE_MANAGER.getUserProfile().getIdGroup());
 
+                            profiles = new ArrayList<>();
+                            profiles.addAll(localProfile);
+
+                            //WEB SERVICE PROFILES
+                            if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                SoapObject soDiffGramL = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                if (soDiffGramL.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                    SoapObject soNewDataSetL = (SoapObject) soDiffGramL.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                    for (int iL = 0; iL < soNewDataSetL.getPropertyCount(); iL++) {
+                                        SoapObject soItemL = (SoapObject) soNewDataSetL.getProperty(iL);
+
+                                        Profile profile = new Profile();
+
+                                        String city = soItemL.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString() + ", " +
+                                                soItemL.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString() + "; " +
+                                                soItemL.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_NAME).toString();
+
+                                        String name =  (soItemL.hasProperty(Constants.SOAP_OBJECT_KEY_NAME)
+                                                ? soItemL.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString() : "") + " " +
+                                                (soItemL.hasProperty(Constants.SOAP_OBJECT_FIRST_SURNAME)
+                                                        ? soItemL.getProperty(Constants.SOAP_OBJECT_FIRST_SURNAME).toString() : "") + " " +
+                                                (soItemL.hasProperty(Constants.SOAP_OBJECT_SECOND_SURNAME)
+                                                        ? soItemL.getProperty(Constants.SOAP_OBJECT_SECOND_SURNAME).toString() : "") ;
+
+                                        profile.setIdProfile(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                        profile.setProfileCity(city);
+                                        profile.setProfileName(name);
+                                        profile.setCveProfile(Constants.SERVER_SYNC_FALSE);
+                                        profile.setProfileCloud(Constants.SERVER_SYNC_TRUE);
+
+                                        profiles.add(profile);
+                                    }
+                                }
+                            }
+
+                            Collections.sort(profiles, new Comparator() {
+                                @Override
+                                public int compare(Object softDrinkOne, Object softDrinkTwo) {
+                                    //use instanceof to verify the references are indeed of the type in question
+                                    return ((Profile) softDrinkOne).getProfileName()
+                                            .compareTo(((Profile) softDrinkTwo).getProfileName());
+                                }
+                            });
+
+                            /*
+                            Collections.sort(profiles, new Comparator() {
+                                @Override
+                                public int compare(Object softDrinkOne, Object softDrinkTwo) {
+                                    //use instanceof to verify the references are indeed of the type in question
+                                    return ((Profile) softDrinkOne).getProfileCity()
+                                            .compareTo(((Profile) softDrinkTwo).getProfileCity());
+                                }
+                            });*/
+
+                            //WebService Profiles
+                            profiles_adapter.addAll(profiles);
+
+                            profile_list.setAdapter(profiles_adapter);
+
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+                            profile_list.setLayoutManager(linearLayoutManager);
+
+                            profile_list.setVisibility((profiles_adapter.getItemCount() > 0) ? View.VISIBLE : View.INVISIBLE);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-
-                        profiles_adapter = new ProfileListAdapter();
-
-                        profiles_adapter.addAll(profiles);
-                        profile_list.setAdapter(profiles_adapter);
-
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-                        profile_list.setLayoutManager(linearLayoutManager);
 
                         break;
                 }
@@ -239,6 +262,8 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
                 Toast.makeText(getContext(), tempText, Toast.LENGTH_LONG).show();
 
             }
+
+            pDialog.dismiss();
         }
     }
 }

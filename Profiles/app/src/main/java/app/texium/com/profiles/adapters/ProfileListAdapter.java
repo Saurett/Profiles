@@ -12,7 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.texium.com.profiles.R;
+import app.texium.com.profiles.fragments.SearchProfileFragment;
+import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.Profile;
+import app.texium.com.profiles.models.ProfileManager;
 
 /**
  * Created by texiumuser on 28/06/2016.
@@ -64,10 +67,30 @@ public class ProfileListAdapter extends RecyclerView.Adapter<ProfileListAdapter.
         holder.profile_city.setText(profile.getProfileCity());
         holder.profile_cloud_button.setBackgroundResource(resource);
 
+        final DecodeProfile decodeProfile = new DecodeProfile();
+        decodeProfile.setProfile(profile);
+        decodeProfile.setProfileManager(new ProfileManager());
+
         holder.profile_cloud_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v, profile.getProfileName(), Snackbar.LENGTH_LONG)
+                Snackbar.make(v, profile.getProfileName() + " Sincronizar", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        holder.profile_edit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                decodeProfile.setIdView(v.getId());
+                SearchProfileFragment.showQuestion(decodeProfile);
+            }
+        });
+
+        holder.profile_delete_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(v, profile.getProfileName() + "Borrar", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });

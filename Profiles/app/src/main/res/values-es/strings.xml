@@ -35,5 +35,9 @@
     <string name="default_logout">Cerrar Sessión</string>
     <string name="default_search_profile">Consultar</string>
     <string name="default_loading_title">Espere un momento por favor...</string>
+    <string name="default_profile_edit_msg">¿Desea editar el perfil?</string>
+    <string name="default_profile_delete_msg">¿Desea eliminar el perfil?</string>
+    <string name="default_profile_data_msg">Obteniendo información del perfil ...</string>
+    <string name="default_download_msg">Descargando actualizaciones de catalogos</string>
 
 </resources>

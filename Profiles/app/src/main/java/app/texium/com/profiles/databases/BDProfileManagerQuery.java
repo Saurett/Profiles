@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import app.texium.com.profiles.models.AcademyLevels;
 import app.texium.com.profiles.models.Careers;
@@ -18,9 +19,11 @@ import app.texium.com.profiles.models.Locations;
 import app.texium.com.profiles.models.Municipalities;
 import app.texium.com.profiles.models.PoliticalParties;
 import app.texium.com.profiles.models.ProfessionalTitles;
+import app.texium.com.profiles.models.Profile;
 import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.States;
 import app.texium.com.profiles.models.Users;
+import app.texium.com.profiles.utils.Constants;
 
 /**
  * Created by texiumuser on 24/05/2016.
@@ -116,6 +119,59 @@ public class BDProfileManagerQuery {
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
             throw new Exception("Database error");
         }
+    }
+
+    public static List<Profile> getProfiles(Context context, String name, Integer idTeam) throws Exception {
+        List<Profile> profiles = new ArrayList<>();
+        try {
+            BDProfileManager bdTasksManager = new BDProfileManager(context,BDName,null,BDVersion);
+            SQLiteDatabase bd = bdTasksManager.getWritableDatabase();
+
+            Cursor result = bd.rawQuery("select * from "+ BDProfileManager.PROFILES_TABLE_NAME +
+                    " where " + BDProfileManager.ColumnProfiles.ID_GROUP + " = " + idTeam  +
+                    " and " + BDProfileManager.ColumnProfiles.NAME + " LIKE '%" + name + "%'" +
+                    " order by 1 ASC",null);
+
+            if (result.moveToFirst()) {
+                do {
+
+                    Profile data = new Profile();
+
+                    Integer idState = result.getInt(result.getColumnIndex(BDProfileManager.ColumnProfiles.ID_STATE));
+                    Integer idMunicipal = result.getInt(result.getColumnIndex(BDProfileManager.ColumnProfiles.ID_MUNICIPAL));
+                    Integer idCity = result.getInt(result.getColumnIndex(BDProfileManager.ColumnProfiles.ID_LOCATION));
+
+                    Locations temp = new Locations();
+                    temp.setIdLocation(idCity);
+                    temp.setIdMunicipal(idMunicipal);
+                    temp.setIdState(idState);
+
+                    temp = getLocationById(context,temp);
+
+                    String city = temp.getStateName() + ", " +  temp.getMunicipalName() + ", " + temp.getLocationName();
+
+                    data.setProfileName(result.getString(result.getColumnIndex(BDProfileManager.ColumnProfiles.NAME)));
+                    data.setProfileCity(city);
+                    data.setProfileCloud(Constants.SERVER_SYNC_FALSE);
+                    data.setCveProfile(result.getInt(result.getColumnIndex(BDProfileManager.ColumnProfiles.PROFILE_CVE)));
+                    data.setIdProfile(Constants.SERVER_SYNC_FALSE);
+
+                    profiles.add(data);
+
+
+                    Log.i("SQLite: ", "Get profile in the bd with cve :" + data.getCveProfile());
+                } while (result.moveToNext());
+            }
+
+            bd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SQLite Exception","Database error: " + e.getMessage());
+            throw new Exception("Database error");
+        }
+
+        return profiles;
+
     }
 
     public static ArrayList<ProfileManager> getAllProfiles(Context context) throws Exception {
@@ -558,7 +614,7 @@ public class BDProfileManagerQuery {
                     data.setIdMunicipal(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.MUNICIPALITY_ID)));
                     data.setMunicipalName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.MUNICIPALITY_NAME)));
                     data.setIdLocation(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.CITY_ID)));
-                    data.setMunicipalName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.CITY_NAME)));
+                    data.setLocationName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.CITY_NAME)));
 
                     Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdLocation());
                 } while (result.moveToNext());

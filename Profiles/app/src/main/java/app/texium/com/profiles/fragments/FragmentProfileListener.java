@@ -5,6 +5,7 @@ import android.widget.EditText;
 
 import java.io.IOException;
 
+import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.ProfileManager;
 
 /**
@@ -16,5 +17,8 @@ public interface FragmentProfileListener {
     void showCalendar(View view, EditText txtDate, EditText txtAge);
     ProfileManager updateProfile(ProfileManager oldProfile);
     ProfileManager getProfileManager();
+    DecodeProfile updateDecodeProfile(DecodeProfile oldProfile);
+    DecodeProfile getDecodeProfile();
     void showCamera(View view) throws IOException;
+    void showQuestion();
 }

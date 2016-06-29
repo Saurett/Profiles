@@ -55,4 +55,15 @@ public class Profile {
     public void setProfileCloud(Integer profileCloud) {
         this.profileCloud = profileCloud;
     }
+
+    /*
+    public static class ProfileComparatorName implements Comparator {
+
+        @Override
+        public int compare(Object softDrinkOne, Object softDrinkTwo) {
+            //use instanceof to verify the references are indeed of the type in question
+            return ((Profile) softDrinkOne).getProfileName()
+                    .compareTo(((Profile) softDrinkTwo).getProfileName());
+        }
+    }*/
 }

@@ -51,11 +51,14 @@ import app.texium.com.profiles.fragments.StructureProfileFragment;
 import app.texium.com.profiles.models.AcademyLevels;
 import app.texium.com.profiles.models.Careers;
 import app.texium.com.profiles.models.Companies;
+import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.ElectoralActor;
 import app.texium.com.profiles.models.ElectoralKeys;
+import app.texium.com.profiles.models.ElectoralProfile;
 import app.texium.com.profiles.models.ElectoralSections;
 import app.texium.com.profiles.models.Locations;
 import app.texium.com.profiles.models.Municipalities;
+import app.texium.com.profiles.models.PersonalProfile;
 import app.texium.com.profiles.models.PoliticalParties;
 import app.texium.com.profiles.models.ProfessionalTitles;
 import app.texium.com.profiles.models.ProfileManager;
@@ -71,6 +74,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     private static Users SESSION_DATA;
     private static ProfileManager PROFILE_MANAGER;
+    private static DecodeProfile DECODE_PROFILE;
     private ProgressDialog pDialog;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1;
     private static int idActualCameraBtn;
@@ -91,6 +95,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         PROFILE_MANAGER = (ProfileManager) getIntent().getExtras().getSerializable(Constants.ACTIVITY_EXTRA_PARAMS_PROFILE_MANAGER);
         SESSION_DATA = (Users) getIntent().getExtras().getSerializable(Constants.ACTIVITY_EXTRA_PARAMS_LOGIN);
+        DECODE_PROFILE = new DecodeProfile();
 
         TextView actualUsername = (TextView) findViewById(R.id.actualUsername);
         actualUsername.setText(SESSION_DATA.getUserName());
@@ -159,25 +164,77 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     public void showQuestion() {
 
+        Integer idView = (null != DECODE_PROFILE.getIdView()
+                ? DECODE_PROFILE.getIdView() : Constants.INACTIVE);
+
         AlertDialog.Builder ad = new AlertDialog.Builder(this);
-        ad.setTitle(getString(R.string.default_title_alert_dialog));
-        ad.setMessage(getString(R.string.default_sync_question));
-        ad.setCancelable(false);
-        ad.setPositiveButton(getString(R.string.default_positive_button), this);
-        ad.setNegativeButton(getString(R.string.default_negative_button), this);
+
+        switch (idView) {
+            case R.id.profile_cloud:
+
+                ad.setTitle(getString(R.string.default_title_alert_dialog));
+                ad.setMessage(getString(R.string.default_sync_question));
+                ad.setCancelable(false);
+                ad.setPositiveButton(getString(R.string.default_positive_button), this);
+                ad.setNegativeButton(getString(R.string.default_negative_button), this);
+
+                break;
+            case R.id.profile_edit:
+
+                ad.setTitle(getString(R.string.default_title_alert_dialog));
+                ad.setMessage(getString(R.string.default_profile_edit_msg));
+                ad.setCancelable(false);
+                ad.setPositiveButton(getString(R.string.default_positive_button), this);
+                ad.setNegativeButton(getString(R.string.default_negative_button), this);
+
+                break;
+            case R.id.profile_delete:
+
+                ad.setTitle(getString(R.string.default_title_alert_dialog));
+                ad.setMessage(getString(R.string.default_profile_delete_msg));
+                ad.setCancelable(false);
+                ad.setPositiveButton(getString(R.string.default_positive_button), this);
+                ad.setNegativeButton(getString(R.string.default_negative_button), this);
+
+                break;
+            default:
+
+                ad.setTitle(getString(R.string.default_title_alert_dialog));
+                ad.setMessage(getString(R.string.default_sync_question));
+                ad.setCancelable(false);
+                ad.setPositiveButton(getString(R.string.default_positive_button), this);
+                ad.setNegativeButton(getString(R.string.default_negative_button), this);
+
+                break;
+        }
+
         ad.show();
     }
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
+
+        Integer idView = (null != DECODE_PROFILE.getIdView()
+                ? DECODE_PROFILE.getIdView() : Constants.INACTIVE);
+
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
-                AsyncProfile wsSyncServer = new AsyncProfile(Constants.WS_KEY_DEFAULT_SYNC);
-                wsSyncServer.execute();
+
+                switch (idView) {
+                    case R.id.profile_edit:
+                        AsyncProfile wsLoadProfile = new AsyncProfile(Constants.WS_KEY_PROFILE_SEARCH_COMPLETE);
+                        wsLoadProfile.execute();
+                        break;
+                    default:
+                        AsyncProfile wsSyncServer = new AsyncProfile(Constants.WS_KEY_DEFAULT_SYNC);
+                        wsSyncServer.execute();
+                        break;
+                }
                 break;
         }
 
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -185,13 +242,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        /*
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        */
 
         switch (id) {
             case R.id.search_profile:
@@ -395,7 +445,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
 
     @Override
-    public void showCamera(View view ) throws IOException {
+    public void showCamera(View view) throws IOException {
         idActualCameraBtn = view.getId();
 
         if (!marshMallowPermission.checkPermissionForCamera()) {
@@ -444,8 +494,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             storageDir = mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
             if (storageDir != null) {
-                if (! storageDir.mkdirs()) {
-                    if (! storageDir.exists()){
+                if (!storageDir.mkdirs()) {
+                    if (!storageDir.exists()) {
                         return null;
                     }
                 }
@@ -465,12 +515,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
                     Uri contentUri = Uri.fromFile(f);
                     mediaScanIntent.setData(contentUri);
                     this.sendBroadcast(mediaScanIntent);
-                    switch (idActualCameraBtn){
+                    switch (idActualCameraBtn) {
                         case R.id.pictureBtnBack:
-                            PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(FileServices.attachImg(this,contentUri));
+                            PROFILE_MANAGER.getElectoralProfile().setPhotoINEBack(FileServices.attachImg(this, contentUri));
                             break;
                         case R.id.pictureBtnFront:
-                            PROFILE_MANAGER.getElectoralProfile().setPhotoINEFront(FileServices.attachImg(this,contentUri));
+                            PROFILE_MANAGER.getElectoralProfile().setPhotoINEFront(FileServices.attachImg(this, contentUri));
                             break;
                     }
 
@@ -497,11 +547,22 @@ public class NavigationDrawerActivity extends AppCompatActivity
         return PROFILE_MANAGER;
     }
 
+    @Override
+    public DecodeProfile updateDecodeProfile(DecodeProfile oldProfile) {
+        DECODE_PROFILE = oldProfile;
+        return DECODE_PROFILE;
+    }
+
+    @Override
+    public DecodeProfile getDecodeProfile() {
+        return DECODE_PROFILE;
+    }
+
     private class AsyncProfile extends AsyncTask<Void, String, Boolean> {
 
         private SoapPrimitive soapPrimitive;
-        private SoapObject soPoliticalParty, soElectoralActor, soapObjectAL, soapObjectCareer,soapObjectPT,
-                soapObjectCompany, soapObjectState, soMunicipal, soLocation, soElectoralKey, soElectoralSection;
+        private SoapObject soPoliticalParty, soElectoralActor, soapObjectAL, soapObjectCareer, soapObjectPT,
+                soapObjectCompany, soapObjectState, soMunicipal, soLocation, soElectoralKey, soElectoralSection, soapObject;
         private Integer webServiceOperation;
         private String textError;
         private Boolean localAccess;
@@ -526,7 +587,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 case Constants.WS_KEY_SPINNER_ALL_SPINNER:
                     pDialog = new ProgressDialog(NavigationDrawerActivity.this);
                     pDialog.setMessage(getString(R.string.default_loading_msg));
-                    pDialog.setTitle("Descargando actualizaciones de catalogos");
+                    pDialog.setTitle(getString(R.string.default_download_msg));
                     pDialog.setIndeterminate(false);
                     pDialog.setCancelable(false);
                     pDialog.show();
@@ -535,6 +596,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
                     pDialog = new ProgressDialog(NavigationDrawerActivity.this);
                     pDialog.setMessage(getString(R.string.default_loading_msg));
                     pDialog.setTitle(getString(R.string.default_sync_title));
+                    pDialog.setIndeterminate(false);
+                    pDialog.setCancelable(false);
+                    pDialog.show();
+                    break;
+                case Constants.WS_KEY_PROFILE_SEARCH_COMPLETE:
+                    pDialog = new ProgressDialog(NavigationDrawerActivity.this);
+                    pDialog.setMessage(getString(R.string.default_loading_msg));
+                    pDialog.setTitle(getString(R.string.default_profile_data_msg));
                     pDialog.setIndeterminate(false);
                     pDialog.setCancelable(false);
                     pDialog.show();
@@ -565,14 +634,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             ElectoralKeys electoralKey = new ElectoralKeys();
                             electoralKey.setElectoralKey(PROFILE_MANAGER.getElectoralProfile().getElectoralKEY());
 
-                            ElectoralKeys data = BDProfileManagerQuery.getElectoralKey(getApplicationContext(),electoralKey);
+                            ElectoralKeys data = BDProfileManagerQuery.getElectoralKey(getApplicationContext(), electoralKey);
 
-                            Integer exist = (data.getElectoralKey() != null )
+                            Integer exist = (data.getElectoralKey() != null)
                                     ? Constants.ACTIVE : Constants.INACTIVE;
 
                             switch (exist) {
                                 case Constants.INACTIVE:
-                                    BDProfileManagerQuery.addElectoralKey(getApplicationContext(),electoralKey);
+                                    BDProfileManagerQuery.addElectoralKey(getApplicationContext(), electoralKey);
                                     break;
                                 case Constants.ACTIVE:
                                     textError = "Ya existe la clave de elector " + PROFILE_MANAGER.getElectoralProfile().getElectoralKEY();
@@ -593,9 +662,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
                         for (ProfileManager pm : profiles) {
 
                             String title = getString(R.string.default_sync_title);
-                            String msg = "Enviando perfil " + ti + " de " + profiles.size() ;
+                            String msg = "Enviando perfil " + ti + " de " + profiles.size();
 
-                            publishProgress(title,msg,String.valueOf(ti), String.valueOf(profiles.size()));
+                            publishProgress(title, msg, String.valueOf(ti), String.valueOf(profiles.size()));
 
                             soapPrimitive = SoapServices.validateINE(getApplicationContext(), PROFILE_MANAGER);
 
@@ -605,7 +674,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             }
 
                             soapPrimitive = SoapServices.saveProfile(getApplicationContext(), pm);
-                            BDProfileManagerQuery.deleteProfile(getApplicationContext(),pm);
+                            BDProfileManagerQuery.deleteProfile(getApplicationContext(), pm);
 
                             validOperation = (soapPrimitive != null);
                         }
@@ -633,28 +702,28 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                                     int tempItem = iE + 1;
                                     String title = "Descargando Catalogo de Direcciones";
-                                    String msg = "Descargando paquete " + tempItem + " de " + soNewDataSet.getPropertyCount() ;
+                                    String msg = "Descargando paquete " + tempItem + " de " + soNewDataSet.getPropertyCount();
 
                                     if (state.getIdState() != 27) continue;
 
                                     try {
 
-                                        States data = BDProfileManagerQuery.getStateById(getApplicationContext(),state);
+                                        States data = BDProfileManagerQuery.getStateById(getApplicationContext(), state);
 
-                                        Integer exist = (data.getIdState() != null )
+                                        Integer exist = (data.getIdState() != null)
                                                 ? Constants.ACTIVE : Constants.INACTIVE;
 
                                         switch (exist) {
                                             case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addState(getApplicationContext(),state);
-                                                Log.i("Estados","Registrando estado : " + state.getStateName());
+                                                BDProfileManagerQuery.addState(getApplicationContext(), state);
+                                                Log.i("Estados", "Registrando estado : " + state.getStateName());
                                                 break;
                                             default:
                                                 continue;
                                         }
 
-                                        publishProgress(title,msg,String.valueOf(tempItem), String.valueOf(soNewDataSet.getPropertyCount()));
-                                        Log.i("Estados","Descargando catalgo de " + state.getStateName());
+                                        publishProgress(title, msg, String.valueOf(tempItem), String.valueOf(soNewDataSet.getPropertyCount()));
+                                        Log.i("Estados", "Descargando catalgo de " + state.getStateName());
 
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -682,15 +751,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                                                 try {
 
-                                                    Municipalities data = BDProfileManagerQuery.getMunicipalById(getApplicationContext(),municipal);
+                                                    Municipalities data = BDProfileManagerQuery.getMunicipalById(getApplicationContext(), municipal);
 
-                                                    Integer exist = (data.getIdMunicipal() != null )
+                                                    Integer exist = (data.getIdMunicipal() != null)
                                                             ? Constants.ACTIVE : Constants.INACTIVE;
 
                                                     switch (exist) {
                                                         case Constants.INACTIVE:
-                                                            BDProfileManagerQuery.addMunicipal(getApplicationContext(),municipal);
-                                                            Log.i("Municipios","Registrando Municipio : " + municipal.getMunicipalName());
+                                                            BDProfileManagerQuery.addMunicipal(getApplicationContext(), municipal);
+                                                            Log.i("Municipios", "Registrando Municipio : " + municipal.getMunicipalName());
                                                             break;
                                                     }
 
@@ -698,7 +767,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                                     e.printStackTrace();
                                                 }
 
-                                                soLocation = SoapServices.getSpinnerLocation(getApplicationContext(), municipal.getIdState(),municipal.getIdMunicipal());
+                                                soLocation = SoapServices.getSpinnerLocation(getApplicationContext(), municipal.getIdState(), municipal.getIdMunicipal());
 
                                                 if (soLocation.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
                                                     SoapObject soDiffGramL = (SoapObject) soLocation.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
@@ -721,15 +790,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                                                             try {
 
-                                                                Locations data = BDProfileManagerQuery.getLocationById(getApplicationContext(),location);
+                                                                Locations data = BDProfileManagerQuery.getLocationById(getApplicationContext(), location);
 
-                                                                Integer exist = (data.getIdMunicipal() != null )
+                                                                Integer exist = (data.getIdMunicipal() != null)
                                                                         ? Constants.ACTIVE : Constants.INACTIVE;
 
                                                                 switch (exist) {
                                                                     case Constants.INACTIVE:
-                                                                        BDProfileManagerQuery.addLocation(getApplicationContext(),location);
-                                                                        Log.i("Localidad","Registrando Localidad : " + location.getLocationName());
+                                                                        BDProfileManagerQuery.addLocation(getApplicationContext(), location);
+                                                                        Log.i("Localidad", "Registrando Localidad : " + location.getLocationName());
                                                                         break;
                                                                 }
 
@@ -751,7 +820,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                         int updates = 8;
                         for (int update = 0; update < updates; update++) {
 
-                            String msg  = "Cargando paquete " + update + " de " + updates ;
+                            String msg = "Cargando paquete " + update + " de " + updates;
                             publishProgress(title, msg, String.valueOf(update + 1), String.valueOf(updates));
 
                             switch (update + 1) {
@@ -776,7 +845,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                 case 7:
                                     soElectoralKey = SoapServices.getElectoralKeys(getApplicationContext());
                                     break;
-                                case 8 :
+                                case 8:
                                     soElectoralSection = new SoapObject();
                                     ArrayList<ElectoralSections> tempES = BDProfileManagerQuery.getAllElectoralSection(getApplicationContext());
 
@@ -788,6 +857,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
                         }
 
                         validOperation = (soElectoralActor.getPropertyCount() > 0);
+                        break;
+                    case Constants.WS_KEY_PROFILE_SEARCH_COMPLETE:
+                        soapObject = SoapServices.getProfile(getApplicationContext(),DECODE_PROFILE);
+                        validOperation = (soapObject.getPropertyCount() > 0);
                         break;
                 }
             } catch (ConnectException e) {
@@ -802,7 +875,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                     case Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE:
 
                         try {
-                            BDProfileManagerQuery.addProfile(getApplicationContext(),PROFILE_MANAGER);
+                            BDProfileManagerQuery.addProfile(getApplicationContext(), PROFILE_MANAGER);
                             validOperation = true;
                             localAccess = true;
                         } catch (Exception e1) {
@@ -877,14 +950,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                                     try {
 
-                                        PoliticalParties data = BDProfileManagerQuery.getPPById(getApplicationContext(),pp);
+                                        PoliticalParties data = BDProfileManagerQuery.getPPById(getApplicationContext(), pp);
 
-                                        Integer exist = (data.getIdPP() != null )
+                                        Integer exist = (data.getIdPP() != null)
                                                 ? Constants.ACTIVE : Constants.INACTIVE;
 
                                         switch (exist) {
                                             case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addPP(getApplicationContext(),pp);
+                                                BDProfileManagerQuery.addPP(getApplicationContext(), pp);
                                                 break;
                                         }
 
@@ -914,14 +987,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                                     try {
 
-                                        ElectoralActor data = BDProfileManagerQuery.getEAById(getApplicationContext(),ea);
+                                        ElectoralActor data = BDProfileManagerQuery.getEAById(getApplicationContext(), ea);
 
-                                        Integer exist = (data.getIdElectoralActor() != null )
+                                        Integer exist = (data.getIdElectoralActor() != null)
                                                 ? Constants.ACTIVE : Constants.INACTIVE;
 
                                         switch (exist) {
                                             case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addEA(getApplicationContext(),ea);
+                                                BDProfileManagerQuery.addEA(getApplicationContext(), ea);
                                                 break;
                                         }
 
@@ -937,7 +1010,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
                                 SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
                                     SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
                                     AcademyLevels al = new AcademyLevels();
@@ -948,14 +1021,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                                     try {
 
-                                        AcademyLevels data = BDProfileManagerQuery.getALById(getApplicationContext(),al);
+                                        AcademyLevels data = BDProfileManagerQuery.getALById(getApplicationContext(), al);
 
-                                        Integer exist = (data.getIdAcademyLevel() != null )
+                                        Integer exist = (data.getIdAcademyLevel() != null)
                                                 ? Constants.ACTIVE : Constants.INACTIVE;
 
                                         switch (exist) {
                                             case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addAL(getApplicationContext(),al);
+                                                BDProfileManagerQuery.addAL(getApplicationContext(), al);
                                                 break;
                                         }
 
@@ -972,7 +1045,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
                                 SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
                                     SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
                                     Careers career = new Careers();
@@ -984,14 +1057,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                                     try {
 
-                                        Careers data = BDProfileManagerQuery.getCareersById(getApplicationContext(),career);
+                                        Careers data = BDProfileManagerQuery.getCareersById(getApplicationContext(), career);
 
-                                        Integer exist = (data.getIdCareer() != null )
+                                        Integer exist = (data.getIdCareer() != null)
                                                 ? Constants.ACTIVE : Constants.INACTIVE;
 
                                         switch (exist) {
                                             case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addCareer(getApplicationContext(),career);
+                                                BDProfileManagerQuery.addCareer(getApplicationContext(), career);
                                                 break;
                                         }
 
@@ -1007,7 +1080,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
                                 SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
                                     SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
                                     ProfessionalTitles pt = new ProfessionalTitles();
@@ -1019,14 +1092,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                                     try {
 
-                                        ProfessionalTitles data = BDProfileManagerQuery.getPTById(getApplicationContext(),pt);
+                                        ProfessionalTitles data = BDProfileManagerQuery.getPTById(getApplicationContext(), pt);
 
-                                        Integer exist = (data.getIdProfessionalTitle() != null )
+                                        Integer exist = (data.getIdProfessionalTitle() != null)
                                                 ? Constants.ACTIVE : Constants.INACTIVE;
 
                                         switch (exist) {
                                             case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addPT(getApplicationContext(),pt);
+                                                BDProfileManagerQuery.addPT(getApplicationContext(), pt);
                                                 break;
                                         }
 
@@ -1042,7 +1115,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
                                 SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
                                     SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
                                     Companies company = new Companies();
@@ -1052,18 +1125,18 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                     company.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
                                     company.setIdGroup((soItem.hasProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_GROUP))
                                             ? Integer.valueOf(soItem.getProperty(Constants.WEB_SERVICE_PARAM_ID_GROUP).toString())
-                                    : 0);
+                                            : 0);
 
                                     try {
 
-                                        Companies data = BDProfileManagerQuery.getCompanyById(getApplicationContext(),company);
+                                        Companies data = BDProfileManagerQuery.getCompanyById(getApplicationContext(), company);
 
-                                        Integer exist = (data.getIdCompany() != null )
+                                        Integer exist = (data.getIdCompany() != null)
                                                 ? Constants.ACTIVE : Constants.INACTIVE;
 
                                         switch (exist) {
                                             case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addCompany(getApplicationContext(),company);
+                                                BDProfileManagerQuery.addCompany(getApplicationContext(), company);
                                                 break;
                                         }
 
@@ -1079,7 +1152,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
                                 SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
                                     SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
                                     ElectoralKeys electoralKey = new ElectoralKeys();
@@ -1089,14 +1162,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                                     try {
 
-                                        ElectoralKeys data = BDProfileManagerQuery.getElectoralKey(getApplicationContext(),electoralKey);
+                                        ElectoralKeys data = BDProfileManagerQuery.getElectoralKey(getApplicationContext(), electoralKey);
 
-                                        Integer exist = (data.getElectoralKey() != null )
+                                        Integer exist = (data.getElectoralKey() != null)
                                                 ? Constants.ACTIVE : Constants.INACTIVE;
 
                                         switch (exist) {
                                             case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addElectoralKey(getApplicationContext(),electoralKey);
+                                                BDProfileManagerQuery.addElectoralKey(getApplicationContext(), electoralKey);
                                                 break;
                                         }
 
@@ -1112,10 +1185,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
                                 SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i ++) {
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
                                     SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
 
-                                    ElectoralSections electoralSection  = new ElectoralSections();
+                                    ElectoralSections electoralSection = new ElectoralSections();
 
                                     electoralSection.setIdItem(i);
                                     electoralSection.setIdElectoralSection(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
@@ -1123,14 +1196,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                                     try {
 
-                                        ElectoralSections data = BDProfileManagerQuery.getElectoralSection(getApplicationContext(),electoralSection);
+                                        ElectoralSections data = BDProfileManagerQuery.getElectoralSection(getApplicationContext(), electoralSection);
 
-                                        Integer exist = (data.getIdElectoralSection() != null )
+                                        Integer exist = (data.getIdElectoralSection() != null)
                                                 ? Constants.ACTIVE : Constants.INACTIVE;
 
                                         switch (exist) {
                                             case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addElectoralSection(getApplicationContext(),electoralSection);
+                                                BDProfileManagerQuery.addElectoralSection(getApplicationContext(), electoralSection);
                                                 break;
                                         }
 
@@ -1141,19 +1214,67 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                 }
                             }
                         }
+                        break;
+                    case Constants.WS_KEY_PROFILE_SEARCH_COMPLETE:
 
-                        pDialog.dismiss();
+                        ProfileManager tempProfile = new ProfileManager();
+
+                        PersonalProfile personalProfile = new PersonalProfile();
+
+                        personalProfile.setName(soapObject.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NAME).toString());
+                        personalProfile.setFirstSurname(soapObject.getPrimitiveProperty(Constants.SOAP_OBJECT_FIRST_SURNAME).toString());
+                        personalProfile.setSecondSurname(soapObject.getPrimitiveProperty(Constants.SOAP_OBJECT_SECOND_SURNAME).toString());
+                        personalProfile.setBirthDate(soapObject.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_DATE_BIRTH).toString());
+                        //tempProfile.getPersonalProfile().setAgeProfile(soapObject.getProperty(Constants.).toString());
+                        personalProfile.setCivilState(soapObject.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CIVIL_STATE).toString());
+                        personalProfile.setSex(soapObject.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_SEX).toString());
+                        personalProfile.setNationality(soapObject.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NATIONALITY).toString());
+                        personalProfile.setBirthPlace(soapObject.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_PLACE_BIRTH).toString());
+
+                        ElectoralProfile electoralProfile = new ElectoralProfile();
+
+                        SoapObject soElectoral = (SoapObject) soapObject.getProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_PROFILE);
+                        SoapObject soElectoralSection = (SoapObject) soElectoral.getProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_SECTION);
+
+                        electoralProfile.setOcrINE(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OCR_INE_PERSONAL).toString());
+                        electoralProfile.setElectoralKEY(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_KEY).toString());
+                        electoralProfile.setValidityINE(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_VALIDITY_INE_PERSONAL).toString());
+                        electoralProfile.setElectoralSection(Integer.valueOf(soElectoralSection.getPrimitiveProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                        //electoralProfile.setLocalDistrict(soElectoralSection.getPrimitiveProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT).toString());
+                        electoralProfile.setFederalDistrict(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FEDERAL_DISTRICT).toString());
+                        electoralProfile.setElectoralAdviser(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_ADVISER).toString());
+                        electoralProfile.setPoliticalParty(Integer.valueOf(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_POLITICAL_PARTY).toString()));
+                        //electoralProfile.setElectoralActor(Integer.valueOf(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR).toString()));
+                        //electoralProfile.setSubItemElectoralActor(Integer.valueOf(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_SON).toString()));
+                        /*electoralProfile.setIdItemPP(soapObject.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OCR_INE).toString());
+                        electoralProfile.setIdItemEA(soapObject.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OCR_INE).toString());
+                        electoralProfile.setIdSubItemEA(soapObject.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OCR_INE).toString());*/
+                        //electoralProfile.setPhotoINEBack(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_BACK_PHOTO_PERSONAL).toString());
+                        //electoralProfile.setPhotoINEFront(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FRONT_PHOTO_PERSONAL).toString());
+
+                        tempProfile.setPersonalProfile(personalProfile);
+                        tempProfile.setElectoralProfile(electoralProfile);
+
+                        updateProfile(tempProfile);
+                        //closeAllFragment();
+
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        FragmentTransaction finishFragment = fragmentManager.beginTransaction();
+                        finishFragment.add(R.id.profiles_fragment_container, new PersonalProfileFragment(), Constants.FRAGMENT_PERSONAL_TAG);
+                        finishFragment.commit();
+
+                        break;
                     default:
-                        pDialog.dismiss();
                         Toast.makeText(NavigationDrawerActivity.this, R.string.default_sync_ok, Toast.LENGTH_LONG).show();
                         break;
                 }
             } else {
-                pDialog.dismiss();
                 String tempText = (textError.isEmpty() ? "Error desconocido" : textError);
                 Toast.makeText(getApplicationContext(), tempText, Toast.LENGTH_LONG).show();
 
             }
+
+            pDialog.dismiss();
         }
     }
 }

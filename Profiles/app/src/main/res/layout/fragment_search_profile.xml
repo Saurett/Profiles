@@ -20,22 +20,15 @@
             app:queryHint="Captura un nombre"
         />
 
-        <TextView
-            android:id="@+id/emptyProfile"
-            android:text="No hay datos"
-            android:textSize="30sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            android:textColor="@color/colorPrimaryDark"/>
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/profile_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content"/>
 
-
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/emptyProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 </FrameLayout>
