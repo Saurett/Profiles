@@ -15,7 +15,6 @@ import app.texium.com.profiles.R;
 import app.texium.com.profiles.fragments.SearchProfileFragment;
 import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.Profile;
-import app.texium.com.profiles.models.ProfileManager;
 
 /**
  * Created by texiumuser on 28/06/2016.
@@ -69,12 +68,11 @@ public class ProfileListAdapter extends RecyclerView.Adapter<ProfileListAdapter.
 
         final DecodeProfile decodeProfile = new DecodeProfile();
         decodeProfile.setProfile(profile);
-        decodeProfile.setProfileManager(new ProfileManager());
 
         holder.profile_cloud_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v, profile.getProfileName() + " Sincronizar", Snackbar.LENGTH_LONG)
+                Snackbar.make(v, profile.getProfileCloud().toString(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });

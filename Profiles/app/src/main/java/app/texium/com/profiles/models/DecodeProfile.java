@@ -6,7 +6,6 @@ package app.texium.com.profiles.models;
 public class DecodeProfile {
 
     private Profile profile;
-    private ProfileManager profileManager;
     private Integer idView;
 
     public Profile getProfile() {
@@ -15,14 +14,6 @@ public class DecodeProfile {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
-    }
-
-    public ProfileManager getProfileManager() {
-        return profileManager;
-    }
-
-    public void setProfileManager(ProfileManager profileManager) {
-        this.profileManager = profileManager;
     }
 
     public Integer getIdView() {

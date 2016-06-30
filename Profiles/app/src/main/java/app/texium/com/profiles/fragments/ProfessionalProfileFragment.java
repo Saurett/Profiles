@@ -357,6 +357,12 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
                                         al.setDescription(soItem.getProperty(Constants.SOAP_OBJECT_KEY_DESCRIPTION).toString());
                                         al.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
 
+                                        Integer item = _PROFILE_MANAGER.getProfessionalProfile().getLevel();
+                                        if (null != item) {
+                                            if (item.equals(al.getIdAcademyLevel()))
+                                                _PROFILE_MANAGER.getProfessionalProfile().setIdItemLevel(i);
+                                        }
+
                                         academyLevels.add(al);
                                         academyList.add(al.getDescription());
                                     }
@@ -376,6 +382,12 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
                                         career.setIdCareer(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
                                         career.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
                                         career.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                        Integer item = _PROFILE_MANAGER.getProfessionalProfile().getCareer();
+                                        if (null != item) {
+                                            if (item.equals(career.getIdCareer()))
+                                                _PROFILE_MANAGER.getProfessionalProfile().setIdItemCareer(i);
+                                        }
 
                                         careers.add(career);
                                         careerList.add(career.getName());
@@ -397,6 +409,12 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
                                         pt.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
                                         pt.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
 
+                                        Integer item = _PROFILE_MANAGER.getProfessionalProfile().getProfessionalTitle();
+                                        if (null != item) {
+                                            if (item.equals(pt.getIdProfessionalTitle()))
+                                                _PROFILE_MANAGER.getProfessionalProfile().setIdItemPT(i);
+                                        }
+
                                         professionalTitles.add(pt);
                                         professionalTitleList.add(pt.getName());
                                     }
@@ -417,6 +435,11 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
                                         company.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
                                         company.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
 
+                                        Integer item = _PROFILE_MANAGER.getProfessionalProfile().getCompany();
+                                        if (null != item) {
+                                            if (item.equals(company.getIdCompany()))
+                                                _PROFILE_MANAGER.getProfessionalProfile().setIdItemCompany(i);
+                                        }
                                         companies.add(company);
                                         companyList.add(company.getName());
                                     }

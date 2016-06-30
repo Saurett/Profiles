@@ -424,6 +424,12 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
                                         state.setStateName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString());
                                         state.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
 
+                                        Integer item = _PROFILE_MANAGER.getAddressProfile().getIdState();
+                                        if (null != item) {
+                                            if (item.equals(state.getIdState()))
+                                                _PROFILE_MANAGER.getAddressProfile().setIdItemState(i + 1);
+                                        }
+
                                         states.add(state);
                                         stateList.add(state.getStateName());
                                     }
@@ -472,6 +478,12 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
                                         municipal.setIdMunicipal(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_ID).toString()));
                                         municipal.setMunicipalName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString());
                                         municipal.setIdstatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                        Integer item = _PROFILE_MANAGER.getAddressProfile().getIdMunicipal();
+                                        if (null != item) {
+                                            if (item.equals(municipal.getIdMunicipal()))
+                                                _PROFILE_MANAGER.getAddressProfile().setIdItemMunicipal(i + 1);
+                                        }
 
                                         municipalities.add(municipal);
                                         municipalList.add(municipal.getMunicipalName());
@@ -523,6 +535,12 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
                                         location.setIdLocation(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_ID).toString()));
                                         location.setLocationName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_NAME).toString());
                                         location.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                        Integer item = _PROFILE_MANAGER.getAddressProfile().getIdLocation();
+                                        if (null != item) {
+                                            if (item.equals(location.getIdLocation()))
+                                                _PROFILE_MANAGER.getAddressProfile().setIdItemLocation(i + 1);
+                                        }
 
 
                                         locations.add(location);

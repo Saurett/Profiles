@@ -1091,6 +1091,8 @@ public class SoapServices {
 
             SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
 
+            Request.addProperty(Constants.SOAP_OBJECT_KEY_ID, profileManager.getDecodeProfile().getProfile().getIdProfile());
+
             //Personal profile
             Request.addProperty(Constants.WEB_SERVICE_PARAM_NAME, profileManager.getPersonalProfile().getName());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_FIRST_SURNAME, profileManager.getPersonalProfile().getFirstSurname());
@@ -1153,6 +1155,7 @@ public class SoapServices {
 
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_GROUP, profileManager.getUserProfile().getIdGroup());
             Request.addProperty(Constants.WEB_SERVICE_PARAM_ID_USER, profileManager.getUserProfile().getIdUser());
+
 
             SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             soapEnvelope.dotNet = true;

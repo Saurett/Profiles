@@ -106,8 +106,8 @@ public final class Constants {
     public static final String WEB_SERVICE_SOAP_SEARCH_PROFILE = "Perfiles/BuscarPersonas";
     public static final String WEB_SERVICE_SOAP_SEARCH_PROFILE_COMPLETE = "Perfiles/ConsultaPersona";
     public static final String WEB_SERVICE_NAMESPACE = "Perfiles";
-    //public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
-    public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
+    public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
+    //public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
 
 
 
@@ -163,25 +163,33 @@ public final class Constants {
     public static final String WEB_SERVICE_PARAM_ELECTORAL_ADVISER = "ConsejeroPolitico";
     public static final String WEB_SERVICE_PARAM_ID_POLITICAL_PARTY = "IDPartidoPolitico";
     public static final String WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR = "IDTipoActorElectoralPadre";
+    public static final String WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_UNIQUE = "TipoActorElectoralPadre";
     public static final String WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_SON = "IDTipoActorElectoralHijo";
+    public static final String WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_SON_UNIQUE = "TipoActorElectoralHijo";
     public static final String WEB_SERVICE_PARAM_FRONT_PHOTO = "FotoINEFrente";
     public static final String WEB_SERVICE_PARAM_BACK_PHOTO = "FotoINEReverso";
-    public static final String WEB_SERVICE_PARAM_FRONT_PHOTO_PERSONAL = "FotoINE_Frente";
-    public static final String WEB_SERVICE_PARAM_BACK_PHOTO_PERSONAL = "FotoINE_Reverso";
+    public static final String WEB_SERVICE_PARAM_FRONT_PHOTO_PERSONAL = "FotografiaIFE_Frente";
+    public static final String WEB_SERVICE_PARAM_BACK_PHOTO_PERSONAL = "FotografiaIFE_Reverso";
     public static final String WEB_SERVICE_PARAM_ID_STATE = "IDEstado";
     public static final String WEB_SERVICE_PARAM_ID_MUNICIPAL = "IDMunicipio";
     public static final String WEB_SERVICE_PARAM_ID_LOCATION = "IDLocalidad";
     public static final String WEB_SERVICE_PARAM_STREET = "Calle";
     public static final String WEB_SERVICE_PARAM_NUM_EXT = "NumeroExterior";
+    public static final String WEB_SERVICE_PARAM_NUM_EXT_UNIQUE = "NumExt";
     public static final String WEB_SERVICE_PARAM_NUM_INT = "NumeroInteior";
+    public static final String WEB_SERVICE_PARAM_NUM_INT_UNIQUE = "NumInt";
     public static final String WEB_SERVICE_PARAM_CITY_COLONY = "ColoniaPoblado";
     public static final String WEB_SERVICE_PARAM_DIVISION = "Fraccionamiento";
     public static final String WEB_SERVICE_PARAM_POSTAL_CODE = "CodigoPostal";
+    public static final String WEB_SERVICE_PARAM_POSTAL_CODE_UNIQUE = "CP";
     public static final String WEB_SERVICE_PARAM_PERSONAL_EMAIL = "CorreoPersonal";
     public static final String WEB_SERVICE_PARAM_PROFESSIONAL_EMAIL = "CorreoProfesional";
+    public static final String WEB_SERVICE_PARAM_PERSONAL_EMAIL_UNIQUE = "CorreoElectrónicoPersonal";
+    public static final String WEB_SERVICE_PARAM_PROFESSIONAL_EMAIL_UNIQUE = "CorreoElectrónicoLaboral";
     public static final String WEB_SERVICE_PARAM_CELLPHONE = "TelefonoPersonal";
     public static final String WEB_SERVICE_PARAM_HOME_PHONE = "TelefonoCasa";
     public static final String WEB_SERVICE_PARAM_OFFICE_PHONE = "TelefonoLaboral";
+    public static final String WEB_SERVICE_PARAM_OFFICE_PHONE_UNIQUE = "TelefonoOficina";
     public static final String WEB_SERVICE_PARAM_OTHER_PHONE = "TelefonoReferencia";
     public static final String WEB_SERVICE_PARAM_CURP = "CURP";
     public static final String WEB_SERVICE_PARAM_RFC = "RFC";
@@ -193,6 +201,7 @@ public final class Constants {
     public static final String WEB_SERVICE_PARAM_ID_COMPANY = "IDEmpresa";
     public static final String WEB_SERVICE_PARAM_COMMITTEE = "Comite";
     public static final String WEB_SERVICE_PARAM_REFERENCE = "Referenciua";
+    public static final String WEB_SERVICE_PARAM_REFERENCE_UNIQUE = "Referencia";
     public static final String WEB_SERVICE_PARAM_COORDINATOR = "Coordinador";
     public static final String WEB_SERVICE_PARAM_LINK = "Enlace";
     public static final String WEB_SERVICE_PARAM_COMMENT = "Observaciones";

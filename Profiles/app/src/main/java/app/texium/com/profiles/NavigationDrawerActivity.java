@@ -203,6 +203,13 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 ad.setNegativeButton(getString(R.string.default_negative_button), this);
 
                 break;
+            case R.id.personalExit:
+                ad.setTitle(getString(R.string.default_title_alert_dialog));
+                ad.setMessage("¿Desea salir del editado del perfil?");
+                ad.setCancelable(false);
+                ad.setPositiveButton(getString(R.string.default_positive_button), this);
+                ad.setNegativeButton(getString(R.string.default_negative_button), this);
+                break;
             default:
 
                 ad.setTitle(getString(R.string.default_title_alert_dialog));
@@ -230,6 +237,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
                     case R.id.profile_edit:
                         AsyncProfile wsLoadProfile = new AsyncProfile(Constants.WS_KEY_PROFILE_SEARCH_COMPLETE);
                         wsLoadProfile.execute();
+                        break;
+                    case R.id.personalExit:
+                        closeAllFragment();
                         break;
                     default:
                         AsyncProfile wsSyncServer = new AsyncProfile(Constants.WS_KEY_DEFAULT_SYNC);
@@ -339,10 +349,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
             fragmentManager.beginTransaction().remove(socialNetwork).commit();
         }
 
+        /*
         Fragment searchProfile = fragmentManager.findFragmentByTag(Constants.FRAGMENT_SEARCH_TAG);
         if (null != searchProfile) {
             fragmentManager.beginTransaction().remove(searchProfile).commit();
         }
+        */
     }
 
     @Override
@@ -933,7 +945,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             String tempText = (localAccess) ? getString(R.string.default_save_local) : soapPrimitive.toString();
                             Toast.makeText(getApplicationContext(), tempText, Toast.LENGTH_LONG).show();
 
-                            PROFILE_MANAGER = new ProfileManager();
+                            updateProfile(new ProfileManager());
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -1240,7 +1252,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                     personalProfile.setFirstSurname(soItem.getPrimitiveProperty(Constants.SOAP_OBJECT_FIRST_SURNAME).toString());
                                     personalProfile.setSecondSurname(soItem.getPrimitiveProperty(Constants.SOAP_OBJECT_SECOND_SURNAME).toString());
                                     personalProfile.setBirthDate(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_DATE_BIRTH).toString());
-                                    //tempProfile.getPersonalProfile().setAgeProfile(soapObject.getProperty(Constants.).toString());
                                     personalProfile.setCivilState(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CIVIL_STATE).toString());
                                     personalProfile.setSex(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_SEX).toString());
                                     personalProfile.setNationality(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NATIONALITY).toString());
@@ -1251,81 +1262,67 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                     electoralProfile.setOcrINE(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OCR_INE).toString());
                                     electoralProfile.setElectoralKEY(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_KEY).toString());
                                     electoralProfile.setValidityINE(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_VALIDITY_INE).toString());
-                                    //electoralProfile.setElectoralSection(Integer.valueOf(soItem.getPrimitiveProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    //electoralProfile.setLocalDistrict(soElectoralSection.getPrimitiveProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT).toString());
-                                    //electoralProfile.setFederalDistrict(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FEDERAL_DISTRICT).toString());
-                                    //electoralProfile.setElectoralAdviser(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_ADVISER).toString());
-                                    //electoralProfile.setPoliticalParty(1);
-                                    //electoralProfile.setPoliticalParty(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_POLITICAL_PARTY).toString()));
-                                    //electoralProfile.setElectoralActor(Integer.valueOf(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR).toString()));
-                                    //electoralProfile.setSubItemElectoralActor(Integer.valueOf(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_SON).toString()));
-                                    /*electoralProfile.setIdItemPP(soapObject.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OCR_INE).toString());
-                                    electoralProfile.setIdItemEA(soapObject.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OCR_INE).toString());
-                                    electoralProfile.setIdSubItemEA(soapObject.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OCR_INE).toString());*/
-                                    //electoralProfile.setPhotoINEBack(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_BACK_PHOTO_PERSONAL).toString());
-                                    //electoralProfile.setPhotoINEFront(soElectoral.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FRONT_PHOTO_PERSONAL).toString());
+                                    electoralProfile.setElectoralSection(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_SECTION).toString()));
+                                    electoralProfile.setLocalDistrict(soItem.getPrimitiveProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT).toString());
+                                    electoralProfile.setFederalDistrict(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FEDERAL_DISTRICT).toString());
+                                    electoralProfile.setElectoralAdviser(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_ADVISER).toString());
+                                    electoralProfile.setPoliticalParty(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_POLITICAL_PARTY).toString()));
+                                    electoralProfile.setElectoralActor(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_UNIQUE).toString()));
+                                    electoralProfile.setSubItemElectoralActor(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_SON_UNIQUE).toString()));
+                                    electoralProfile.setPhotoINEBack(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_BACK_PHOTO_PERSONAL).toString());
+                                    electoralProfile.setPhotoINEFront(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FRONT_PHOTO_PERSONAL).toString());
 
                                     AddressProfile addressProfile = new AddressProfile();
 
-                                    /*
-                                    addressProfile.setStreet();
-                                    addressProfile.setNumExt();
-                                    addressProfile.setNumInt();
-                                    addressProfile.setCity();
-                                    addressProfile.setDivision();
-                                    addressProfile.setPostalCode(0);
-                                    addressProfile.setIdState();
-                                    addressProfile.setIdMunicipal();
-                                    addressProfile.setIdLocation();
-                                    */
+                                    addressProfile.setStreet(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_STREET).toString());
+                                    addressProfile.setNumExt(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NUM_EXT_UNIQUE).toString());
+                                    addressProfile.setNumInt(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NUM_INT_UNIQUE).toString());
+                                    addressProfile.setCity(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CITY_COLONY).toString());
+                                    addressProfile.setDivision(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_DIVISION).toString());
+                                    addressProfile.setPostalCode(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_POSTAL_CODE_UNIQUE).toString()));
+                                    addressProfile.setIdState(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_STATE).toString()));
+                                    addressProfile.setIdMunicipal(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_MUNICIPAL).toString()));
+                                    addressProfile.setIdLocation(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_LOCATION).toString()));
 
                                     ContactProfile contactProfile = new ContactProfile();
 
-                                    /*
-                                    contactProfile.setPersonalEmail();
-                                    contactProfile.setProfessionalEmail();
-                                    contactProfile.setCellPhoneNumber();
-                                    contactProfile.setOfficePhoneNumber();
-                                    contactProfile.setHomePhoneNumber();
-                                    contactProfile.setOtherPhoneNumber();
-                                    contactProfile.setCurp();
-                                    contactProfile.setRfc();*/
+                                    contactProfile.setPersonalEmail(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_PERSONAL_EMAIL_UNIQUE).toString());
+                                    contactProfile.setProfessionalEmail(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_PROFESSIONAL_EMAIL_UNIQUE).toString());
+                                    contactProfile.setCellPhoneNumber(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CELLPHONE).toString());
+                                    contactProfile.setOfficePhoneNumber(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OFFICE_PHONE_UNIQUE).toString());
+                                    contactProfile.setHomePhoneNumber(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_HOME_PHONE).toString());
+                                    contactProfile.setOtherPhoneNumber(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OTHER_PHONE).toString());
+                                    contactProfile.setCurp(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CURP).toString());
+                                    contactProfile.setRfc(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_RFC).toString());
 
                                     ProfessionalProfile professionalProfile = new ProfessionalProfile();
 
-                                    /*
-                                    professionalProfile.setNss();
-                                    professionalProfile.setActualJob();
-                                    professionalProfile.setCompany();
-                                    professionalProfile.setCareer();
-                                    professionalProfile.setLevel();
-                                    professionalProfile.setProfessionalTitle();
-                                    professionalProfile.setIdItemCompany();
-                                    professionalProfile.setIdItemCareer();
-                                    professionalProfile.setIdItemLevel();
-                                    professionalProfile.setIdItemPT();
-                                    professionalProfile.setProfessionalResume();
-                                    */
+                                    professionalProfile.setNss(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NSS).toString());
+                                    professionalProfile.setActualJob(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ACTUAL_JOB).toString());
+                                    professionalProfile.setCompany(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_COMPANY).toString()));
+                                    professionalProfile.setCareer(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_CAREER).toString()));
+                                    professionalProfile.setLevel(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_LEVEL).toString()));
+                                    professionalProfile.setProfessionalTitle(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_TITLE).toString()));
+                                    professionalProfile.setProfessionalResume(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_RESUME).toString());
+
 
                                     StructureProfile structureProfile = new StructureProfile();
 
-                                    /*
-                                    structureProfile.setCommittee();
-                                    structureProfile.setReference();
-                                    structureProfile.setLink();
-                                    structureProfile.setCoordinator();
-                                    */
+
+                                    structureProfile.setCommittee(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_COMMITTEE).toString());
+                                    structureProfile.setReference(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_REFERENCE_UNIQUE).toString());
+                                    structureProfile.setLink(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_LINK).toString());
+                                    structureProfile.setCoordinator(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_COORDINATOR).toString());
 
                                     CommentProfile commentProfile = new CommentProfile();
 
-                                    //commentProfile.setComment();
+                                    commentProfile.setComment(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_COMMENT).toString());
 
                                     SocialNetworkProfile socialNetworkProfile = new SocialNetworkProfile();
 
-
-                                    //socialNetworkProfile.setFacebook(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FACEBOOK).toString());
-                                    //socialNetworkProfile.setTwitter();
-                                    //socialNetworkProfile.setInstagram();
+                                    socialNetworkProfile.setFacebook(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FACEBOOK).toString());
+                                    socialNetworkProfile.setTwitter(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_TWITTER).toString());
+                                    socialNetworkProfile.setInstagram(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_INSTAGRAM).toString());
 
 
                                     tempProfile.setPersonalProfile(personalProfile);
@@ -1336,6 +1333,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                     tempProfile.setStructureProfile(structureProfile);
                                     tempProfile.setCommentProfile(commentProfile);
                                     tempProfile.setSocialNetworkProfile(socialNetworkProfile);
+                                    tempProfile.setDecodeProfile(DECODE_PROFILE);
 
                                     updateProfile(tempProfile);
                                 }

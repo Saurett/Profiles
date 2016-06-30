@@ -13,9 +13,11 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import app.texium.com.profiles.R;
+import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.PersonalProfile;
 import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.utils.Constants;
@@ -25,7 +27,7 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
 
     static FragmentProfileListener activityListener;
 
-    private static Button nextBtn;
+    private static Button nextBtn, personalExit;
     private EditText txtDate, txtAge, txtName, txtFirstSurname, txtSecondSurname, txtNationality, txtPlace;
     private CheckBox checkBox, checkBox2, checkBox3, checkBox4, checkBoxWoman, checkBoxMan;
 
@@ -60,7 +62,9 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
         calendarButton.setOnClickListener(this);
 
         nextBtn = (Button) view.findViewById(R.id.nextBtnPersonalProfile);
+        personalExit = (Button) view.findViewById(R.id.personalExit);
         nextBtn.setOnClickListener(this);
+        personalExit.setOnClickListener(this);
 
         checkBox.setOnClickListener(this);
         checkBox2.setOnClickListener(this);
@@ -132,6 +136,28 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         _PROFILE_MANAGER = activityListener.getProfileManager();
+
+        if (null !=_PROFILE_MANAGER.getPersonalProfile().getBirthDate()) {
+            String currentDate = _PROFILE_MANAGER.getPersonalProfile().getBirthDate();
+
+            if (currentDate.contains("-")) {
+                String[] actualDate = currentDate.split("-");
+
+                int year = Integer.valueOf(actualDate[0]);
+                int month = Integer.valueOf(actualDate[1]);
+                int day = Integer.valueOf(actualDate[2]);
+
+                String date = day + " / " + month + " / " + year;
+
+                _PROFILE_MANAGER.getPersonalProfile().setBirthDate(date);
+
+                final Calendar c = Calendar.getInstance();
+                int actualYear = c.get(Calendar.YEAR);
+
+                _PROFILE_MANAGER.getPersonalProfile().setAgeProfile(String.valueOf(actualYear - year) + " Años");
+
+            }
+        }
     }
 
     @Override
@@ -172,6 +198,13 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
                     activityListener.updateProfile(_PROFILE_MANAGER);
                     activityListener.moveFragments(v);
                 }
+                break;
+            case R.id.personalExit:
+                DecodeProfile decodeProfile = activityListener.getDecodeProfile();
+                decodeProfile.setIdView(v.getId());
+
+                activityListener.updateDecodeProfile(decodeProfile);
+                activityListener.showQuestion();
                 break;
             default:
                 boolean checked = ((CheckBox) v).isChecked();

@@ -32,7 +32,7 @@ public class DateProfileFragment extends DialogFragment implements DatePickerDia
 
         actualYear = year;
 
-        return  new DatePickerDialog(getActivity(), this, year,month,day);
+        return new DatePickerDialog(getActivity(), this, year, month, day);
     }
 
     @Override

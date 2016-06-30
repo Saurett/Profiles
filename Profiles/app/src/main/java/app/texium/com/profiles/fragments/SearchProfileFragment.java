@@ -13,6 +13,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.ksoap2.serialization.SoapObject;
@@ -43,9 +45,11 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
     private static ProfileListAdapter profiles_adapter;
 
     private SearchView searchView;
+    private RecyclerView profile_list;
+    private LinearLayout emptySearch;
 
-    private RecyclerView profile_list, emptyProfile;
-
+    private TextView emptyTitle;
+    private TextView emptyMsg;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,10 +59,13 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
 
         searchView = (SearchView) view.findViewById(R.id.searchView);
         profile_list = (RecyclerView) view.findViewById(R.id.profile_list);
-        emptyProfile = (RecyclerView) view.findViewById(R.id.emptyProfile);
+        emptySearch = (LinearLayout) view.findViewById(R.id.emptySearch);
 
-        //profile_list.setVisibility(View.INVISIBLE);
-        //emptyProfile.setVisibility(View.VISIBLE);
+        emptyTitle = (TextView) view.findViewById(R.id.emptyTitle);
+        emptyMsg = (TextView) view.findViewById(R.id.emptyMsg);
+
+        emptyTitle.setText("¿Desea buscar un perfil?");
+        emptyMsg.setText("Capture un nombre en la barra de busqueda");
 
         searchView.setOnQueryTextListener(this);
         searchView.setOnCloseListener(this);
@@ -66,7 +73,11 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
         searchView.requestFocusFromTouch();
 
         profiles_adapter = new ProfileListAdapter();
+
         profiles_adapter.setOnClickListener(this);
+
+        profile_list.setVisibility((profiles_adapter.getItemCount() > 0) ? View.VISIBLE : View.INVISIBLE);
+        emptySearch.setVisibility((profiles_adapter.getItemCount() > 0) ? View.INVISIBLE : View.VISIBLE);
 
         return view;
     }
@@ -249,7 +260,11 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                             profile_list.setLayoutManager(linearLayoutManager);
 
+                            emptySearch.setVisibility((profiles_adapter.getItemCount() > 0) ? View.INVISIBLE : View.VISIBLE);
                             profile_list.setVisibility((profiles_adapter.getItemCount() > 0) ? View.VISIBLE : View.INVISIBLE);
+
+                            emptyTitle.setText("¡No es posible localizar el perfil!");
+                            emptyMsg.setText("Lo sentimos su busqueda no arrojo resultados");
 
                         } catch (Exception e) {
                             e.printStackTrace();
