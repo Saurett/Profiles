@@ -480,6 +480,12 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                                         pp.setAcronymName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ACRONYM_NAME).toString());
                                         pp.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
 
+                                        Integer item = _PROFILE_MANAGER.getElectoralProfile().getPoliticalParty();
+                                        if (null != item) {
+                                            if (item.equals(pp.getIdPP()))
+                                                _PROFILE_MANAGER.getElectoralProfile().setIdItemPP(i);
+                                        }
+
                                         politicalParties.add(pp);
                                         list.add(pp.getAcronymName());
                                     }
@@ -499,6 +505,12 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                                         ea.setIdItem(i);
                                         ea.setIdElectoralActor(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
                                         ea.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+
+                                        Integer item = _PROFILE_MANAGER.getElectoralProfile().getPoliticalParty();
+                                        if (null != item) {
+                                            if (item.equals(ea.getIdElectoralActor()))
+                                                _PROFILE_MANAGER.getElectoralProfile().setIdItemEA(i);
+                                        }
 
                                         if (!soItem.hasProperty(Constants.SOAP_OBJECT_KEY_FATHER)) {
                                             electoralActors.add(ea);
@@ -553,6 +565,12 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                                         subItemEA.setIdSubItemEA(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
                                         subItemEA.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
 
+                                        Integer item = _PROFILE_MANAGER.getElectoralProfile().getPoliticalParty();
+                                        if (null != item) {
+                                            if (item.equals(subItemEA.getIdSubItemEA()))
+                                                _PROFILE_MANAGER.getElectoralProfile().setIdSubItemEA(i);
+                                        }
+
                                         subItemEAs.add(subItemEA);
                                         subItemEAList.add(subItemEA.getName());
                                     }
@@ -583,7 +601,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                             es.setIdElectoralSection(webServiceID);
 
                             try {
-                                es = BDProfileManagerQuery.getElectoralSection(getContext(),es);
+                                es = BDProfileManagerQuery.getElectoralSection(getContext(), es);
 
                                 section.setId(es.getIdElectoralSection());
                                 section.setLocalDistrict(es.getLocalDistrict());
