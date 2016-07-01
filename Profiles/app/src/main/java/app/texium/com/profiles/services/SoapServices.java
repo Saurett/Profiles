@@ -1091,7 +1091,7 @@ public class SoapServices {
 
             SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
 
-            Request.addProperty(Constants.SOAP_OBJECT_KEY_ID, profileManager.getDecodeProfile().getProfile().getIdProfile());
+            Request.addProperty(Constants.SOAP_OBJECT_KEY_ID, (null != profileManager.getDecodeProfile() ? profileManager.getDecodeProfile().getProfile().getIdProfile() : 0));
 
             //Personal profile
             Request.addProperty(Constants.WEB_SERVICE_PARAM_NAME, profileManager.getPersonalProfile().getName());
