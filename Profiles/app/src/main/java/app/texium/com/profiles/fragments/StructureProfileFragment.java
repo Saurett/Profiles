@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import app.texium.com.profiles.R;
+import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.StructureProfile;
 
@@ -19,8 +21,9 @@ public class StructureProfileFragment extends Fragment implements View.OnClickLi
 
     static FragmentProfileListener activityListener;
 
-    private static Button backBtn, nextBtn;
+    private static Button backBtn, nextBtn, exitBtn;
     private EditText txtCommittee, txtReference, txtLink, txtCoordinator;
+    private TextView title;
 
     private static ProfileManager _PROFILE_MANAGER;
 
@@ -33,14 +36,17 @@ public class StructureProfileFragment extends Fragment implements View.OnClickLi
 
         backBtn = (Button) view.findViewById(R.id.backBtnStructureProfile);
         nextBtn = (Button) view.findViewById(R.id.nextBtnStructureProfile);
+        exitBtn = (Button) view.findViewById(R.id.structureExit);
 
         txtCommittee = (EditText) view.findViewById(R.id.committee);
         txtReference = (EditText) view.findViewById(R.id.reference);
         txtLink = (EditText) view.findViewById(R.id.link);
         txtCoordinator = (EditText) view.findViewById(R.id.coordinator);
+        title = (TextView) view.findViewById(R.id.structureProfileTitle);
 
         backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
+        exitBtn.setOnClickListener(this);
 
         if (null != _PROFILE_MANAGER) {
             if (null != _PROFILE_MANAGER.getStructureProfile().getCommittee())
@@ -53,7 +59,16 @@ public class StructureProfileFragment extends Fragment implements View.OnClickLi
                 txtCoordinator.setText(_PROFILE_MANAGER.getStructureProfile().getCoordinator());
         }
 
+        setTitle();
+
         return view;
+    }
+
+    public void setTitle() {
+        if (null !=_PROFILE_MANAGER.getDecodeProfile()) {
+            title.setText(R.string.default_edit_profile_title);
+            exitBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -101,6 +116,13 @@ public class StructureProfileFragment extends Fragment implements View.OnClickLi
 
                 activityListener.updateProfile(_PROFILE_MANAGER);
                 activityListener.moveFragments(v);
+                break;
+            case R.id.structureExit:
+                DecodeProfile decodeProfile = activityListener.getDecodeProfile();
+                decodeProfile.setIdView(v.getId());
+
+                activityListener.updateDecodeProfile(decodeProfile);
+                activityListener.showQuestion();
                 break;
             default:
                 break;

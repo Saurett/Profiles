@@ -5,8 +5,18 @@ package app.texium.com.profiles.models;
  */
 public class DecodeProfile {
 
+
     private Profile profile;
     private Integer idView;
+    private Integer position;
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
+    }
 
     public Profile getProfile() {
         return profile;

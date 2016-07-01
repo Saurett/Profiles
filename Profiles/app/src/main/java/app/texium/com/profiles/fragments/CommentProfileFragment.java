@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import app.texium.com.profiles.R;
 import app.texium.com.profiles.models.CommentProfile;
+import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.ProfileManager;
 
 
@@ -19,8 +21,9 @@ public class CommentProfileFragment extends Fragment implements View.OnClickList
 
     static FragmentProfileListener activityListener;
 
-    private static Button backBtn, nextBtn;
+    private static Button backBtn, nextBtn, exitBtn;
     private EditText txtComment;
+    private TextView title;
 
     private static ProfileManager _PROFILE_MANAGER;
 
@@ -33,18 +36,30 @@ public class CommentProfileFragment extends Fragment implements View.OnClickList
 
         backBtn = (Button) view.findViewById(R.id.backBtnCommentProfile);
         nextBtn = (Button) view.findViewById(R.id.nextBtnCommentProfile);
+        exitBtn = (Button) view.findViewById(R.id.commentExit);
 
         txtComment = (EditText) view.findViewById(R.id.comment);
+        title = (TextView) view.findViewById(R.id.commentProfileTitle);
 
         backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
+        exitBtn.setOnClickListener(this);
 
         if (null != _PROFILE_MANAGER) {
             if (null != _PROFILE_MANAGER.getCommentProfile().getComment())
                 txtComment.setText(_PROFILE_MANAGER.getCommentProfile().getComment());
         }
 
+        setTitle();
+
         return view;
+    }
+
+    public void setTitle() {
+        if (null !=_PROFILE_MANAGER.getDecodeProfile()) {
+            title.setText(R.string.default_edit_profile_title);
+            exitBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -86,6 +101,13 @@ public class CommentProfileFragment extends Fragment implements View.OnClickList
 
                 activityListener.updateProfile(_PROFILE_MANAGER);
                 activityListener.moveFragments(v);
+                break;
+            case R.id.commentExit:
+                DecodeProfile decodeProfile = activityListener.getDecodeProfile();
+                decodeProfile.setIdView(v.getId());
+
+                activityListener.updateDecodeProfile(decodeProfile);
+                activityListener.showQuestion();
                 break;
             default:
                 break;

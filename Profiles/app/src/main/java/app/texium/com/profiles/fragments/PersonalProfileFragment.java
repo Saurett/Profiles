@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,8 +28,9 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
 
     static FragmentProfileListener activityListener;
 
-    private static Button nextBtn, personalExit;
+    private static Button nextBtn, exitBtn;
     private EditText txtDate, txtAge, txtName, txtFirstSurname, txtSecondSurname, txtNationality, txtPlace;
+    private TextView title;
     private CheckBox checkBox, checkBox2, checkBox3, checkBox4, checkBoxWoman, checkBoxMan;
 
     private static ProfileManager _PROFILE_MANAGER;
@@ -47,8 +49,7 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
         txtAge = (EditText) view.findViewById(R.id.ageProfile);
         txtNationality = (EditText) view.findViewById(R.id.nationality);
         txtPlace = (EditText) view.findViewById(R.id.birthPlace);
-
-        txtNationality.setText("Mexicana");
+        title = (TextView) view.findViewById(R.id.personalProfileTitle);
 
         checkBox = (CheckBox) view.findViewById(R.id.checkBox);
         checkBox2 = (CheckBox) view.findViewById(R.id.checkBox2);
@@ -62,9 +63,9 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
         calendarButton.setOnClickListener(this);
 
         nextBtn = (Button) view.findViewById(R.id.nextBtnPersonalProfile);
-        personalExit = (Button) view.findViewById(R.id.personalExit);
+        exitBtn = (Button) view.findViewById(R.id.personalExit);
         nextBtn.setOnClickListener(this);
-        personalExit.setOnClickListener(this);
+        exitBtn.setOnClickListener(this);
 
         checkBox.setOnClickListener(this);
         checkBox2.setOnClickListener(this);
@@ -127,8 +128,7 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
             }
         }
 
-
-
+        setTitle();
         return view;
     }
 
@@ -157,6 +157,13 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
                 _PROFILE_MANAGER.getPersonalProfile().setAgeProfile(String.valueOf(actualYear - year) + " Años");
 
             }
+        }
+    }
+
+    public void setTitle() {
+        if (null !=_PROFILE_MANAGER.getDecodeProfile()) {
+            title.setText(R.string.default_edit_profile_title);
+            exitBtn.setVisibility(View.VISIBLE);
         }
     }
 

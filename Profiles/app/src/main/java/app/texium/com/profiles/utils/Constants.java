@@ -21,6 +21,8 @@ public final class Constants {
     public static final int FORGET_USERNAME_FORM = 2;
     public static final int RESET_PASSWORD_FORM = 3;
     public static final int SUB_ITEM_ACTION = 2;
+    public static final int LOADING = 1;
+    public static final int SEARCH = 2;
     //endregion SYS CONSTANTS//
 
     //region DATABASE STATUS//
@@ -64,6 +66,7 @@ public final class Constants {
     public static final int WS_KEY_ELECTORAL_KEY = 14;
     public static final int WS_KEY_PROFILE_SEARCH = 15;
     public static final int WS_KEY_PROFILE_SEARCH_COMPLETE = 16;
+    public static final int WS_KEY_PROFILE_DELETE = 17;
 
     //endregion WEB SERVICE ID//
 
@@ -105,9 +108,10 @@ public final class Constants {
     public static final String WEB_SERVICE_SOAP_ACTION_SECTION = "Perfiles/ConsultaSeccionElectoral";
     public static final String WEB_SERVICE_SOAP_SEARCH_PROFILE = "Perfiles/BuscarPersonas";
     public static final String WEB_SERVICE_SOAP_SEARCH_PROFILE_COMPLETE = "Perfiles/ConsultaPersona";
+    public static final String WEB_SERVICE_SOAP_DELETE_PROFILE= "Perfiles/EliminarPersona";
     public static final String WEB_SERVICE_NAMESPACE = "Perfiles";
-    public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
-    //public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
+    //public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
+    public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
 
 
 
@@ -137,6 +141,7 @@ public final class Constants {
     public static final String WEB_SERVICE_METHOD_NAME_SECTION = "ConsultaSeccionElectoral";
     public static final String WEB_SERVICE_METHOD_SEARCH_PROFILE = "BuscarPersonas";
     public static final String WEB_SERVICE_METHOD_SEARCH_PROFILE_COMPLETE = "ConsultaPersona";
+    public static final String WEB_SERVICE_METHOD_DELETE_PROFILE = "EliminarPersona";
     //endregion SOAP OPERATION//
 
     //region WEB SERVICE PARAMS//
@@ -227,6 +232,7 @@ public final class Constants {
     //region SOAP KEYS//
     public static final String SOAP_OBJECT_KEY_LOGIN_ID_ACTOR = "IDActor";
     public static final String SOAP_OBJECT_KEY_LOGIN_ID_USER = "ID";
+    public static final String SOAP_OBJECT_KEY_LOGIN_ID_USER_COMPLETE = "IDUsuario";
     public static final String SOAP_OBJECT_KEY_LOGIN_ACTOR_NAME = "NombreActor";
     public static final String SOAP_OBJECT_KEY_LOGIN_ID_GROUP = "IDGrupo";
     public static final String SOAP_OBJECT_KEY_LOGIN_USERNAME = "Usuario";

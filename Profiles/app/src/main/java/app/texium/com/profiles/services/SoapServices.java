@@ -1259,6 +1259,63 @@ public class SoapServices {
         return soapObject;
     }
 
+    public static SoapPrimitive deleteProfile(Context context, DecodeProfile decodeProfile) throws Exception {
+        SoapPrimitive soapPrimitive;
+        try {
+            String SOAP_ACTION = Constants.WEB_SERVICE_SOAP_DELETE_PROFILE;
+            String METHOD_NAME = Constants.WEB_SERVICE_METHOD_DELETE_PROFILE;
+            String NAMESPACE = Constants.WEB_SERVICE_NAMESPACE;
+            String URL = Constants.WEB_SERVICE_URL;
+
+            SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
+            Request.addProperty(Constants.SOAP_OBJECT_KEY_ID, decodeProfile.getProfile().getIdProfile());
+            Request.addProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_USER_COMPLETE, 1);
+
+
+            SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            soapEnvelope.dotNet = true;
+            soapEnvelope.implicitTypes = true;
+            soapEnvelope.setOutputSoapObject(Request);
+
+
+            HttpTransportSE transport = new HttpTransportSE(URL);
+
+            transport.call(SOAP_ACTION, soapEnvelope);
+            soapPrimitive = (SoapPrimitive) soapEnvelope.getResponse();
+
+        } catch (EOFException e) {
+            e.printStackTrace();
+            Log.e("Soap EOFException", e.getMessage());
+            throw new Exception(context.getString(R.string.default_exception_error));
+        } catch (ConnectException e) {
+            e.printStackTrace();
+            Log.e("Soap ConnectException", e.getMessage());
+            throw new ConnectException(context.getString(R.string.default_connect_error));
+        } catch (java.net.SocketTimeoutException e) {
+            e.printStackTrace();
+            Log.e("Soap SocketTimeoutException", e.getMessage());
+            throw new ConnectException(context.getString(R.string.default_connect_error));
+        } catch (java.net.SocketException e) {
+            e.printStackTrace();
+            Log.e("Soap SocketException", e.getMessage());
+            throw new ConnectException(context.getString(R.string.default_connect_error));
+        } catch (HttpResponseException e) {
+            e.printStackTrace();
+            Log.e("Soap HttpResponseException", e.getMessage());
+            throw new ConnectException(context.getString(R.string.default_soap_error));
+        } catch (SoapFault e) {
+            e.printStackTrace();
+            Log.e("Soap Fault", e.getMessage());
+            throw new ConnectException(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Soap Exception", e.getMessage());
+            throw new ConnectException(context.getString(R.string.default_exception_error));
+        }
+
+        return soapPrimitive;
+    }
+
     public static SoapPrimitive validateINE(Context context, ProfileManager profileManager) throws Exception {
         SoapPrimitive soapPrimitive;
         try {

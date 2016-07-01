@@ -204,8 +204,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                 break;
             case R.id.personalExit:
+            case R.id.electoralExit:
+            case R.id.addressExit:
+            case R.id.professionalExit:
+            case R.id.contactExit:
+            case R.id.structureExit:
+            case R.id.commentExit:
+            case R.id.socialNetworkExit:
                 ad.setTitle(getString(R.string.default_title_alert_dialog));
-                ad.setMessage("¿Desea salir del editado del perfil?");
+                ad.setMessage(getString(R.string.defaut_profile_exit_question));
                 ad.setCancelable(false);
                 ad.setPositiveButton(getString(R.string.default_positive_button), this);
                 ad.setNegativeButton(getString(R.string.default_negative_button), this);
@@ -238,7 +245,18 @@ public class NavigationDrawerActivity extends AppCompatActivity
                         AsyncProfile wsLoadProfile = new AsyncProfile(Constants.WS_KEY_PROFILE_SEARCH_COMPLETE);
                         wsLoadProfile.execute();
                         break;
+                    case R.id.profile_delete:
+                        AsyncProfile wsDeleteProfile = new AsyncProfile(Constants.WS_KEY_PROFILE_DELETE);
+                        wsDeleteProfile.execute();
+                        break;
                     case R.id.personalExit:
+                    case R.id.electoralExit:
+                    case R.id.addressExit:
+                    case R.id.professionalExit:
+                    case R.id.contactExit:
+                    case R.id.structureExit:
+                    case R.id.commentExit:
+                    case R.id.socialNetworkExit:
                         closeAllFragment();
                         break;
                     default:
@@ -259,15 +277,24 @@ public class NavigationDrawerActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
         switch (id) {
-            case R.id.search_profile:
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction actualFragment = fragmentManager.beginTransaction();
+            case R.id.add_profile:
+                FragmentTransaction addFragment = fragmentManager.beginTransaction();
 
                 closeAllFragment();
 
-                actualFragment.add(R.id.profiles_fragment_container, new SearchProfileFragment(), Constants.FRAGMENT_SEARCH_TAG);
-                actualFragment.commit();
+                addFragment.add(R.id.profiles_fragment_container, new PersonalProfileFragment(), Constants.FRAGMENT_PERSONAL_TAG);
+                addFragment.commit();
+                break;
+            case R.id.search_profile:
+                FragmentTransaction searchFragment = fragmentManager.beginTransaction();
+
+                closeAllFragment();
+
+                searchFragment.add(R.id.profiles_fragment_container, new SearchProfileFragment(), Constants.FRAGMENT_SEARCH_TAG);
+                searchFragment.commit();
                 break;
             case R.id.action_sync:
                 showQuestion();
@@ -627,6 +654,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
                     pDialog.setCancelable(false);
                     pDialog.show();
                     break;
+                case Constants.WS_KEY_PROFILE_DELETE:
+                    pDialog = new ProgressDialog(NavigationDrawerActivity.this);
+                    pDialog.setMessage(getString(R.string.default_loading_msg));
+                    pDialog.setTitle(getString(R.string.default_delete_profile_msg));
+                    pDialog.setIndeterminate(false);
+                    pDialog.setCancelable(false);
+                    pDialog.show();
+                    break;
             }
         }
 
@@ -839,7 +874,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                         int updates = 8;
                         for (int update = 0; update < updates; update++) {
 
-                            String msg = "Cargando paquete " + update + " de " + updates;
+                            String msg = "validando paquete " + (update + 1)  + " de " + updates;
                             publishProgress(title, msg, String.valueOf(update + 1), String.valueOf(updates));
 
                             switch (update + 1) {
@@ -875,11 +910,323 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             }
                         }
 
-                        validOperation = (soElectoralActor.getPropertyCount() > 0);
+                        String msg = "actualizando paquete " + 1 + " de " + updates;
+                        publishProgress(title, msg, String.valueOf(1), String.valueOf(updates));
+
+                        if (soPoliticalParty.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soPoliticalParty.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    PoliticalParties pp = new PoliticalParties();
+                                    pp.setIdItem(i);
+                                    pp.setIdPP(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                    pp.setAcronymName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ACRONYM_NAME).toString());
+                                    pp.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                    try {
+
+                                        PoliticalParties data = BDProfileManagerQuery.getPPById(getApplicationContext(), pp);
+
+                                        Integer exist = (data.getIdPP() != null)
+                                                ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                        switch (exist) {
+                                            case Constants.INACTIVE:
+                                                BDProfileManagerQuery.addPP(getApplicationContext(), pp);
+                                                break;
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        msg = "actualizando paquete " + 2 + " de " + updates;
+                        publishProgress(title, msg, String.valueOf(2), String.valueOf(updates));
+
+                        if (soElectoralActor.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soElectoralActor.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    ElectoralActor ea = new ElectoralActor();
+                                    ea.setIdItem(i);
+                                    ea.setIdElectoralActor(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                    ea.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+                                    ea.setIdFather(soItem.hasProperty(Constants.SOAP_OBJECT_KEY_FATHER)
+                                            ? Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_FATHER).toString())
+                                            : 0
+                                    );
+
+                                    try {
+
+                                        ElectoralActor data = BDProfileManagerQuery.getEAById(getApplicationContext(), ea);
+
+                                        Integer exist = (data.getIdElectoralActor() != null)
+                                                ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                        switch (exist) {
+                                            case Constants.INACTIVE:
+                                                BDProfileManagerQuery.addEA(getApplicationContext(), ea);
+                                                break;
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+
+                        msg = "actualizando paquete " + 3 + " de " + updates;
+                        publishProgress(title, msg, String.valueOf(3), String.valueOf(updates));
+
+
+                        if (soapObjectAL.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soapObjectAL.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    AcademyLevels al = new AcademyLevels();
+                                    al.setIdItem(i);
+                                    al.setIdAcademyLevel(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                    al.setDescription(soItem.getProperty(Constants.SOAP_OBJECT_KEY_DESCRIPTION).toString());
+                                    al.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                    try {
+
+                                        AcademyLevels data = BDProfileManagerQuery.getALById(getApplicationContext(), al);
+
+                                        Integer exist = (data.getIdAcademyLevel() != null)
+                                                ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                        switch (exist) {
+                                            case Constants.INACTIVE:
+                                                BDProfileManagerQuery.addAL(getApplicationContext(), al);
+                                                break;
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            }
+                        }
+
+
+                        msg = "actualizando paquete " + 4 + " de " + updates;
+                        publishProgress(title, msg, String.valueOf(4), String.valueOf(updates));
+
+                        if (soapObjectCareer.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soapObjectCareer.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    Careers career = new Careers();
+
+                                    career.setIdItem(i);
+                                    career.setIdCareer(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                    career.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+                                    career.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                    try {
+
+                                        Careers data = BDProfileManagerQuery.getCareersById(getApplicationContext(), career);
+
+                                        Integer exist = (data.getIdCareer() != null)
+                                                ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                        switch (exist) {
+                                            case Constants.INACTIVE:
+                                                BDProfileManagerQuery.addCareer(getApplicationContext(), career);
+                                                break;
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        msg = "actualizando paquete " + 5 + " de " + updates;
+                        publishProgress(title, msg, String.valueOf(5), String.valueOf(updates));
+
+                        if (soapObjectPT.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soapObjectPT.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    ProfessionalTitles pt = new ProfessionalTitles();
+
+                                    pt.setIdItem(i);
+                                    pt.setIdProfessionalTitle(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                    pt.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+                                    pt.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+
+                                    try {
+
+                                        ProfessionalTitles data = BDProfileManagerQuery.getPTById(getApplicationContext(), pt);
+
+                                        Integer exist = (data.getIdProfessionalTitle() != null)
+                                                ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                        switch (exist) {
+                                            case Constants.INACTIVE:
+                                                BDProfileManagerQuery.addPT(getApplicationContext(), pt);
+                                                break;
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        msg = "actualizando paquete " + 6 + " de " + updates;
+                        publishProgress(title, msg, String.valueOf(6), String.valueOf(updates));
+
+                        if (soapObjectCompany.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soapObjectCompany.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    Companies company = new Companies();
+                                    company.setIdItem(i);
+                                    company.setIdCompany(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                    company.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
+                                    company.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
+                                    company.setIdGroup((soItem.hasProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_GROUP))
+                                            ? Integer.valueOf(soItem.getProperty(Constants.WEB_SERVICE_PARAM_ID_GROUP).toString())
+                                            : 0);
+
+                                    try {
+
+                                        Companies data = BDProfileManagerQuery.getCompanyById(getApplicationContext(), company);
+
+                                        Integer exist = (data.getIdCompany() != null)
+                                                ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                        switch (exist) {
+                                            case Constants.INACTIVE:
+                                                BDProfileManagerQuery.addCompany(getApplicationContext(), company);
+                                                break;
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        msg = "actualizando paquete " + 7 + " de " + updates;
+                        publishProgress(title, msg, String.valueOf(7), String.valueOf(updates));
+
+                        if (soElectoralKey.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soElectoralKey.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    ElectoralKeys electoralKey = new ElectoralKeys();
+
+                                    electoralKey.setIdItem(i);
+                                    electoralKey.setElectoralKey(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ELECTORAL_KEY).toString());
+
+                                    try {
+
+                                        ElectoralKeys data = BDProfileManagerQuery.getElectoralKey(getApplicationContext(), electoralKey);
+
+                                        Integer exist = (data.getElectoralKey() != null)
+                                                ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                        switch (exist) {
+                                            case Constants.INACTIVE:
+                                                BDProfileManagerQuery.addElectoralKey(getApplicationContext(), electoralKey);
+                                                break;
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        msg = "actualizando paquete " + 8  + " de " + updates;
+                        publishProgress(title, msg, String.valueOf(8), String.valueOf(updates));
+
+                        if (soElectoralSection.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGram = (SoapObject) soElectoralSection.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                    ElectoralSections electoralSection = new ElectoralSections();
+
+                                    electoralSection.setIdItem(i);
+                                    electoralSection.setIdElectoralSection(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                    electoralSection.setLocalDistrict(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT).toString());
+
+                                    try {
+
+                                        ElectoralSections data = BDProfileManagerQuery.getElectoralSection(getApplicationContext(), electoralSection);
+
+                                        Integer exist = (data.getIdElectoralSection() != null)
+                                                ? Constants.ACTIVE : Constants.INACTIVE;
+
+                                        switch (exist) {
+                                            case Constants.INACTIVE:
+                                                BDProfileManagerQuery.addElectoralSection(getApplicationContext(), electoralSection);
+                                                break;
+                                        }
+
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        validOperation = true;
                         break;
                     case Constants.WS_KEY_PROFILE_SEARCH_COMPLETE:
                         soapObject = SoapServices.getProfile(getApplicationContext(),DECODE_PROFILE);
                         validOperation = (soapObject.getPropertyCount() > 0);
+                        break;
+                    case Constants.WS_KEY_PROFILE_DELETE:
+                        soapPrimitive = SoapServices.deleteProfile(getApplicationContext(),DECODE_PROFILE);
+                        validOperation = (soapPrimitive != null);
                         break;
                 }
             } catch (ConnectException e) {
@@ -929,428 +1276,150 @@ public class NavigationDrawerActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(final Boolean success) {
 
-            if (success) {
-
-                switch (webServiceOperation) {
-                    case Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE:
-                        try {
-                            pDialog.dismiss();
-                            closeAllFragment();
-
-                            FragmentManager fragmentManager = getSupportFragmentManager();
-                            FragmentTransaction actualFragment = fragmentManager.beginTransaction();
-                            actualFragment.add(R.id.profiles_fragment_container, new PersonalProfileFragment(), Constants.FRAGMENT_PERSONAL_TAG);
-                            actualFragment.commit();
-
-                            String tempText = (localAccess) ? getString(R.string.default_save_local) : soapPrimitive.toString();
-                            Toast.makeText(getApplicationContext(), tempText, Toast.LENGTH_LONG).show();
-
-                            updateProfile(new ProfileManager());
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    case Constants.WS_KEY_SPINNER_ALL_SPINNER:
-
-                        if (soPoliticalParty.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soPoliticalParty.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
-
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
-
-                                    PoliticalParties pp = new PoliticalParties();
-                                    pp.setIdItem(i);
-                                    pp.setIdPP(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    pp.setAcronymName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ACRONYM_NAME).toString());
-                                    pp.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
-
-                                    try {
-
-                                        PoliticalParties data = BDProfileManagerQuery.getPPById(getApplicationContext(), pp);
-
-                                        Integer exist = (data.getIdPP() != null)
-                                                ? Constants.ACTIVE : Constants.INACTIVE;
-
-                                        switch (exist) {
-                                            case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addPP(getApplicationContext(), pp);
-                                                break;
-                                        }
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-
-                        if (soElectoralActor.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soElectoralActor.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
-
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
-
-                                    ElectoralActor ea = new ElectoralActor();
-                                    ea.setIdItem(i);
-                                    ea.setIdElectoralActor(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    ea.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
-                                    ea.setIdFather(soItem.hasProperty(Constants.SOAP_OBJECT_KEY_FATHER)
-                                            ? Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_FATHER).toString())
-                                            : 0
-                                    );
-
-                                    try {
-
-                                        ElectoralActor data = BDProfileManagerQuery.getEAById(getApplicationContext(), ea);
-
-                                        Integer exist = (data.getIdElectoralActor() != null)
-                                                ? Constants.ACTIVE : Constants.INACTIVE;
-
-                                        switch (exist) {
-                                            case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addEA(getApplicationContext(), ea);
-                                                break;
-                                        }
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-
-                        if (soapObjectAL.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObjectAL.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
-
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
-
-                                    AcademyLevels al = new AcademyLevels();
-                                    al.setIdItem(i);
-                                    al.setIdAcademyLevel(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    al.setDescription(soItem.getProperty(Constants.SOAP_OBJECT_KEY_DESCRIPTION).toString());
-                                    al.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
-
-                                    try {
-
-                                        AcademyLevels data = BDProfileManagerQuery.getALById(getApplicationContext(), al);
-
-                                        Integer exist = (data.getIdAcademyLevel() != null)
-                                                ? Constants.ACTIVE : Constants.INACTIVE;
-
-                                        switch (exist) {
-                                            case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addAL(getApplicationContext(), al);
-                                                break;
-                                        }
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-
-                                }
-                            }
-                        }
-
-                        if (soapObjectCareer.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObjectCareer.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
-
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
-
-                                    Careers career = new Careers();
-
-                                    career.setIdItem(i);
-                                    career.setIdCareer(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    career.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
-                                    career.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
-
-                                    try {
-
-                                        Careers data = BDProfileManagerQuery.getCareersById(getApplicationContext(), career);
-
-                                        Integer exist = (data.getIdCareer() != null)
-                                                ? Constants.ACTIVE : Constants.INACTIVE;
-
-                                        switch (exist) {
-                                            case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addCareer(getApplicationContext(), career);
-                                                break;
-                                        }
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-
-                        if (soapObjectPT.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObjectPT.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
-
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
-
-                                    ProfessionalTitles pt = new ProfessionalTitles();
-
-                                    pt.setIdItem(i);
-                                    pt.setIdProfessionalTitle(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    pt.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
-                                    pt.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
-
-                                    try {
-
-                                        ProfessionalTitles data = BDProfileManagerQuery.getPTById(getApplicationContext(), pt);
-
-                                        Integer exist = (data.getIdProfessionalTitle() != null)
-                                                ? Constants.ACTIVE : Constants.INACTIVE;
-
-                                        switch (exist) {
-                                            case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addPT(getApplicationContext(), pt);
-                                                break;
-                                        }
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-
-                        if (soapObjectCompany.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObjectCompany.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
-
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
-
-                                    Companies company = new Companies();
-                                    company.setIdItem(i);
-                                    company.setIdCompany(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    company.setName(soItem.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString());
-                                    company.setIdStatus(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_STATUS).toString()));
-                                    company.setIdGroup((soItem.hasProperty(Constants.SOAP_OBJECT_KEY_LOGIN_ID_GROUP))
-                                            ? Integer.valueOf(soItem.getProperty(Constants.WEB_SERVICE_PARAM_ID_GROUP).toString())
-                                            : 0);
-
-                                    try {
-
-                                        Companies data = BDProfileManagerQuery.getCompanyById(getApplicationContext(), company);
-
-                                        Integer exist = (data.getIdCompany() != null)
-                                                ? Constants.ACTIVE : Constants.INACTIVE;
-
-                                        switch (exist) {
-                                            case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addCompany(getApplicationContext(), company);
-                                                break;
-                                        }
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-
-                        if (soElectoralKey.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soElectoralKey.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
-
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
-
-                                    ElectoralKeys electoralKey = new ElectoralKeys();
-
-                                    electoralKey.setIdItem(i);
-                                    electoralKey.setElectoralKey(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ELECTORAL_KEY).toString());
-
-                                    try {
-
-                                        ElectoralKeys data = BDProfileManagerQuery.getElectoralKey(getApplicationContext(), electoralKey);
-
-                                        Integer exist = (data.getElectoralKey() != null)
-                                                ? Constants.ACTIVE : Constants.INACTIVE;
-
-                                        switch (exist) {
-                                            case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addElectoralKey(getApplicationContext(), electoralKey);
-                                                break;
-                                        }
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-
-                        if (soElectoralSection.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soElectoralSection.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
-
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
-
-                                    ElectoralSections electoralSection = new ElectoralSections();
-
-                                    electoralSection.setIdItem(i);
-                                    electoralSection.setIdElectoralSection(Integer.valueOf(soItem.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                    electoralSection.setLocalDistrict(soItem.getProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT).toString());
-
-                                    try {
-
-                                        ElectoralSections data = BDProfileManagerQuery.getElectoralSection(getApplicationContext(), electoralSection);
-
-                                        Integer exist = (data.getIdElectoralSection() != null)
-                                                ? Constants.ACTIVE : Constants.INACTIVE;
-
-                                        switch (exist) {
-                                            case Constants.INACTIVE:
-                                                BDProfileManagerQuery.addElectoralSection(getApplicationContext(), electoralSection);
-                                                break;
-                                        }
-
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    case Constants.WS_KEY_PROFILE_SEARCH_COMPLETE:
-
-                        if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                            SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                            if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
-
-                                for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
-                                    SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
-
-                                    ProfileManager tempProfile = new ProfileManager();
-
-                                    PersonalProfile personalProfile = new PersonalProfile();
-
-                                    personalProfile.setName(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NAME).toString());
-                                    personalProfile.setFirstSurname(soItem.getPrimitiveProperty(Constants.SOAP_OBJECT_FIRST_SURNAME).toString());
-                                    personalProfile.setSecondSurname(soItem.getPrimitiveProperty(Constants.SOAP_OBJECT_SECOND_SURNAME).toString());
-                                    personalProfile.setBirthDate(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_DATE_BIRTH).toString());
-                                    personalProfile.setCivilState(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CIVIL_STATE).toString());
-                                    personalProfile.setSex(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_SEX).toString());
-                                    personalProfile.setNationality(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NATIONALITY).toString());
-                                    personalProfile.setBirthPlace(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_PLACE_BIRTH).toString());
-
-                                    ElectoralProfile electoralProfile = new ElectoralProfile();
-
-                                    electoralProfile.setOcrINE(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OCR_INE).toString());
-                                    electoralProfile.setElectoralKEY(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_KEY).toString());
-                                    electoralProfile.setValidityINE(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_VALIDITY_INE).toString());
-                                    electoralProfile.setElectoralSection(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_SECTION).toString()));
-                                    electoralProfile.setLocalDistrict(soItem.getPrimitiveProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT).toString());
-                                    electoralProfile.setFederalDistrict(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FEDERAL_DISTRICT).toString());
-                                    electoralProfile.setElectoralAdviser(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_ADVISER).toString());
-                                    electoralProfile.setPoliticalParty(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_POLITICAL_PARTY).toString()));
-                                    electoralProfile.setElectoralActor(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_UNIQUE).toString()));
-                                    electoralProfile.setSubItemElectoralActor(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_SON_UNIQUE).toString()));
-                                    electoralProfile.setPhotoINEBack(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_BACK_PHOTO_PERSONAL).toString());
-                                    electoralProfile.setPhotoINEFront(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FRONT_PHOTO_PERSONAL).toString());
-
-                                    AddressProfile addressProfile = new AddressProfile();
-
-                                    addressProfile.setStreet(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_STREET).toString());
-                                    addressProfile.setNumExt(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NUM_EXT_UNIQUE).toString());
-                                    addressProfile.setNumInt(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NUM_INT_UNIQUE).toString());
-                                    addressProfile.setCity(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CITY_COLONY).toString());
-                                    addressProfile.setDivision(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_DIVISION).toString());
-                                    addressProfile.setPostalCode(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_POSTAL_CODE_UNIQUE).toString()));
-                                    addressProfile.setIdState(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_STATE).toString()));
-                                    addressProfile.setIdMunicipal(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_MUNICIPAL).toString()));
-                                    addressProfile.setIdLocation(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_LOCATION).toString()));
-
-                                    ContactProfile contactProfile = new ContactProfile();
-
-                                    contactProfile.setPersonalEmail(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_PERSONAL_EMAIL_UNIQUE).toString());
-                                    contactProfile.setProfessionalEmail(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_PROFESSIONAL_EMAIL_UNIQUE).toString());
-                                    contactProfile.setCellPhoneNumber(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CELLPHONE).toString());
-                                    contactProfile.setOfficePhoneNumber(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OFFICE_PHONE_UNIQUE).toString());
-                                    contactProfile.setHomePhoneNumber(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_HOME_PHONE).toString());
-                                    contactProfile.setOtherPhoneNumber(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OTHER_PHONE).toString());
-                                    contactProfile.setCurp(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CURP).toString());
-                                    contactProfile.setRfc(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_RFC).toString());
-
-                                    ProfessionalProfile professionalProfile = new ProfessionalProfile();
-
-                                    professionalProfile.setNss(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NSS).toString());
-                                    professionalProfile.setActualJob(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ACTUAL_JOB).toString());
-                                    professionalProfile.setCompany(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_COMPANY).toString()));
-                                    professionalProfile.setCareer(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_CAREER).toString()));
-                                    professionalProfile.setLevel(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_LEVEL).toString()));
-                                    professionalProfile.setProfessionalTitle(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_TITLE).toString()));
-                                    professionalProfile.setProfessionalResume(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_RESUME).toString());
-
-
-                                    StructureProfile structureProfile = new StructureProfile();
-
-
-                                    structureProfile.setCommittee(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_COMMITTEE).toString());
-                                    structureProfile.setReference(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_REFERENCE_UNIQUE).toString());
-                                    structureProfile.setLink(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_LINK).toString());
-                                    structureProfile.setCoordinator(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_COORDINATOR).toString());
-
-                                    CommentProfile commentProfile = new CommentProfile();
-
-                                    commentProfile.setComment(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_COMMENT).toString());
-
-                                    SocialNetworkProfile socialNetworkProfile = new SocialNetworkProfile();
-
-                                    socialNetworkProfile.setFacebook(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FACEBOOK).toString());
-                                    socialNetworkProfile.setTwitter(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_TWITTER).toString());
-                                    socialNetworkProfile.setInstagram(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_INSTAGRAM).toString());
-
-
-                                    tempProfile.setPersonalProfile(personalProfile);
-                                    tempProfile.setElectoralProfile(electoralProfile);
-                                    tempProfile.setAddressProfile(addressProfile);
-                                    tempProfile.setContactProfile(contactProfile);
-                                    tempProfile.setProfessionalProfile(professionalProfile);
-                                    tempProfile.setStructureProfile(structureProfile);
-                                    tempProfile.setCommentProfile(commentProfile);
-                                    tempProfile.setSocialNetworkProfile(socialNetworkProfile);
-                                    tempProfile.setDecodeProfile(DECODE_PROFILE);
-
-                                    updateProfile(tempProfile);
-                                }
-                            }
-                        }
+            if (success) switch (webServiceOperation) {
+                case Constants.WS_KEY_SPINNER_SAVE_PROFILE_SERVICE:
+                    try {
+                        pDialog.dismiss();
+                        closeAllFragment();
 
                         FragmentManager fragmentManager = getSupportFragmentManager();
-                        FragmentTransaction finishFragment = fragmentManager.beginTransaction();
-                        finishFragment.add(R.id.profiles_fragment_container, new PersonalProfileFragment(), Constants.FRAGMENT_PERSONAL_TAG);
-                        finishFragment.commit();
+                        FragmentTransaction actualFragment = fragmentManager.beginTransaction();
+                        actualFragment.add(R.id.profiles_fragment_container, new PersonalProfileFragment(), Constants.FRAGMENT_PERSONAL_TAG);
+                        actualFragment.commit();
 
-                        break;
-                    default:
-                        Toast.makeText(NavigationDrawerActivity.this, R.string.default_sync_ok, Toast.LENGTH_LONG).show();
-                        break;
-                }
-            } else {
+                        String tempText = (localAccess) ? getString(R.string.default_save_local) : soapPrimitive.toString();
+                        Toast.makeText(getApplicationContext(), tempText, Toast.LENGTH_LONG).show();
+
+                        updateProfile(new ProfileManager());
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case Constants.WS_KEY_SPINNER_ALL_SPINNER:
+
+                    break;
+                case Constants.WS_KEY_PROFILE_SEARCH_COMPLETE:
+
+                    if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                        SoapObject soDiffGram = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                        if (soDiffGram.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                            SoapObject soNewDataSet = (SoapObject) soDiffGram.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                            for (int i = 0; i < soNewDataSet.getPropertyCount(); i++) {
+                                SoapObject soItem = (SoapObject) soNewDataSet.getProperty(i);
+
+                                ProfileManager tempProfile = new ProfileManager();
+
+                                PersonalProfile personalProfile = new PersonalProfile();
+
+                                personalProfile.setName(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NAME).toString());
+                                personalProfile.setFirstSurname(soItem.getPrimitiveProperty(Constants.SOAP_OBJECT_FIRST_SURNAME).toString());
+                                personalProfile.setSecondSurname(soItem.getPrimitiveProperty(Constants.SOAP_OBJECT_SECOND_SURNAME).toString());
+                                personalProfile.setBirthDate(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_DATE_BIRTH).toString());
+                                personalProfile.setCivilState(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CIVIL_STATE).toString());
+                                personalProfile.setSex(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_SEX).toString());
+                                personalProfile.setNationality(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NATIONALITY).toString());
+                                personalProfile.setBirthPlace(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_PLACE_BIRTH).toString());
+
+                                ElectoralProfile electoralProfile = new ElectoralProfile();
+
+                                electoralProfile.setOcrINE(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OCR_INE).toString());
+                                electoralProfile.setElectoralKEY(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_KEY).toString());
+                                electoralProfile.setValidityINE(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_VALIDITY_INE).toString());
+                                electoralProfile.setElectoralSection(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_SECTION).toString()));
+                                electoralProfile.setLocalDistrict(soItem.getPrimitiveProperty(Constants.SOAP_OBJECT_KEY_LOCAL_DISTRICT).toString());
+                                electoralProfile.setFederalDistrict(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FEDERAL_DISTRICT).toString());
+                                electoralProfile.setElectoralAdviser(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ELECTORAL_ADVISER).toString());
+                                electoralProfile.setPoliticalParty(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_POLITICAL_PARTY).toString()));
+                                electoralProfile.setElectoralActor(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_UNIQUE).toString()));
+                                electoralProfile.setSubItemElectoralActor(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_ELECTORAL_ACTOR_SON_UNIQUE).toString()));
+                                electoralProfile.setPhotoINEBack(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_BACK_PHOTO_PERSONAL).toString());
+                                electoralProfile.setPhotoINEFront(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FRONT_PHOTO_PERSONAL).toString());
+
+                                AddressProfile addressProfile = new AddressProfile();
+
+                                addressProfile.setStreet(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_STREET).toString());
+                                addressProfile.setNumExt(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NUM_EXT_UNIQUE).toString());
+                                addressProfile.setNumInt(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NUM_INT_UNIQUE).toString());
+                                addressProfile.setCity(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CITY_COLONY).toString());
+                                addressProfile.setDivision(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_DIVISION).toString());
+                                addressProfile.setPostalCode(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_POSTAL_CODE_UNIQUE).toString()));
+                                addressProfile.setIdState(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_STATE).toString()));
+                                addressProfile.setIdMunicipal(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_MUNICIPAL).toString()));
+                                addressProfile.setIdLocation(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_LOCATION).toString()));
+
+                                ContactProfile contactProfile = new ContactProfile();
+
+                                contactProfile.setPersonalEmail(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_PERSONAL_EMAIL_UNIQUE).toString());
+                                contactProfile.setProfessionalEmail(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_PROFESSIONAL_EMAIL_UNIQUE).toString());
+                                contactProfile.setCellPhoneNumber(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CELLPHONE).toString());
+                                contactProfile.setOfficePhoneNumber(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OFFICE_PHONE_UNIQUE).toString());
+                                contactProfile.setHomePhoneNumber(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_HOME_PHONE).toString());
+                                contactProfile.setOtherPhoneNumber(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_OTHER_PHONE).toString());
+                                contactProfile.setCurp(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_CURP).toString());
+                                contactProfile.setRfc(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_RFC).toString());
+
+                                ProfessionalProfile professionalProfile = new ProfessionalProfile();
+
+                                professionalProfile.setNss(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NSS).toString());
+                                professionalProfile.setActualJob(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ACTUAL_JOB).toString());
+                                professionalProfile.setCompany(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_COMPANY).toString()));
+                                professionalProfile.setCareer(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_CAREER).toString()));
+                                professionalProfile.setLevel(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_LEVEL).toString()));
+                                professionalProfile.setProfessionalTitle(Integer.valueOf(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_ID_TITLE).toString()));
+                                professionalProfile.setProfessionalResume(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_RESUME).toString());
+
+
+                                StructureProfile structureProfile = new StructureProfile();
+
+
+                                structureProfile.setCommittee(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_COMMITTEE).toString());
+                                structureProfile.setReference(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_REFERENCE_UNIQUE).toString());
+                                structureProfile.setLink(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_LINK).toString());
+                                structureProfile.setCoordinator(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_COORDINATOR).toString());
+
+                                CommentProfile commentProfile = new CommentProfile();
+
+                                commentProfile.setComment(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_COMMENT).toString());
+
+                                SocialNetworkProfile socialNetworkProfile = new SocialNetworkProfile();
+
+                                socialNetworkProfile.setFacebook(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_FACEBOOK).toString());
+                                socialNetworkProfile.setTwitter(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_TWITTER).toString());
+                                socialNetworkProfile.setInstagram(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_INSTAGRAM).toString());
+
+
+                                tempProfile.setPersonalProfile(personalProfile);
+                                tempProfile.setElectoralProfile(electoralProfile);
+                                tempProfile.setAddressProfile(addressProfile);
+                                tempProfile.setContactProfile(contactProfile);
+                                tempProfile.setProfessionalProfile(professionalProfile);
+                                tempProfile.setStructureProfile(structureProfile);
+                                tempProfile.setCommentProfile(commentProfile);
+                                tempProfile.setSocialNetworkProfile(socialNetworkProfile);
+                                tempProfile.setDecodeProfile(DECODE_PROFILE);
+
+                                updateProfile(tempProfile);
+                            }
+                        }
+                    }
+
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction finishFragment = fragmentManager.beginTransaction();
+                    finishFragment.add(R.id.profiles_fragment_container, new PersonalProfileFragment(), Constants.FRAGMENT_PERSONAL_TAG);
+                    finishFragment.commit();
+
+                    break;
+                case Constants.WS_KEY_PROFILE_DELETE:
+                    SearchProfileFragment.removeAt(DECODE_PROFILE.getPosition());
+                    Toast.makeText(NavigationDrawerActivity.this, soapPrimitive.toString(), Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    Toast.makeText(NavigationDrawerActivity.this, R.string.default_sync_ok, Toast.LENGTH_LONG).show();
+                    break;
+            }
+            else {
                 String tempText = (textError.isEmpty() ? "Error desconocido" : textError);
                 Toast.makeText(getApplicationContext(), tempText, Toast.LENGTH_LONG).show();
 

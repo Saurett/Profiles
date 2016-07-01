@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.ksoap2.serialization.SoapObject;
@@ -28,6 +29,7 @@ import app.texium.com.profiles.databases.BDProfileManagerQuery;
 import app.texium.com.profiles.models.AcademyLevels;
 import app.texium.com.profiles.models.Careers;
 import app.texium.com.profiles.models.Companies;
+import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.ProfessionalProfile;
 import app.texium.com.profiles.models.ProfessionalTitles;
 import app.texium.com.profiles.models.ProfileManager;
@@ -40,8 +42,9 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
 
     static FragmentProfileListener activityListener;
 
-    private static Button backBtn, nextBtn;
+    private static Button backBtn, nextBtn, exitBtn;
     private static EditText txtNSS, txtActualJob, txtProfessionalResume;
+    public static TextView title;
     private ProgressDialog pDialog;
     private static Spinner professionalTitleSpinner, companySpinner,careerSpinner,levelSpinner;
 
@@ -65,13 +68,16 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
 
         backBtn = (Button) view.findViewById(R.id.backBtnProfessionalProfile);
         nextBtn = (Button) view.findViewById(R.id.nextBtnProfessionalProfile);
+        exitBtn = (Button) view.findViewById(R.id.professionalExit);
 
         txtNSS = (EditText) view.findViewById(R.id.nss);
         txtActualJob = (EditText) view.findViewById(R.id.actualJob);
         txtProfessionalResume = (EditText) view.findViewById(R.id.professionalResume);
+        title = (TextView) view.findViewById(R.id.professionalProfileTitle);
 
         backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
+        exitBtn.setOnClickListener(this);
 
         professionalTitleSpinner = (Spinner) view.findViewById(R.id.professionalTitle);
         companySpinner = (Spinner) view.findViewById(R.id.company);
@@ -93,7 +99,16 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
                 txtProfessionalResume.setText(_PROFILE_MANAGER.getProfessionalProfile().getProfessionalResume());
         }
 
+        setTitle();
+
         return view;
+    }
+
+    public void setTitle() {
+        if (null !=_PROFILE_MANAGER.getDecodeProfile()) {
+            title.setText(R.string.default_edit_profile_title);
+            exitBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -159,6 +174,13 @@ public class ProfessionalProfileFragment extends Fragment implements View.OnClic
 
                 activityListener.updateProfile(_PROFILE_MANAGER);
                 activityListener.moveFragments(v);
+                break;
+            case R.id.professionalExit:
+                DecodeProfile decodeProfile = activityListener.getDecodeProfile();
+                decodeProfile.setIdView(v.getId());
+
+                activityListener.updateDecodeProfile(decodeProfile);
+                activityListener.showQuestion();
                 break;
             default:
                 break;

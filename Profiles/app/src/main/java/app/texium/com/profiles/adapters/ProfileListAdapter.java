@@ -1,6 +1,5 @@
 package app.texium.com.profiles.adapters;
 
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +55,7 @@ public class ProfileListAdapter extends RecyclerView.Adapter<ProfileListAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         final Profile profile = profiles.get(position);
 
         Integer resource = (profile.getProfileCloud() == 0) ?
@@ -72,8 +71,10 @@ public class ProfileListAdapter extends RecyclerView.Adapter<ProfileListAdapter.
         holder.profile_cloud_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
                 Snackbar.make(v, profile.getProfileCloud().toString(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                        */
             }
         });
 
@@ -88,8 +89,9 @@ public class ProfileListAdapter extends RecyclerView.Adapter<ProfileListAdapter.
         holder.profile_delete_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v, profile.getProfileName() + "Borrar", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                decodeProfile.setIdView(v.getId());
+                decodeProfile.setPosition(position);
+                SearchProfileFragment.showQuestion(decodeProfile);
             }
         });
     }
@@ -104,6 +106,11 @@ public class ProfileListAdapter extends RecyclerView.Adapter<ProfileListAdapter.
         this.profiles.addAll(profiles);
     }
 
+    public void removeItem(int position) {
+        this.profiles.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount() - position);
+    }
 
 }
 

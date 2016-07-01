@@ -28,6 +28,7 @@ import java.util.List;
 import app.texium.com.profiles.R;
 import app.texium.com.profiles.databases.BDProfileManagerQuery;
 import app.texium.com.profiles.models.AddressProfile;
+import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.Locations;
 import app.texium.com.profiles.models.Municipalities;
 import app.texium.com.profiles.models.ProfileManager;
@@ -40,8 +41,9 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
 
     static FragmentProfileListener activityListener;
 
-    private static Button backBtn, nextBtn;
+    private static Button backBtn, nextBtn, exitBtn;
     private static EditText txtStreet, txtNumExt, txtNumInt, txtCity, txtDivision, txtPostalCode;
+    private static TextView title;
     private static Spinner stateSpinner, municipalitySpinner, locationSpinner;
     private ProgressDialog pDialog;
 
@@ -64,6 +66,7 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
 
         backBtn = (Button) view.findViewById(R.id.backBtnAddressProfile);
         nextBtn = (Button) view.findViewById(R.id.nextBtnAddressProfile);
+        exitBtn = (Button) view.findViewById(R.id.addressExit);
 
         txtStreet = (EditText) view.findViewById(R.id.street);
         txtNumInt = (EditText) view.findViewById(R.id.numInt);
@@ -71,6 +74,7 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
         txtCity = (EditText) view.findViewById(R.id.city);
         txtDivision = (EditText) view.findViewById(R.id.division);
         txtPostalCode = (EditText) view.findViewById(R.id.postalCode);
+        title = (TextView) view.findViewById(R.id.addressProfileTitle);
 
         stateSpinner = (Spinner) view.findViewById(R.id.state);
         municipalitySpinner = (Spinner) view.findViewById(R.id.municipality);
@@ -79,6 +83,7 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
 
         backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
+        exitBtn.setOnClickListener(this);
 
         stateSpinner.setOnItemSelectedListener(this);
         municipalitySpinner.setOnItemSelectedListener(this);
@@ -101,7 +106,16 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
             }
         }
 
+        setTitle();
+
         return view;
+    }
+
+    public void setTitle() {
+        if (null !=_PROFILE_MANAGER.getDecodeProfile()) {
+            title.setText(R.string.default_edit_profile_title);
+            exitBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -194,6 +208,13 @@ public class AddressProfileFragment extends Fragment implements View.OnClickList
                     activityListener.moveFragments(v);
 
                 }
+                break;
+            case R.id.addressExit:
+                DecodeProfile decodeProfile = activityListener.getDecodeProfile();
+                decodeProfile.setIdView(v.getId());
+
+                activityListener.updateDecodeProfile(decodeProfile);
+                activityListener.showQuestion();
                 break;
             default:
                 break;

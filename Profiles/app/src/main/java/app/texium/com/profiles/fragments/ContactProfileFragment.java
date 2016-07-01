@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import app.texium.com.profiles.R;
 import app.texium.com.profiles.models.ContactProfile;
+import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.ProfileManager;
 
 
@@ -19,8 +21,9 @@ public class ContactProfileFragment extends Fragment implements View.OnClickList
 
     static FragmentProfileListener activityListener;
 
-    private static Button backBtn, nextBtn;
+    private static Button backBtn, nextBtn, exitBtn;
     private EditText txtPersonalEmail, txtProfessionalEmail,txtCellPhone, txtOfficePhone, txtHomePhone, txtOtherPhone,txtCURP, txtRFC;
+    private TextView title;
 
     private static ProfileManager _PROFILE_MANAGER;
 
@@ -32,6 +35,7 @@ public class ContactProfileFragment extends Fragment implements View.OnClickList
 
         backBtn = (Button) view.findViewById(R.id.backBtnContactProfile);
         nextBtn = (Button) view.findViewById(R.id.nextBtnContactProfile);
+        exitBtn = (Button) view.findViewById(R.id.contactExit);
 
         txtPersonalEmail = (EditText) view.findViewById(R.id.personalEmail);
         txtProfessionalEmail = (EditText) view.findViewById(R.id.professionalEmail);
@@ -41,9 +45,11 @@ public class ContactProfileFragment extends Fragment implements View.OnClickList
         txtOtherPhone = (EditText) view.findViewById(R.id.otherPhoneNumber);
         txtCURP = (EditText) view.findViewById(R.id.curp);
         txtRFC = (EditText) view.findViewById(R.id.rfc);
+        title = (TextView) view.findViewById(R.id.contactProfileTitle);
 
         backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
+        exitBtn.setOnClickListener(this);
 
         if (null != _PROFILE_MANAGER) {
             if (null != _PROFILE_MANAGER.getContactProfile().getPersonalEmail())
@@ -64,7 +70,16 @@ public class ContactProfileFragment extends Fragment implements View.OnClickList
                 txtRFC.setText(_PROFILE_MANAGER.getContactProfile().getRfc());
         }
 
+        setTitle();
+
         return view;
+    }
+
+    public void setTitle() {
+        if (null !=_PROFILE_MANAGER.getDecodeProfile()) {
+            title.setText(R.string.default_edit_profile_title);
+            exitBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -120,6 +135,13 @@ public class ContactProfileFragment extends Fragment implements View.OnClickList
 
                 activityListener.updateProfile(_PROFILE_MANAGER);
                 activityListener.moveFragments(v);
+                break;
+            case R.id.contactExit:
+                DecodeProfile decodeProfile = activityListener.getDecodeProfile();
+                decodeProfile.setIdView(v.getId());
+
+                activityListener.updateDecodeProfile(decodeProfile);
+                activityListener.showQuestion();
                 break;
             default:
                 break;

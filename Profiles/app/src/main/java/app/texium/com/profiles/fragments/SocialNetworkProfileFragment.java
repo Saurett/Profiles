@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import app.texium.com.profiles.R;
+import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.ProfileManager;
 import app.texium.com.profiles.models.SocialNetworkProfile;
 
@@ -19,8 +21,9 @@ public class SocialNetworkProfileFragment extends Fragment implements View.OnCli
 
     static FragmentProfileListener activityListener;
 
-    private static Button backBtn, nextBtn, finishBtn;
+    private static Button backBtn, nextBtn, finishBtn, exitBtn;
     private static EditText txtFacebook, txtTwitter, txtInstagram;
+    private TextView title;
 
     private static ProfileManager _PROFILE_MANAGER;
 
@@ -33,14 +36,17 @@ public class SocialNetworkProfileFragment extends Fragment implements View.OnCli
         backBtn = (Button) view.findViewById(R.id.backBtnSNProfile);
         nextBtn = (Button) view.findViewById(R.id.nextBtnSNProfile);
         finishBtn = (Button) view.findViewById(R.id.finishBtnSNProfile);
+        exitBtn = (Button) view.findViewById(R.id.socialNetworkExit);
 
         txtFacebook = (EditText) view.findViewById(R.id.facebook);
         txtTwitter = (EditText) view.findViewById(R.id.twitter);
         txtInstagram = (EditText) view.findViewById(R.id.instagram);
+        title = (TextView) view.findViewById(R.id.socialNetworkProfileTitle);
 
         backBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
         finishBtn.setOnClickListener(this);
+        exitBtn.setOnClickListener(this);
 
         if (null != _PROFILE_MANAGER) {
             if (null != _PROFILE_MANAGER.getSocialNetworkProfile().getFacebook())
@@ -50,8 +56,16 @@ public class SocialNetworkProfileFragment extends Fragment implements View.OnCli
             if (null != _PROFILE_MANAGER.getSocialNetworkProfile().getInstagram())
                 txtInstagram.setText(_PROFILE_MANAGER.getSocialNetworkProfile().getInstagram());
         }
+        setTitle();
 
         return view;
+    }
+
+    public void setTitle() {
+        if (null !=_PROFILE_MANAGER.getDecodeProfile()) {
+            title.setText(R.string.default_edit_profile_title);
+            exitBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -104,6 +118,14 @@ public class SocialNetworkProfileFragment extends Fragment implements View.OnCli
 
                 activityListener.updateProfile(_PROFILE_MANAGER);
                 activityListener.moveFragments(v);
+                break;
+            case R.id.socialNetworkExit:
+                DecodeProfile decodeProfile = activityListener.getDecodeProfile();
+                decodeProfile.setIdView(v.getId());
+
+                activityListener.updateDecodeProfile(decodeProfile);
+                activityListener.showQuestion();
+                break;
             default:
                 break;
         }

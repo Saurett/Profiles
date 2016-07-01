@@ -39,5 +39,9 @@
     <string name="default_profile_delete_msg">¿Desea eliminar el perfil?</string>
     <string name="default_profile_data_msg">Obteniendo información del perfil ...</string>
     <string name="default_download_msg">Descargando actualizaciones de catalogos</string>
+    <string name="default_delete_profile_msg">Eliminando perfil ...</string>
+    <string name="default_edit_profile_title">Editar Usuario</string>
+    <string name="defaut_profile_exit_question">¿Desea salir de editar el perfil?</string>
+    <string name="default_add_profile">Registar</string>
 
 </resources>

@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.ksoap2.serialization.SoapObject;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 
 import app.texium.com.profiles.R;
 import app.texium.com.profiles.databases.BDProfileManagerQuery;
+import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.ElectoralActor;
 import app.texium.com.profiles.models.ElectoralProfile;
 import app.texium.com.profiles.models.ElectoralSections;
@@ -43,8 +45,9 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
 
     static FragmentProfileListener activityListener;
 
-    private static Button backBtn, nextBtn, pictureBtnBack, pictureBtnFront, deleteBtnBack, deleteBtnFront;
+    private static Button backBtn, nextBtn, pictureBtnBack, pictureBtnFront, deleteBtnBack, deleteBtnFront, exitBtn;
     private static EditText txtOCR, txtElectoralKey, txtValidityINE, txtElectoralSection, txtLocalDistrict, txtFederalDistrict, txtElectoralAdviser;
+    private TextView title;
     private ProgressDialog pDialog;
 
     private static int positionPP, positionElectoralActor, positionSubItemEA;
@@ -75,6 +78,8 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         pictureBtnFront = (Button) view.findViewById(R.id.pictureBtnFront);
         deleteBtnBack = (Button) view.findViewById(R.id.deleteBtnBack);
         deleteBtnFront = (Button) view.findViewById(R.id.deleteBtnFront);
+        exitBtn = (Button) view.findViewById(R.id.electoralExit);
+        title = (TextView) view.findViewById(R.id.electoralProfileTitle);
 
         txtOCR = (EditText) view.findViewById(R.id.ocrINE);
         txtElectoralKey = (EditText) view.findViewById(R.id.electoralKey);
@@ -94,6 +99,7 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
         pictureBtnFront.setOnClickListener(this);
         deleteBtnBack.setOnClickListener(this);
         deleteBtnFront.setOnClickListener(this);
+        exitBtn.setOnClickListener(this);
 
         politicalSpinner.setOnItemSelectedListener(this);
         electoralActorSpinner.setOnItemSelectedListener(this);
@@ -120,7 +126,16 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
                 txtElectoralAdviser.setText(_PROFILE_MANAGER.getElectoralProfile().getElectoralAdviser());
         }
 
+        setTitle();
+
         return view;
+    }
+
+    public void setTitle() {
+        if (null !=_PROFILE_MANAGER.getDecodeProfile()) {
+            title.setText(R.string.default_edit_profile_title);
+            exitBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -208,6 +223,13 @@ public class ElectoralProfileFragment extends Fragment implements View.OnClickLi
             case R.id.deleteBtnBack:
             case R.id.deleteBtnFront:
                 showQuestion(v.getId());
+                break;
+            case R.id.electoralExit:
+                DecodeProfile decodeProfile = activityListener.getDecodeProfile();
+                decodeProfile.setIdView(v.getId());
+
+                activityListener.updateDecodeProfile(decodeProfile);
+                activityListener.showQuestion();
                 break;
             default:
                 break;

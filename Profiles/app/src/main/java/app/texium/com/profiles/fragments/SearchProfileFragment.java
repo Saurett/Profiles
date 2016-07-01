@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import org.ksoap2.serialization.SoapObject;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,11 +46,11 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
     private static ProfileListAdapter profiles_adapter;
 
     private SearchView searchView;
-    private RecyclerView profile_list;
-    private LinearLayout emptySearch;
+    private static RecyclerView profile_list;
+    private static LinearLayout emptySearch;
 
-    private TextView emptyTitle;
-    private TextView emptyMsg;
+    private static TextView emptyTitle;
+    private static TextView emptyMsg;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,9 +65,6 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
         emptyTitle = (TextView) view.findViewById(R.id.emptyTitle);
         emptyMsg = (TextView) view.findViewById(R.id.emptyMsg);
 
-        emptyTitle.setText("¿Desea buscar un perfil?");
-        emptyMsg.setText("Capture un nombre en la barra de busqueda");
-
         searchView.setOnQueryTextListener(this);
         searchView.setOnCloseListener(this);
         searchView.setFocusable(true);
@@ -76,8 +74,7 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
 
         profiles_adapter.setOnClickListener(this);
 
-        profile_list.setVisibility((profiles_adapter.getItemCount() > 0) ? View.VISIBLE : View.INVISIBLE);
-        emptySearch.setVisibility((profiles_adapter.getItemCount() > 0) ? View.INVISIBLE : View.VISIBLE);
+        setEmptyView(Constants.LOADING);
 
         return view;
     }
@@ -130,6 +127,27 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
         activityListener.showQuestion();
     }
 
+    public static void removeAt(int position) {
+        profiles_adapter.removeItem(position);
+       setEmptyView(Constants.SEARCH);
+    }
+
+    private static void setEmptyView(Integer request) {
+        profile_list.setVisibility((profiles_adapter.getItemCount() > 0) ? View.VISIBLE : View.INVISIBLE);
+        emptySearch.setVisibility((profiles_adapter.getItemCount() > 0) ? View.INVISIBLE : View.VISIBLE);
+
+        String title = "¿Desea buscar un perfil?";
+        String msg = "Capture un nombre en la barra de busqueda";
+
+        if ((profile_list.getVisibility() == View.INVISIBLE) && (Constants.SEARCH == request)){
+            title = "¡No es posible localizar el perfil!";
+            msg = "Lo sentimos su busqueda no arrojó resultados";
+        }
+
+        emptyTitle.setText(title);
+        emptyMsg.setText(msg);
+    }
+
     private class AsyncSearch extends AsyncTask<Void, Void, Boolean> {
 
         private SoapObject soapObject;
@@ -174,7 +192,11 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
                         validOperation = (soapObject.getPropertyCount() > 0);
                         break;
                 }
-            } catch (Exception e) {
+            } catch (ConnectException e) {
+                textError = e.getMessage();
+                localAccess = true;
+                validOperation = true;
+            }catch (Exception e) {
                 textError = e.getMessage();
                 validOperation = false;
             }
@@ -200,38 +222,40 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
                             profiles = new ArrayList<>();
                             profiles.addAll(localProfile);
 
-                            //WEB SERVICE PROFILES
-                            if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                                SoapObject soDiffGramL = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                                if (soDiffGramL.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                    SoapObject soNewDataSetL = (SoapObject) soDiffGramL.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+                           if (!localAccess) {
+                               //WEB SERVICE PROFILES
+                               if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                                   SoapObject soDiffGramL = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                                   if (soDiffGramL.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                       SoapObject soNewDataSetL = (SoapObject) soDiffGramL.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
 
-                                    for (int iL = 0; iL < soNewDataSetL.getPropertyCount(); iL++) {
-                                        SoapObject soItemL = (SoapObject) soNewDataSetL.getProperty(iL);
+                                       for (int iL = 0; iL < soNewDataSetL.getPropertyCount(); iL++) {
+                                           SoapObject soItemL = (SoapObject) soNewDataSetL.getProperty(iL);
 
-                                        Profile profile = new Profile();
+                                           Profile profile = new Profile();
 
-                                        String city = soItemL.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString() + ", " +
-                                                soItemL.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString() + "; " +
-                                                soItemL.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_NAME).toString();
+                                           String city = soItemL.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString() + ", " +
+                                                   soItemL.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString() + "; " +
+                                                   soItemL.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_NAME).toString();
 
-                                        String name =  (soItemL.hasProperty(Constants.SOAP_OBJECT_KEY_NAME)
-                                                ? soItemL.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString() : "") + " " +
-                                                (soItemL.hasProperty(Constants.SOAP_OBJECT_FIRST_SURNAME)
-                                                        ? soItemL.getProperty(Constants.SOAP_OBJECT_FIRST_SURNAME).toString() : "") + " " +
-                                                (soItemL.hasProperty(Constants.SOAP_OBJECT_SECOND_SURNAME)
-                                                        ? soItemL.getProperty(Constants.SOAP_OBJECT_SECOND_SURNAME).toString() : "") ;
+                                           String name =  (soItemL.hasProperty(Constants.SOAP_OBJECT_KEY_NAME)
+                                                   ? soItemL.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString().trim() : "") + " " +
+                                                   (soItemL.hasProperty(Constants.SOAP_OBJECT_FIRST_SURNAME)
+                                                           ? soItemL.getProperty(Constants.SOAP_OBJECT_FIRST_SURNAME).toString().trim() : "") + " " +
+                                                   (soItemL.hasProperty(Constants.SOAP_OBJECT_SECOND_SURNAME)
+                                                           ? soItemL.getProperty(Constants.SOAP_OBJECT_SECOND_SURNAME).toString().trim() : "") ;
 
-                                        profile.setIdProfile(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                        profile.setProfileCity(city);
-                                        profile.setProfileName(name);
-                                        profile.setCveProfile(Constants.SERVER_SYNC_FALSE);
-                                        profile.setProfileCloud(Constants.SERVER_SYNC_TRUE);
+                                           profile.setIdProfile(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                           profile.setProfileCity(city);
+                                           profile.setProfileName(name);
+                                           profile.setCveProfile(Constants.SERVER_SYNC_FALSE);
+                                           profile.setProfileCloud(Constants.SERVER_SYNC_TRUE);
 
-                                        profiles.add(profile);
-                                    }
-                                }
-                            }
+                                           profiles.add(profile);
+                                       }
+                                   }
+                               }
+                           }
 
                             Collections.sort(profiles, new Comparator() {
                                 @Override
@@ -260,11 +284,7 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                             profile_list.setLayoutManager(linearLayoutManager);
 
-                            emptySearch.setVisibility((profiles_adapter.getItemCount() > 0) ? View.INVISIBLE : View.VISIBLE);
-                            profile_list.setVisibility((profiles_adapter.getItemCount() > 0) ? View.VISIBLE : View.INVISIBLE);
-
-                            emptyTitle.setText("¡No es posible localizar el perfil!");
-                            emptyMsg.setText("Lo sentimos su busqueda no arrojo resultados");
+                            setEmptyView(Constants.SEARCH);
 
                         } catch (Exception e) {
                             e.printStackTrace();
