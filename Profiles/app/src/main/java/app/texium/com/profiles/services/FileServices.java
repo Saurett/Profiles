@@ -4,10 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.Shader;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
@@ -39,6 +46,33 @@ public class FileServices {
         }
 
         return imageEncoded;
+    }
+
+    public static Bitmap compressBitmap(Bitmap original) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        original.compress(Bitmap.CompressFormat.PNG, 50, out);
+        return BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
+    }
+
+    public static Bitmap rotateBmp(Bitmap bmp, float angle){
+        Matrix matrix = new Matrix();
+        //set image rotation value to 90 degrees in matrix.
+        matrix.postRotate(angle);
+        //supply the original width and height, if you don't want to change the height and width of bitmap.
+        bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(),bmp.getHeight(), matrix, true);
+        return bmp;
+    }
+
+    public static Bitmap setRadius(Bitmap actualBitmap) {
+
+        Bitmap imageRounded = Bitmap.createBitmap(actualBitmap.getWidth(), actualBitmap.getHeight(), actualBitmap.getConfig());
+        Canvas canvas = new Canvas(imageRounded);
+        Paint bmPaint = new Paint();
+        bmPaint.setAntiAlias(true);
+        bmPaint.setShader(new BitmapShader(actualBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
+        canvas.drawRoundRect((new RectF(0, 0, actualBitmap.getWidth(), actualBitmap.getHeight())), 100, 100, bmPaint);// Round Image Corner 100 100 100 100
+
+        return imageRounded;
     }
 
 

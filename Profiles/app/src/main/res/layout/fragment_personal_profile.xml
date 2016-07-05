@@ -68,55 +68,78 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:paddingTop="20dp">
 
-                <EditText
-                    android:id="@+id/name"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:background="@drawable/shape_form"
-                    android:hint="Nombre(s)"
-                    android:inputType="textNoSuggestions"
-                    android:maxLines="1"
-                    android:paddingLeft="20dp"
-                    android:singleLine="true"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimaryDark"
-                    android:textSize="15sp" />
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:paddingRight="20dp">
+                    <ImageView
+                        android:id="@+id/profilePicture"
+                        android:layout_width="180dp"
+                        android:layout_height="140dp"
+                        android:layout_gravity="center"
+                        android:scaleType="centerInside"
+                        android:background="@mipmap/ic_launcher"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+                    <EditText
+                        android:id="@+id/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/shape_form"
+                        android:hint="Nombre(s)"
+                        android:inputType="textNoSuggestions"
+                        android:maxLines="1"
+                        android:paddingLeft="20dp"
+                        android:singleLine="true"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/colorPrimaryDark"
+                        android:textSize="15sp" />
 
-                <EditText
-                    android:id="@+id/firstSurname"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/shape_form"
-                    android:hint="Apellido Paterno"
-                    android:inputType="textNoSuggestions"
-                    android:maxLines="1"
-                    android:paddingLeft="20dp"
-                    android:singleLine="true"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimaryDark"
-                    android:textSize="15sp" />
+                    <EditText
+                        android:id="@+id/firstSurname"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/shape_form"
+                        android:hint="Apellido Paterno"
+                        android:inputType="textNoSuggestions"
+                        android:maxLines="1"
+                        android:paddingLeft="20dp"
+                        android:singleLine="true"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/colorPrimaryDark"
+                        android:textSize="15sp" />
 
-                <EditText
-                    android:id="@+id/secondSurname"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/shape_form"
-                    android:hint="Apellido Materno"
-                    android:imeOptions="actionDone"
-                    android:inputType="textNoSuggestions"
-                    android:maxLines="1"
-                    android:paddingLeft="20dp"
-                    android:singleLine="true"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimaryDark"
-                    android:textSize="15sp" />
+                    <EditText
+                        android:id="@+id/secondSurname"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/shape_form"
+                        android:hint="Apellido Materno"
+                        android:imeOptions="actionDone"
+                        android:inputType="textNoSuggestions"
+                        android:maxLines="1"
+                        android:paddingLeft="20dp"
+                        android:singleLine="true"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/colorPrimaryDark"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -193,9 +216,9 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/shape_form"
                     android:hint="Nacionalidad"
-                    android:text="Mexicana"
                     android:maxLines="1"
                     android:paddingLeft="20dp"
+                    android:text="Mexicana"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
                     android:textSize="15sp" />

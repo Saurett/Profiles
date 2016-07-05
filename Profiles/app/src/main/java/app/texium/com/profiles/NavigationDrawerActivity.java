@@ -4,6 +4,9 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,6 +87,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
     private static DecodeProfile DECODE_PROFILE;
     private ProgressDialog pDialog;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1;
+    private static final int CROP_IMAGE_ACTIVITY_REQUEST_CODE = 2;
     private static int idActualCameraBtn;
     private MarshMallowPermission marshMallowPermission = new MarshMallowPermission(this);
     private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
@@ -555,6 +560,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 try {
+
                     Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                     File f = new File(mCurrentPhotoPath);
                     Uri contentUri = Uri.fromFile(f);
@@ -567,7 +573,31 @@ public class NavigationDrawerActivity extends AppCompatActivity
                         case R.id.pictureBtnFront:
                             PROFILE_MANAGER.getElectoralProfile().setPhotoINEFront(FileServices.attachImg(this, contentUri));
                             break;
+                        case R.id.profilePicture:
+                            try {
+                                cropImage();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // User cancelled the image capture
+            } else {
+                // Image capture failed, advise user
+            }
+        }
+
+        if (requestCode == CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                try {
+
+                    ImageView mImageView = (ImageView) findViewById(R.id.profilePicture);
+                    mImageView.setBackground(null);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -580,6 +610,91 @@ public class NavigationDrawerActivity extends AppCompatActivity
             }
         }
     }
+
+    private void cropImage() {
+        /*
+        // Use existing crop activity.
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri,"image/*");
+
+        // Specify image size
+        intent.putExtra("outputX", 100);
+        intent.putExtra("outputY", 100);
+
+        // Specify aspect ratio, 1:1
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("scale", true);
+        intent.putExtra("return-data", true);
+        // REQUEST_CODE_CROP_PHOTO is an integer tag you defined to
+        // identify the activity in onActivityResult() when it returns
+        startActivityForResult(intent, CROP_IMAGE_ACTIVITY_REQUEST_CODE);*/
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setClassName("com.google.android.gallery3d", "com.android.gallery3d.app.CropImage");
+        File file = new File(mCurrentPhotoPath);
+        Uri uri = Uri.fromFile(file);
+        intent.setData(uri);
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", 96);
+        intent.putExtra("outputY", 96);
+        intent.putExtra("noFaceDetection", true);
+        intent.putExtra("return-data", true);
+        startActivityForResult(intent, CROP_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
+
+    private void setPic() {
+        ImageView mImageView = (ImageView) findViewById(R.id.profilePicture);
+        mImageView.setBackground(null);
+
+        // Get the dimensions of the View
+        int targetW = mImageView.getWidth();
+        int targetH = mImageView.getHeight();
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        File f = new File(mCurrentPhotoPath);
+
+        ExifInterface ei = null;
+        try {
+            ei = new ExifInterface(f.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+
+        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+        switch(orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                Bitmap bMapScaled90 = Bitmap.createScaledBitmap(FileServices.rotateBmp(bitmap,90), 150, 150, true);
+                mImageView.setImageBitmap(bMapScaled90);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                Bitmap bMapScaled180 = Bitmap.createScaledBitmap(FileServices.rotateBmp(bitmap,180), 150, 150, true);
+                mImageView.setImageBitmap(bMapScaled180);
+                break;
+            default:
+                mImageView.setImageBitmap(FileServices.setRadius(bitmap));
+                break;
+        }
+    }
+
+
 
     @Override
     public ProfileManager updateProfile(ProfileManager oldProfile) {

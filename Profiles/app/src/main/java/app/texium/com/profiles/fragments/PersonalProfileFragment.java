@@ -11,8 +11,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -29,6 +31,7 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
     static FragmentProfileListener activityListener;
 
     private static Button nextBtn, exitBtn;
+    private ImageView picture;
     private EditText txtDate, txtAge, txtName, txtFirstSurname, txtSecondSurname, txtNationality, txtPlace;
     private TextView title;
     private CheckBox checkBox, checkBox2, checkBox3, checkBox4, checkBoxWoman, checkBoxMan;
@@ -41,6 +44,8 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_personal_profile, container, false);
+
+        picture = (ImageView) view.findViewById(R.id.profilePicture);
 
         txtName = (EditText) view.findViewById(R.id.name);
         txtFirstSurname = (EditText) view.findViewById(R.id.firstSurname);
@@ -64,6 +69,8 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
 
         nextBtn = (Button) view.findViewById(R.id.nextBtnPersonalProfile);
         exitBtn = (Button) view.findViewById(R.id.personalExit);
+
+        picture.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
         exitBtn.setOnClickListener(this);
 
@@ -180,6 +187,13 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.profilePicture:
+                try {
+                    activityListener.showCamera(v);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             case R.id.calendarButton:
                 activityListener.showCalendar(v, txtDate, txtAge);
                 break;
