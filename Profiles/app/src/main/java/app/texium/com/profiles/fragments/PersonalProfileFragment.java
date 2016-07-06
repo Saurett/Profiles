@@ -2,9 +2,12 @@ package app.texium.com.profiles.fragments;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,28 +147,32 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
         super.onCreate(saveInstanceState);
         _PROFILE_MANAGER = activityListener.getProfileManager();
 
-       if (null != _PROFILE_MANAGER.getPersonalProfile()) {
-           if (null !=_PROFILE_MANAGER.getPersonalProfile().getBirthDate()) {
-               String currentDate = _PROFILE_MANAGER.getPersonalProfile().getBirthDate();
+       try {
+           if (null != _PROFILE_MANAGER.getPersonalProfile()) {
+               if (null !=_PROFILE_MANAGER.getPersonalProfile().getBirthDate()) {
+                   String currentDate = _PROFILE_MANAGER.getPersonalProfile().getBirthDate();
 
-               if (currentDate.contains("-")) {
-                   String[] actualDate = currentDate.split("-");
+                   if (currentDate.contains("-")) {
+                       String[] actualDate = currentDate.split("-");
 
-                   int year = Integer.valueOf(actualDate[0]);
-                   int month = Integer.valueOf(actualDate[1]);
-                   int day = Integer.valueOf(actualDate[2]);
+                       int year = Integer.valueOf(actualDate[0]);
+                       int month = Integer.valueOf(actualDate[1]);
+                       int day = Integer.valueOf(actualDate[2]);
 
-                   String date = day + " / " + month + " / " + year;
+                       String date = day + " / " + month + " / " + year;
 
-                   _PROFILE_MANAGER.getPersonalProfile().setBirthDate(date);
+                       _PROFILE_MANAGER.getPersonalProfile().setBirthDate(date);
 
-                   final Calendar c = Calendar.getInstance();
-                   int actualYear = c.get(Calendar.YEAR);
+                       final Calendar c = Calendar.getInstance();
+                       int actualYear = c.get(Calendar.YEAR);
 
-                   _PROFILE_MANAGER.getPersonalProfile().setAgeProfile(String.valueOf(actualYear - year) + " Años");
+                       _PROFILE_MANAGER.getPersonalProfile().setAgeProfile(String.valueOf(actualYear - year) + " Años");
 
+                   }
                }
            }
+       } catch (Exception e) {
+           e.printStackTrace();
        }
     }
 
@@ -173,13 +180,24 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
     public void onResume() {
         super.onResume();
         _PROFILE_MANAGER = activityListener.getProfileManager();
+
+        if (null != _PROFILE_MANAGER.getPersonalProfile().getProfilePicture()) {
+            String encodedImage = _PROFILE_MANAGER.getPersonalProfile().getProfilePicture();
+            byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            picture.setImageBitmap(decodedByte);
+        }
     }
 
     public void setTitle() {
-        if (null !=_PROFILE_MANAGER.getDecodeProfile()) {
-            title.setText(R.string.default_edit_profile_title);
-            exitBtn.setVisibility(View.VISIBLE);
-        }
+       try {
+           if (null !=_PROFILE_MANAGER.getDecodeProfile()) {
+               title.setText(R.string.default_edit_profile_title);
+               exitBtn.setVisibility(View.VISIBLE);
+           }
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
     }
 
     @Override
