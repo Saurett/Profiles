@@ -113,7 +113,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.PROFILES_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add content in the bd with id :" + temp.getPersonalProfile().getName());
+            ////Log.i("SQLite: ", "Add content in the bd with id :" + temp.getPersonalProfile().getName());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -159,7 +159,7 @@ public class BDProfileManagerQuery {
                     profiles.add(data);
 
 
-                    Log.i("SQLite: ", "Get profile in the bd with cve :" + data.getCveProfile());
+                    ////Log.i("SQLite: ", "Get profile in the bd with cve :" + data.getCveProfile());
                 } while (result.moveToNext());
             }
 
@@ -294,7 +294,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.USERS_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add user in the bd with user_id : " + u.getIdUser());
+            //Log.i("SQLite: ", "Add user in the bd with user_id : " + u.getIdUser());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -319,7 +319,7 @@ public class BDProfileManagerQuery {
                     BDProfileManager.ColumnUsers.USER_ID + " = " + u.getIdUser(), null);
             bd.close();
 
-            Log.i("SQLite: ", "Update user in the bd with user_id : " + u.getIdUser());
+            //Log.i("SQLite: ", "Update user in the bd with user_id : " + u.getIdUser());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -337,7 +337,7 @@ public class BDProfileManagerQuery {
                             +" = "+  data.getUserProfile().getCveUser()
                     ,null);
 
-            Log.i("SQLite: ", "delete content in the bd with id :" + data.getUserProfile().getCveUser());
+            //Log.i("SQLite: ", "delete content in the bd with id :" + data.getUserProfile().getCveUser());
 
             bd.close();
         } catch (Exception e) {
@@ -369,8 +369,7 @@ public class BDProfileManagerQuery {
                     data.setIdRol(result.getInt(6));
                     data.setIdGroup(result.getInt(result.getColumnIndex(BDProfileManager.ColumnUsers.GROUP_ID)));
 
-                    Log.i("SQLite: ", "Get user in the bd with idUser :" + data.getIdUser()
-                            + " username : " + data.getUserName() + " password :" + data.getPassword());
+                    //Log.i("SQLite: ", "Get user in the bd with idUser :" + data.getIdUser()+ " username : " + data.getUserName() + " password :" + data.getPassword());
                 } while (result.moveToNext());
             }
 
@@ -404,8 +403,7 @@ public class BDProfileManagerQuery {
                     data.setIdRol(result.getInt(6));
                     data.setIdGroup(result.getInt(result.getColumnIndex(BDProfileManager.ColumnUsers.GROUP_ID)));
 
-                    Log.i("SQLite: ", "Get user in the bd with idUser :" + data.getIdUser()
-                            + " username : " + data.getUserName() + " password :" + data.getPassword());
+                    //Log.i("SQLite: ", "Get user in the bd with idUser :" + data.getIdUser()+ " username : " + data.getUserName() + " password :" + data.getPassword());
                 } while (result.moveToNext());
             }
 
@@ -435,7 +433,7 @@ public class BDProfileManagerQuery {
                     data.setIdState(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_ID)));
                     data.setStateName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.ESTATE_NAME)));
 
-                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdState());
+                    //Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdState());
                 } while (result.moveToNext());
             }
 
@@ -461,7 +459,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.ADDRESS_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add content in the bd with id :" + temp.getIdState());
+            //Log.i("SQLite: ", "Add content in the bd with id :" + temp.getIdState());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -523,7 +521,7 @@ public class BDProfileManagerQuery {
                     data.setIdMunicipal(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.MUNICIPALITY_ID)));
                     data.setMunicipalName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.MUNICIPALITY_NAME)));
 
-                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdMunicipal());
+                    //Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdMunicipal());
                 } while (result.moveToNext());
             }
 
@@ -551,7 +549,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.ADDRESS_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add content in the bd with id :" + temp.getIdMunicipal());
+            //Log.i("SQLite: ", "Add content in the bd with id :" + temp.getIdMunicipal());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -616,7 +614,7 @@ public class BDProfileManagerQuery {
                     data.setIdLocation(result.getInt(result.getColumnIndex(BDProfileManager.ColumnAddress.CITY_ID)));
                     data.setLocationName(result.getString(result.getColumnIndex(BDProfileManager.ColumnAddress.CITY_NAME)));
 
-                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdLocation());
+                    //Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdLocation());
                 } while (result.moveToNext());
             }
 
@@ -646,7 +644,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.ADDRESS_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add content in the bd with id :" + temp.getIdMunicipal());
+            //Log.i("SQLite: ", "Add content in the bd with id :" + temp.getIdMunicipal());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -708,7 +706,7 @@ public class BDProfileManagerQuery {
                     data.setName(result.getString(result.getColumnIndex(BDProfileManager.ColumnPoliticalParties.NAME)));
                     data.setAcronymName(result.getString(result.getColumnIndex(BDProfileManager.ColumnPoliticalParties.ACRONYM)));
 
-                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdPP());
+                    //Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdPP());
                 } while (result.moveToNext());
             }
 
@@ -735,7 +733,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.PP_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add content in the bd with id :" + pp.getIdPP());
+            //Log.i("SQLite: ", "Add content in the bd with id :" + pp.getIdPP());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -789,7 +787,7 @@ public class BDProfileManagerQuery {
                     data.setIdAcademyLevel(result.getInt(result.getColumnIndex(BDProfileManager.ColumnLevelsStudies.LEVEL_STUDY_ID)));
                     data.setDescription(result.getString(result.getColumnIndex(BDProfileManager.ColumnLevelsStudies.NAME)));
 
-                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdAcademyLevel());
+                    //Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdAcademyLevel());
                 } while (result.moveToNext());
             }
 
@@ -815,7 +813,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.LEVELS_STUDIES_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdAcademyLevel());
+            //Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdAcademyLevel());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -869,7 +867,7 @@ public class BDProfileManagerQuery {
                     data.setName(result.getString(result.getColumnIndex(BDProfileManager.ColumnCompany.NAME)));
                     data.setIdGroup(result.getInt(result.getColumnIndex(BDProfileManager.ColumnCompany.GROUP_ID)));
 
-                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdCompany());
+                    //Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdCompany());
                 } while (result.moveToNext());
             }
 
@@ -896,7 +894,7 @@ public class BDProfileManagerQuery {
 
                     data.setElectoralKey(result.getString(result.getColumnIndex(BDProfileManager.ColumnElectoralKeys.ELECTORAL_KEY)));
 
-                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getElectoralKey());
+                    //Log.i("SQLite: ", "Get content in the bd with id :" + data.getElectoralKey());
                 } while (result.moveToNext());
             }
 
@@ -924,7 +922,7 @@ public class BDProfileManagerQuery {
                     data.setLocalDistrict(result.getString(result.getColumnIndex(BDProfileManager.ColumnElectoralSections.LOCAL_DISTRICT)));
                     data.setIdElectoralSection(result.getInt(result.getColumnIndex(BDProfileManager.ColumnElectoralSections.ELECTORAL_SECTION_ID)));
 
-                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdElectoralSection());
+                    //Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdElectoralSection());
                 } while (result.moveToNext());
             }
 
@@ -954,7 +952,7 @@ public class BDProfileManagerQuery {
 
                     data.add(temp);
 
-                    Log.i("SQLite: ", "Get content in the bd with id :" + temp.getIdElectoralSection());
+                    //Log.i("SQLite: ", "Get content in the bd with id :" + temp.getIdElectoralSection());
                 } while (result.moveToNext());
             }
 
@@ -981,7 +979,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.COMPANY_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdCompany());
+            ////Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdCompany());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -1001,7 +999,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.ELECTORAL_KEYS_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add content in the bd with id :" + data.getElectoralKey());
+            ////Log.i("SQLite: ", "Add content in the bd with id :" + data.getElectoralKey());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -1022,7 +1020,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.ELECTORAL_SECTIONS_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdElectoralSection());
+            ////Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdElectoralSection());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -1077,7 +1075,7 @@ public class BDProfileManagerQuery {
                     data.setIdProfessionalTitle(result.getInt(result.getColumnIndex(BDProfileManager.ColumnObtainedDocument.OBTAINED_DOCUMENT_ID)));
                     data.setName(result.getString(result.getColumnIndex(BDProfileManager.ColumnObtainedDocument.NAME)));
 
-                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdProfessionalTitle());
+                    ////Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdProfessionalTitle());
                 } while (result.moveToNext());
             }
 
@@ -1103,7 +1101,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.OBTAINED_DOCUMENT_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdProfessionalTitle());
+            //Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdProfessionalTitle());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -1156,7 +1154,7 @@ public class BDProfileManagerQuery {
                     data.setIdCareer(result.getInt(result.getColumnIndex(BDProfileManager.ColumnCareers.CAREER_ID)));
                     data.setName(result.getString(result.getColumnIndex(BDProfileManager.ColumnCareers.NAME)));
 
-                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdCareer());
+                    //Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdCareer());
                 } while (result.moveToNext());
             }
 
@@ -1182,7 +1180,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.CAREERS_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdCareer());
+            ////Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdCareer());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());
@@ -1236,7 +1234,7 @@ public class BDProfileManagerQuery {
                     data.setName(result.getString(result.getColumnIndex(BDProfileManager.ColumnElectoralActor.NAME)));
                     data.setIdFather(result.getInt(result.getColumnIndex(BDProfileManager.ColumnElectoralActor.FATHER)));
 
-                    Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdElectoralActor());
+                    //Log.i("SQLite: ", "Get content in the bd with id :" + data.getIdElectoralActor());
                 } while (result.moveToNext());
             }
 
@@ -1263,7 +1261,7 @@ public class BDProfileManagerQuery {
             bd.insert(BDProfileManager.ELECTORAL_ACTOR_TABLE_NAME, null, cv);
             bd.close();
 
-            Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdElectoralActor());
+            //Log.i("SQLite: ", "Add content in the bd with id :" + data.getIdElectoralActor());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SQLite Exception", "Database error: " + e.getMessage());

@@ -110,8 +110,8 @@ public final class Constants {
     public static final String WEB_SERVICE_SOAP_SEARCH_PROFILE_COMPLETE = "Perfiles/ConsultaPersona";
     public static final String WEB_SERVICE_SOAP_DELETE_PROFILE= "Perfiles/EliminarPersona";
     public static final String WEB_SERVICE_NAMESPACE = "Perfiles";
-    public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
-    //public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
+    //public static final String WEB_SERVICE_URL = "http://192.168.1.138/Perfiles/movil.asmx";
+    public static final String WEB_SERVICE_URL = "http://perfiles.azurewebsites.net/movil.asmx";
 
 
 
@@ -145,6 +145,7 @@ public final class Constants {
     //endregion SOAP OPERATION//
 
     //region WEB SERVICE PARAMS//
+    public static final String WEB_SERVICE_PARAM_PROFILE_PICTURE = "FotoPerfil";
     public static final String WEB_SERVICE_PARAM_LOGIN_USERNAME = "Nombre";
     public static final String WEB_SERVICE_PARAM_LOGIN_PASSWORD = "Contrasena";
     public static final String WEB_SERVICE_PARAM_ADDRESS_ID_STATE = "IDEstado";

@@ -1,6 +1,7 @@
 package app.texium.com.profiles;
 
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -91,7 +92,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
     private static int idActualCameraBtn;
     private MarshMallowPermission marshMallowPermission = new MarshMallowPermission(this);
     private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+
     String mCurrentPhotoPath;
+    String mCurrentPhotoPathCROP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -575,7 +578,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
                             break;
                         case R.id.profilePicture:
                             try {
-                                cropImage();
+                                //the final picture save on next OnActionResultActivity
+                                performCrop(contentUri);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -595,10 +599,18 @@ public class NavigationDrawerActivity extends AppCompatActivity
         if (requestCode == CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 try {
+                    ImageView iv = (ImageView) findViewById(R.id.profilePicture);
+                    assert iv != null;
+                    iv.setBackground(null);
+                    setPic(mCurrentPhotoPathCROP);
 
-                    ImageView mImageView = (ImageView) findViewById(R.id.profilePicture);
-                    mImageView.setBackground(null);
+                    Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                    File f = new File(mCurrentPhotoPathCROP);
+                    Uri contentUri = Uri.fromFile(f);
+                    mediaScanIntent.setData(contentUri);
+                    this.sendBroadcast(mediaScanIntent);
 
+                    PROFILE_MANAGER.getPersonalProfile().setProfilePicture(FileServices.attachImg(this, contentUri));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -607,45 +619,52 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 // User cancelled the image capture
             } else {
                 // Image capture failed, advise user
+                //TODO DELETE PICTURE
             }
         }
     }
 
-    private void cropImage() {
-        /*
-        // Use existing crop activity.
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri,"image/*");
+    private void performCrop(Uri picUri) {
+        try {
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            cropIntent.setDataAndType(picUri, "image/*");
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            cropIntent.putExtra("outputX", 300);
+            cropIntent.putExtra("outputY", 300);
+            // retrieve data on return
+            cropIntent.putExtra("return-data", true);
 
-        // Specify image size
-        intent.putExtra("outputX", 100);
-        intent.putExtra("outputY", 100);
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
 
-        // Specify aspect ratio, 1:1
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("scale", true);
-        intent.putExtra("return-data", true);
-        // REQUEST_CODE_CROP_PHOTO is an integer tag you defined to
-        // identify the activity in onActivityResult() when it returns
-        startActivityForResult(intent, CROP_IMAGE_ACTIVITY_REQUEST_CODE);*/
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setClassName("com.google.android.gallery3d", "com.android.gallery3d.app.CropImage");
-        File file = new File(mCurrentPhotoPath);
-        Uri uri = Uri.fromFile(file);
-        intent.setData(uri);
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 96);
-        intent.putExtra("outputY", 96);
-        intent.putExtra("noFaceDetection", true);
-        intent.putExtra("return-data", true);
-        startActivityForResult(intent, CROP_IMAGE_ACTIVITY_REQUEST_CODE);
+           if (photoFile != null) {
+               try {
+                   mCurrentPhotoPathCROP = photoFile.getAbsolutePath();
+                   File f = new File(mCurrentPhotoPathCROP);
+                   cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+                   startActivityForResult(cropIntent, CROP_IMAGE_ACTIVITY_REQUEST_CODE);
+               } catch (Exception e) {
+                   e.printStackTrace();
+               }
+           }
+        }
+        // respond to users whose devices do not support the crop action
+        catch (ActivityNotFoundException e) {
+            // display an error message
+            String errorMessage = "Whoops - your device doesn't support the crop action!";
+            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private void setPic() {
+    private void setPic(String currentPath) {
         ImageView mImageView = (ImageView) findViewById(R.id.profilePicture);
+        assert mImageView != null;
         mImageView.setBackground(null);
 
         // Get the dimensions of the View
@@ -655,7 +674,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        BitmapFactory.decodeFile(currentPath, bmOptions);
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
 
@@ -667,7 +686,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         bmOptions.inSampleSize = scaleFactor;
         bmOptions.inPurgeable = true;
 
-        File f = new File(mCurrentPhotoPath);
+        File f = new File(currentPath);
 
         ExifInterface ei = null;
         try {
@@ -675,21 +694,21 @@ public class NavigationDrawerActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        Bitmap bitmap = BitmapFactory.decodeFile(currentPath, bmOptions);
 
         int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
 
         switch(orientation) {
             case ExifInterface.ORIENTATION_ROTATE_90:
-                Bitmap bMapScaled90 = Bitmap.createScaledBitmap(FileServices.rotateBmp(bitmap,90), 150, 150, true);
+                Bitmap bMapScaled90 = Bitmap.createScaledBitmap(FileServices.rotateBmp(bitmap,90), 140, 140, true);
                 mImageView.setImageBitmap(bMapScaled90);
                 break;
             case ExifInterface.ORIENTATION_ROTATE_180:
-                Bitmap bMapScaled180 = Bitmap.createScaledBitmap(FileServices.rotateBmp(bitmap,180), 150, 150, true);
+                Bitmap bMapScaled180 = Bitmap.createScaledBitmap(FileServices.rotateBmp(bitmap,180), 140, 140, true);
                 mImageView.setImageBitmap(bMapScaled180);
                 break;
             default:
-                mImageView.setImageBitmap(FileServices.setRadius(bitmap));
+                mImageView.setImageBitmap(bitmap);
                 break;
         }
     }
@@ -885,14 +904,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                         switch (exist) {
                                             case Constants.INACTIVE:
                                                 BDProfileManagerQuery.addState(getApplicationContext(), state);
-                                                Log.i("Estados", "Registrando estado : " + state.getStateName());
+                                                //Log.i("Estados", "Registrando estado : " + state.getStateName());
                                                 break;
                                             default:
                                                 continue;
                                         }
 
                                         publishProgress(title, msg, String.valueOf(tempItem), String.valueOf(soNewDataSet.getPropertyCount()));
-                                        Log.i("Estados", "Descargando catalgo de " + state.getStateName());
+                                        //Log.i("Estados", "Descargando catalgo de " + state.getStateName());
 
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -928,7 +947,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                                     switch (exist) {
                                                         case Constants.INACTIVE:
                                                             BDProfileManagerQuery.addMunicipal(getApplicationContext(), municipal);
-                                                            Log.i("Municipios", "Registrando Municipio : " + municipal.getMunicipalName());
+                                                            //Log.i("Municipios", "Registrando Municipio : " + municipal.getMunicipalName());
                                                             break;
                                                     }
 
@@ -967,7 +986,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                                                                 switch (exist) {
                                                                     case Constants.INACTIVE:
                                                                         BDProfileManagerQuery.addLocation(getApplicationContext(), location);
-                                                                        Log.i("Localidad", "Registrando Localidad : " + location.getLocationName());
+                                                                        //Log.i("Localidad", "Registrando Localidad : " + location.getLocationName());
                                                                         break;
                                                                 }
 
@@ -1537,6 +1556,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
             else {
                 String tempText = (textError.isEmpty() ? "Error desconocido" : textError);
                 Toast.makeText(getApplicationContext(), tempText, Toast.LENGTH_LONG).show();
+
+                Log.i("Info", tempText);
 
             }
 

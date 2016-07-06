@@ -1,5 +1,7 @@
 package app.texium.com.profiles.models;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by texiumuser on 28/06/2016.
  */
@@ -10,6 +12,7 @@ public class Profile {
     private String profileName;
     private String profileCity;
     private Integer profileCloud;
+    private Bitmap profilePicture;
 
     public Profile() {
 
@@ -54,6 +57,14 @@ public class Profile {
 
     public void setProfileCloud(Integer profileCloud) {
         this.profileCloud = profileCloud;
+    }
+
+    public Bitmap getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(Bitmap profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     /*

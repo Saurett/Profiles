@@ -14,6 +14,19 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="10dp">
+
+            <ImageView
+                android:id="@+id/profile_picture"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/profiles_launcher" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -24,9 +37,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Nombre Completo"
+                android:text="Adriana Leon Solis"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp" />
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/profile_city"
@@ -34,7 +47,8 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
                 android:text="Ciudad Actual"
-                android:textColor="@color/colorPrimaryDark" />
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="13sp" />
         </LinearLayout>
 
         <LinearLayout

@@ -16,8 +16,10 @@ public class PersonalProfile implements Serializable {
     private String sex;
     private String birthPlace;
     private String nationality;
+    private String profilePicture;
 
     public PersonalProfile() {
+        profilePicture = "";
 
     }
 
@@ -91,5 +93,13 @@ public class PersonalProfile implements Serializable {
 
     public void setBirthPlace(String birthPlace) {
         this.birthPlace = birthPlace;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

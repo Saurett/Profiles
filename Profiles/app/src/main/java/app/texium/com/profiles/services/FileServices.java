@@ -70,7 +70,7 @@ public class FileServices {
         Paint bmPaint = new Paint();
         bmPaint.setAntiAlias(true);
         bmPaint.setShader(new BitmapShader(actualBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
-        canvas.drawRoundRect((new RectF(0, 0, actualBitmap.getWidth(), actualBitmap.getHeight())), 100, 100, bmPaint);// Round Image Corner 100 100 100 100
+        canvas.drawRoundRect((new RectF(0, 0, actualBitmap.getWidth(), actualBitmap.getHeight())), 140, 140, bmPaint);// Round Image Corner 100 100 100 100
 
         return imageRounded;
     }

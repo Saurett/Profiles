@@ -144,27 +144,35 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
         super.onCreate(saveInstanceState);
         _PROFILE_MANAGER = activityListener.getProfileManager();
 
-        if (null !=_PROFILE_MANAGER.getPersonalProfile().getBirthDate()) {
-            String currentDate = _PROFILE_MANAGER.getPersonalProfile().getBirthDate();
+       if (null != _PROFILE_MANAGER.getPersonalProfile()) {
+           if (null !=_PROFILE_MANAGER.getPersonalProfile().getBirthDate()) {
+               String currentDate = _PROFILE_MANAGER.getPersonalProfile().getBirthDate();
 
-            if (currentDate.contains("-")) {
-                String[] actualDate = currentDate.split("-");
+               if (currentDate.contains("-")) {
+                   String[] actualDate = currentDate.split("-");
 
-                int year = Integer.valueOf(actualDate[0]);
-                int month = Integer.valueOf(actualDate[1]);
-                int day = Integer.valueOf(actualDate[2]);
+                   int year = Integer.valueOf(actualDate[0]);
+                   int month = Integer.valueOf(actualDate[1]);
+                   int day = Integer.valueOf(actualDate[2]);
 
-                String date = day + " / " + month + " / " + year;
+                   String date = day + " / " + month + " / " + year;
 
-                _PROFILE_MANAGER.getPersonalProfile().setBirthDate(date);
+                   _PROFILE_MANAGER.getPersonalProfile().setBirthDate(date);
 
-                final Calendar c = Calendar.getInstance();
-                int actualYear = c.get(Calendar.YEAR);
+                   final Calendar c = Calendar.getInstance();
+                   int actualYear = c.get(Calendar.YEAR);
 
-                _PROFILE_MANAGER.getPersonalProfile().setAgeProfile(String.valueOf(actualYear - year) + " Años");
+                   _PROFILE_MANAGER.getPersonalProfile().setAgeProfile(String.valueOf(actualYear - year) + " Años");
 
-            }
-        }
+               }
+           }
+       }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        _PROFILE_MANAGER = activityListener.getProfileManager();
     }
 
     public void setTitle() {
@@ -213,6 +221,7 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
                     personalProfile.setSex(getCheckedSex().getText().toString());
                     personalProfile.setNationality(txtNationality.getText().toString());
                     personalProfile.setBirthPlace(txtPlace.getText().toString());
+                    personalProfile.setProfilePicture(_PROFILE_MANAGER.getPersonalProfile().getProfilePicture());
 
                     _PROFILE_MANAGER.setPersonalProfile(personalProfile);
 

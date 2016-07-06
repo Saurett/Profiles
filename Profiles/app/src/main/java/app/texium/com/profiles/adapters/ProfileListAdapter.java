@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class ProfileListAdapter extends RecyclerView.Adapter<ProfileListAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        ImageView profile_picture;
         TextView profile_name;
         TextView profile_city;
         Button profile_cloud_button;
@@ -33,6 +35,8 @@ public class ProfileListAdapter extends RecyclerView.Adapter<ProfileListAdapter.
 
         public ViewHolder(View itemView) {
             super(itemView);
+
+            profile_picture = (ImageView) itemView.findViewById(R.id.profile_picture);
 
             profile_name = (TextView) itemView.findViewById(R.id.profile_name);
             profile_city = (TextView) itemView.findViewById(R.id.profile_city);
@@ -61,6 +65,7 @@ public class ProfileListAdapter extends RecyclerView.Adapter<ProfileListAdapter.
         Integer resource = (profile.getProfileCloud() == 0) ?
                 R.mipmap.ic_cloud_off_black : R.mipmap.ic_cloud_black;
 
+        holder.profile_picture.setImageBitmap(profile.getProfilePicture());
         holder.profile_name.setText(profile.getProfileName());
         holder.profile_city.setText(profile.getProfileCity());
         holder.profile_cloud_button.setBackgroundResource(resource);
