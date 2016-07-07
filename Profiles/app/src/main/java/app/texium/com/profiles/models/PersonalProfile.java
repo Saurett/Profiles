@@ -17,6 +17,7 @@ public class PersonalProfile implements Serializable {
     private String birthPlace;
     private String nationality;
     private String profilePicture;
+    private String wsPathPicture;
 
     public PersonalProfile() {
         profilePicture = "";
@@ -101,5 +102,13 @@ public class PersonalProfile implements Serializable {
 
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public String getWsPathPicture() {
+        return wsPathPicture;
+    }
+
+    public void setWsPathPicture(String wsPathPicture) {
+        this.wsPathPicture = wsPathPicture;
     }
 }

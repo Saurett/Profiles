@@ -16,7 +16,10 @@ import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import app.texium.com.profiles.R;
 
@@ -48,6 +51,40 @@ public class FileServices {
         return imageEncoded;
     }
 
+    public static Bitmap getBitmapFromURL(String src) {
+        Bitmap myBitmap = null;
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            myBitmap = BitmapFactory.decodeStream(input);
+        } catch (java.net.MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return myBitmap;
+    }
+
+    public static String attachImgFromBitmap(Bitmap bitmap) throws Exception {
+        String imageEncoded = null;
+        try {
+            ByteArrayOutputStream convert = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, convert);
+            byte[] b = convert.toByteArray();
+            imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("AttachImg Exception",e.getMessage());
+        }
+
+        return imageEncoded;
+    }
+
     public static Bitmap compressBitmap(Bitmap original) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         original.compress(Bitmap.CompressFormat.PNG, 50, out);
@@ -74,6 +111,8 @@ public class FileServices {
 
         return imageRounded;
     }
+
+
 
 
 }

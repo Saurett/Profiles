@@ -188,8 +188,50 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
                 switch (webServiceOperation) {
                     case Constants.WS_KEY_PROFILE_SEARCH:
 
+                        List<Profile> localProfile = BDProfileManagerQuery.getProfiles(getContext(),
+                                webServiceSearch, _PROFILE_MANAGER.getUserProfile().getIdGroup());
+
                         soapObject = SoapServices.searchProfile(getContext(), webServiceSearch, _PROFILE_MANAGER.getUserProfile().getIdGroup());
-                        validOperation = (soapObject.getPropertyCount() > 0);
+
+                        profiles = new ArrayList<>();
+                        profiles.addAll(localProfile);
+
+                        if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
+                            SoapObject soDiffGramL = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
+                            if (soDiffGramL.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
+                                SoapObject soNewDataSetL = (SoapObject) soDiffGramL.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
+
+                                for (int iL = 0; iL < soNewDataSetL.getPropertyCount(); iL++) {
+                                    SoapObject soItemL = (SoapObject) soNewDataSetL.getProperty(iL);
+
+                                    Profile profile = new Profile();
+
+                                    //profile.setProfilePicture(FileServices.getBitmapFromURL("https://cldse.blob.core.windows.net/archivos-perfiles-fotos-personas/ssf67.jpg"));
+
+                                    String city = soItemL.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString() + ", " +
+                                            soItemL.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString() + "; " +
+                                            soItemL.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_NAME).toString();
+
+                                    String name =  (soItemL.hasProperty(Constants.SOAP_OBJECT_KEY_NAME)
+                                            ? soItemL.getPrimitiveProperty(Constants.SOAP_OBJECT_KEY_NAME).toString().trim() : "") + " " +
+                                            (soItemL.hasProperty(Constants.SOAP_OBJECT_FIRST_SURNAME)
+                                                    ? soItemL.getPrimitiveProperty(Constants.SOAP_OBJECT_FIRST_SURNAME).toString().trim() : "") + " " +
+                                            (soItemL.hasProperty(Constants.SOAP_OBJECT_SECOND_SURNAME)
+                                                    ? soItemL.getPrimitiveProperty(Constants.SOAP_OBJECT_SECOND_SURNAME).toString().trim() : "") ;
+
+                                    profile.setIdProfile(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
+                                    profile.setProfileCity(city);
+                                    profile.setProfileName(name);
+                                    profile.setCveProfile(Constants.SERVER_SYNC_FALSE);
+                                    profile.setProfileCloud(Constants.SERVER_SYNC_TRUE);
+
+                                    profiles.add(profile);
+                                }
+                            }
+                        }
+
+                        validOperation = true;
+
                         break;
                 }
             } catch (ConnectException e) {
@@ -214,48 +256,6 @@ public class SearchProfileFragment extends Fragment implements View.OnClickListe
 
                         try {
                             profiles_adapter = new ProfileListAdapter();
-
-                            //LOCAL PROFILES
-                            List<Profile> localProfile = BDProfileManagerQuery.getProfiles(getContext(),
-                                    webServiceSearch, _PROFILE_MANAGER.getUserProfile().getIdGroup());
-
-                            profiles = new ArrayList<>();
-                            profiles.addAll(localProfile);
-
-                           if (!localAccess) {
-                               //WEB SERVICE PROFILES
-                               if (soapObject.hasProperty(Constants.SOAP_PROPERTY_DIFFGRAM)) {
-                                   SoapObject soDiffGramL = (SoapObject) soapObject.getProperty(Constants.SOAP_PROPERTY_DIFFGRAM);
-                                   if (soDiffGramL.hasProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET)) {
-                                       SoapObject soNewDataSetL = (SoapObject) soDiffGramL.getProperty(Constants.SOAP_PROPERTY_NEW_DATA_SET);
-
-                                       for (int iL = 0; iL < soNewDataSetL.getPropertyCount(); iL++) {
-                                           SoapObject soItemL = (SoapObject) soNewDataSetL.getProperty(iL);
-
-                                           Profile profile = new Profile();
-
-                                           String city = soItemL.getProperty(Constants.SOAP_OBJECT_KEY_STATE_NAME).toString() + ", " +
-                                                   soItemL.getProperty(Constants.SOAP_OBJECT_KEY_MUNICIPAL_NAME).toString() + "; " +
-                                                   soItemL.getProperty(Constants.SOAP_OBJECT_KEY_LOCATION_NAME).toString();
-
-                                           String name =  (soItemL.hasProperty(Constants.SOAP_OBJECT_KEY_NAME)
-                                                   ? soItemL.getProperty(Constants.SOAP_OBJECT_KEY_NAME).toString().trim() : "") + " " +
-                                                   (soItemL.hasProperty(Constants.SOAP_OBJECT_FIRST_SURNAME)
-                                                           ? soItemL.getProperty(Constants.SOAP_OBJECT_FIRST_SURNAME).toString().trim() : "") + " " +
-                                                   (soItemL.hasProperty(Constants.SOAP_OBJECT_SECOND_SURNAME)
-                                                           ? soItemL.getProperty(Constants.SOAP_OBJECT_SECOND_SURNAME).toString().trim() : "") ;
-
-                                           profile.setIdProfile(Integer.valueOf(soItemL.getProperty(Constants.SOAP_OBJECT_KEY_ID).toString()));
-                                           profile.setProfileCity(city);
-                                           profile.setProfileName(name);
-                                           profile.setCveProfile(Constants.SERVER_SYNC_FALSE);
-                                           profile.setProfileCloud(Constants.SERVER_SYNC_TRUE);
-
-                                           profiles.add(profile);
-                                       }
-                                   }
-                               }
-                           }
 
                             Collections.sort(profiles, new Comparator() {
                                 @Override

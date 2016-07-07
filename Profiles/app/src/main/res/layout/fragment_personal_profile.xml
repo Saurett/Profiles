@@ -85,7 +85,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:background="@mipmap/ic_launcher"
+                        android:background="@mipmap/ic_person_black"
                         />
                 </LinearLayout>
                 <LinearLayout

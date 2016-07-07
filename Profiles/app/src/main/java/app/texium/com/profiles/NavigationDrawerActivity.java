@@ -289,6 +289,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.add_profile:
+                updateProfile(new ProfileManager());
                 FragmentTransaction addFragment = fragmentManager.beginTransaction();
 
                 closeAllFragment();
@@ -1355,6 +1356,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                         validOperation = true;
                         break;
                     case Constants.WS_KEY_PROFILE_SEARCH_COMPLETE:
+                        //Bitmap tempBitmap = FileServices.getBitmapFromURL("https://cldse.blob.core.windows.net/archivos-perfiles-fotos-personas/ssf67.jpg");
                         soapObject = SoapServices.getProfile(getApplicationContext(),DECODE_PROFILE);
                         validOperation = (soapObject.getPropertyCount() > 0);
                         break;
@@ -1447,6 +1449,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                                 PersonalProfile personalProfile = new PersonalProfile();
 
+                                personalProfile.setWsPathPicture(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_WS_PROFILE_PICTURE).toString());
                                 personalProfile.setName(soItem.getPrimitiveProperty(Constants.WEB_SERVICE_PARAM_NAME).toString());
                                 personalProfile.setFirstSurname(soItem.getPrimitiveProperty(Constants.SOAP_OBJECT_FIRST_SURNAME).toString());
                                 personalProfile.setSecondSurname(soItem.getPrimitiveProperty(Constants.SOAP_OBJECT_SECOND_SURNAME).toString());

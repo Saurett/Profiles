@@ -67,6 +67,7 @@ public final class Constants {
     public static final int WS_KEY_PROFILE_SEARCH = 15;
     public static final int WS_KEY_PROFILE_SEARCH_COMPLETE = 16;
     public static final int WS_KEY_PROFILE_DELETE = 17;
+    public static final int WS_KEY_PICTURE_PATH = 18;
 
     //endregion WEB SERVICE ID//
 
@@ -145,6 +146,7 @@ public final class Constants {
     //endregion SOAP OPERATION//
 
     //region WEB SERVICE PARAMS//
+    public static final String WEB_SERVICE_PARAM_WS_PROFILE_PICTURE= "FotografiaPerfil";
     public static final String WEB_SERVICE_PARAM_PROFILE_PICTURE = "FotoPerfil";
     public static final String WEB_SERVICE_PARAM_LOGIN_USERNAME = "Nombre";
     public static final String WEB_SERVICE_PARAM_LOGIN_PASSWORD = "Contrasena";

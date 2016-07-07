@@ -1,9 +1,11 @@
 package app.texium.com.profiles.fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -16,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,6 +29,7 @@ import app.texium.com.profiles.R;
 import app.texium.com.profiles.models.DecodeProfile;
 import app.texium.com.profiles.models.PersonalProfile;
 import app.texium.com.profiles.models.ProfileManager;
+import app.texium.com.profiles.services.FileServices;
 import app.texium.com.profiles.utils.Constants;
 
 
@@ -38,6 +42,7 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
     private EditText txtDate, txtAge, txtName, txtFirstSurname, txtSecondSurname, txtNationality, txtPlace;
     private TextView title;
     private CheckBox checkBox, checkBox2, checkBox3, checkBox4, checkBoxWoman, checkBoxMan;
+    private ProgressDialog pDialog;
 
     private static ProfileManager _PROFILE_MANAGER;
     boolean cancelMove = false;
@@ -182,10 +187,18 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
         _PROFILE_MANAGER = activityListener.getProfileManager();
 
         if (null != _PROFILE_MANAGER.getPersonalProfile().getProfilePicture()) {
-            String encodedImage = _PROFILE_MANAGER.getPersonalProfile().getProfilePicture();
-            byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            picture.setImageBitmap(decodedByte);
+
+            if (_PROFILE_MANAGER.getPersonalProfile().getProfilePicture().isEmpty()) {
+               if (null != _PROFILE_MANAGER.getPersonalProfile().getWsPathPicture()) {
+                   AsyncPersonal ws = new AsyncPersonal(Constants.WS_KEY_PICTURE_PATH, _PROFILE_MANAGER.getPersonalProfile().getWsPathPicture());
+                   ws.execute();
+               }
+            } else {
+                String encodedImage = _PROFILE_MANAGER.getPersonalProfile().getProfilePicture();
+                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                picture.setImageBitmap(decodedByte);
+            }
         }
     }
 
@@ -385,5 +398,77 @@ public class PersonalProfileFragment extends Fragment implements View.OnClickLis
            }
        }
 
+    }
+
+    private class AsyncPersonal extends AsyncTask<Void, Void, Boolean> {
+
+        private Integer webServiceOperation;
+        private String webServicePath;
+        private String textError;
+        private Boolean localAccess;
+
+        private Bitmap wsBitmap;
+
+        private AsyncPersonal(Integer wsOperation, String wsPath) {
+            webServiceOperation = wsOperation;
+            webServicePath = wsPath;
+            textError = "";
+            localAccess = false;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(getContext());
+            pDialog.setMessage("Espere un momento por favor");
+            pDialog.setTitle("Obteniendo imagen de perfil");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            Boolean validOperation = false;
+
+            try {
+                switch (webServiceOperation) {
+                    case Constants.WS_KEY_PICTURE_PATH:
+
+                        try {
+                            wsBitmap = FileServices.getBitmapFromURL(webServicePath);
+                        } catch (Exception e) {
+                            wsBitmap = null;
+                        }
+                        validOperation = (null != wsBitmap);
+                        break;
+                }
+            } catch (Exception e) {
+                textError = e.getMessage();
+                validOperation = false;
+            }
+
+            return validOperation;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+            if (success) {
+                try {
+                    picture.setImageBitmap(wsBitmap);
+                    _PROFILE_MANAGER.getPersonalProfile().setProfilePicture(FileServices.attachImgFromBitmap(wsBitmap));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                String tempText = (textError.isEmpty() ? "Error desconocido" : textError);
+                Toast.makeText(getContext(), tempText, Toast.LENGTH_LONG).show();
+
+            }
+
+            pDialog.dismiss();
+        }
     }
 }
