@@ -10,6 +10,7 @@ import android.widget.Toast;
 /**
  * Created by texiumuser on 09/06/2016.
  */
+@Deprecated
 public class MarshMallowPermission {
 
     public static final int RECORD_PERMISSION_REQUEST_CODE = 1;
